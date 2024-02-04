@@ -34,6 +34,7 @@
 
             <!-- Page Content -->
             <main>
+                <x-backend.flash-messages />
                 {{ $slot }}
             </main>
         </div>
