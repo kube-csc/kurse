@@ -15,17 +15,45 @@
 }
 
 .alert-success {
-    @apply bg-lime-100 border-lime-400 text-lime-800;
+    @apply bg-lime-100 border-lime-400 text-lime-800 rounded-md;
 }
 
 .alert-danger {
-    @apply bg-red-100 border-red-500 text-red-800;
+    @apply bg-red-100 border-red-500 text-red-800 rounded-md;
 }
 
 .alert-warning {
-    @apply bg-yellow-100 border-yellow-400 text-yellow-800;
+    @apply bg-yellow-100 border-yellow-400 text-yellow-800 rounded-md;
 }
 
 .alert-info {
-    @apply bg-blue-100 border-blue-400 text-blue-800;
+    @apply bg-blue-100 border-blue-400 text-blue-800 rounded-md;
+}
+
+.form-group {
+    @apply px-4 py-5 sm:p-6;
+}
+
+.form-card {
+    @apply grid grid-cols-6 gap-6;
+}
+
+.form-field {
+    @apply col-span-6 sm:col-span-3;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-400;
+}
+
+.form-input {
+    @apply mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md;
+}
+
+.form-text{
+    @apply mt-1 shadow-sm sm:text-sm border-gray-300 rounded-md bg-white pb-5;
+}
+
+.is-invalid {
+    @apply bg-red-100 border-red-500 text-red-800;
 }

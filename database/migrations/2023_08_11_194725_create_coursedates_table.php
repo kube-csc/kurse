@@ -11,27 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        // DoTO: bearbeiten nullable
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trainer_id');        //idtrainer
-            $table->unsignedBigInteger('course_id');         //idkurs
+            $table->unsignedBigInteger('course_id');        //idkurs
             $table->unsignedBigInteger('sportSection_id');   //idgruppe
-            $table->date('kurstermin');
-            $table->time('startzeit');
-            $table->time('startzeitmax');
-            $table->time('laenge');
+            $table->date('kurstermin')->nullable();
+            $table->time('startzeit')->nullable();
+            $table->time('startzeitmax')->nullable();
+            $table->time('kurslaenge');
 
             $table->dateTime('kursstarttermin');
             $table->dateTime('kursendtermin');
             $table->dateTime('kursstartvorschlag');
             $table->dateTime('kursendvorschlag');
-            $table->dateTime('kursstartvorschlagkunde');
-            $table->dateTime('kursendvorschlagkunde');
+            $table->dateTime('kursstartvorschlagkunde')->nullable();
+            $table->dateTime('kursendvorschlagkunde')->nullable();
 
             $table->integer('sportgeraetanzahl');
 
-            $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
+            $table->unsignedBigInteger('user_id');
 
             $table->SoftDeletes();
             $table->timestamps();
@@ -47,6 +49,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Entferne die Foren-Keys
+        Schema::table('coursedates', function (Blueprint $table) {
+            $table->dropForeign(['trainer_id']);
+            $table->dropForeign(['course_id']);
+            $table->dropForeign(['sportSection_id']);
+        });
         Schema::dropIfExists('coursedates');
     }
 };

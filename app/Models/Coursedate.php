@@ -11,13 +11,16 @@ class Coursedate extends Model
 
     protected $fillable = [
         'trainer_id',
-        'course_id',
         'sportSection_id',
-        'kurstermin',
-        'startzeit',
-        'startzeitmax',
-        'laenge',
-        'sportgeraetanzahl'
+        'course_id',
+        'kursstarttermin',
+        'kursendtermin',
+        'kurslaenge',
+        'kursstartvorschlag',
+        'kursendvorschlag',
+        'sportgeraetanzahl',
+        'user_id',
+        'bearbeiter_id'
     ];
 
     protected $dates = [
