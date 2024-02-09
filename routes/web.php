@@ -43,12 +43,12 @@ Route::middleware([
     /*  ToDO: Auf Resource umstellen
         Route::resource('/post', CoursedateController::clas;
     */
-        Route::get('/backend/CourseDate', 'App\Http\Controllers\backend\CoursedateController@index')->name('backend.CourseDate.index');
-        Route::get('/backend/CourseDateCreate', 'App\Http\Controllers\backend\CoursedateController@create')->name('backend.CourseDate.create');
-        Route::get('/backend/CourseDateEdit/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@edit')->name('backend.CourseDate.edit');
-        Route::put('/backend/CourseDateUpdate/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@update')->name('backend.CourseDate.update');
-        Route::put('/backend/CourseDateStore', 'App\Http\Controllers\backend\CoursedateController@store')->name('backend.CourseDate.store');
-        Route::get('/backend/CourseDateDestroy/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@destroy')->name('backend.CourseDate.destroy');
+        Route::get('/backend/CourseDate', 'App\Http\Controllers\backend\CoursedateController@index')->name('backend.courseDate.index');
+        Route::get('/backend/CourseDateCreate', 'App\Http\Controllers\backend\CoursedateController@create')->name('backend.courseDate.create');
+        Route::get('/backend/CourseDateEdit/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@edit')->name('backend.courseDate.edit');
+        Route::put('/backend/CourseDateUpdate/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@update')->name('backend.courseDate.update');
+        Route::put('/backend/CourseDateStore', 'App\Http\Controllers\backend\CoursedateController@store')->name('backend.courseDate.store');
+        Route::get('/backend/CourseDateDestroy/{coursedate}', 'App\Http\Controllers\backend\CoursedateController@destroy')->name('backend.courseDate.destroy');
 });
 
 Route::get('/Kursemanager', 'App\Http\Controllers\CoursedateController@index');

@@ -8,7 +8,7 @@ use App\Models\Coursedate;
 use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
 use App\Models\SportEquipment;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 
@@ -129,7 +129,7 @@ class CoursedateController extends Controller
 
         self::success('Kurstermin wurde erfolgreich angelegt.');
 
-        return redirect()->route('backend.CourseDate.index');
+        return redirect()->route('backend.courseDate.index');
     }
 
     /**
@@ -154,7 +154,7 @@ class CoursedateController extends Controller
 
         $sportgeraetanzahlMax = $this->sportgeraetanzahlMax();
 
-        return view('components.backend.CourseDate.edit', compact([
+        return view('components.backend.courseDate.edit', compact([
             'coursedate',
             'sportgeraetanzahlMax',
             'courses'
@@ -233,7 +233,7 @@ class CoursedateController extends Controller
 
         self::success('Kurstermin wurde erfolgreich bearbeitet.');
 
-        return redirect()->route('backend.CourseDate.index');
+        return redirect()->route('backend.courseDate.index');
     }
 
     /**
@@ -245,7 +245,7 @@ class CoursedateController extends Controller
 
         self::success('Kurstermin wurde erfolgreich gelöscht.');
 
-        return redirect()->route('backend.CourseDate.index');
+        return redirect()->route('backend.courseDate.index');
     }
 
     public function sportgeraetanzahlMax()

@@ -13,7 +13,7 @@
                 </div>
             @endif
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                <form action="{{ route('backend.CourseDate.store') }}" method="POST">
+                <form action="{{ route('backend.courseDate.store') }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="form-group ">

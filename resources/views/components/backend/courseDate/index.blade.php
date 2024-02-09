@@ -5,7 +5,7 @@
                 {{ __('backend.Course Dates') }}
             </h2>
             <div class="bg-white ml-5 border-2 boarder border-black shadow-gray-950">
-                <a href="{{ route('backend.CourseDate.create') }}">
+                <a href="{{ route('backend.courseDate.create') }}">
                   <box-icon name='calendar-plus' ></box-icon>
                 </a>
             </div>
@@ -61,10 +61,10 @@
                                     @endif
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <a href="{{ route('backend.CourseDate.edit', $coursedate->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                <a href="{{ route('backend.courseDate.edit', $coursedate->id) }}" class="text-indigo-600 hover:text-indigo-900">
                                     <box-icon name='edit' ></box-icon>
                                 </a>
-                                <a href="{{ route('backend.CourseDate.destroy', $coursedate->id) }}" class="text-indigo-600 hover:text-indigo-900" onclick="return confirm('Wirklich den Kurs löschen?')">
+                                <a href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" class="text-indigo-600 hover:text-indigo-900" onclick="return confirm('Wirklich den Kurs löschen?')">
                                     <box-icon name='trash' ></box-icon>
                                 </a>
                             </td>

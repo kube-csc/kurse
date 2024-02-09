@@ -20,7 +20,7 @@ Schreine die Route in der web.php. Die Route ist backend.CourseDate.index und ba
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                <form action="{{ route('backend.CourseDate.update', $coursedate->id) }}" method="POST">
+                <form action="{{ route('backend.courseDate.update', $coursedate->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="px-4 py-5 sm:p-6">
