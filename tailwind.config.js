@@ -21,7 +21,7 @@ export default {
 
     plugins: [
         forms,
-        typography,
-          require('@tailwindcss/line-clamp'),
+        typography
       ],
 };
+

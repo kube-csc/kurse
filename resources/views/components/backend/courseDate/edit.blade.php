@@ -12,7 +12,7 @@
                     {{ $danger }}
                 </div>
             @endif
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="box">
                 <form action="{{ route('backend.courseDate.update', $coursedate->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -20,7 +20,7 @@
                         <div class="form-card ">
                             <div class="form-field ">
                                 <label for="kursstarttermin" class="form-label">Start Datum</label>
-                                <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input"
+                                <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input-date"
                                         @if(isset($kursstarttermin))
                                             value="{{ $kursstarttermin }}"
                                         @else
@@ -31,7 +31,7 @@
 
                             <div class="form-field ">
                                 <label for="kurslaenge" class="form-label">Kursdauer</label>
-                                <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input @if(isset($danger)) is-invalid @endif"
+                                <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif"
                                         @if(isset($kurslaenge))
                                             value="{{ $kurslaenge }}"
                                         @else
@@ -42,7 +42,7 @@
 
                             <div class="form-field ">
                                 <label for="kursendtermin" class="form-label">End Datum</label>
-                                <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input @if(isset($danger)) is-invalid @endif"
+                                <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input-date @if(isset($danger)) is-invalid @endif"
                                         @if(isset($kursendtermin))
                                             value="{{ $kursendtermin }}"
                                         @else

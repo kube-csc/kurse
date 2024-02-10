@@ -12,7 +12,7 @@
                     {{ $danger }}
                 </div>
             @endif
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="box">
                 <form action="{{ route('backend.courseDate.store') }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -20,17 +20,17 @@
                         <div class="form-card ">
                             <div class="form-field ">
                                 <label for="kursstarttermin" class="form-label">Start Datum</label>
-                                <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input" value="{{ $kursstarttermin }}">
+                                <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input-date " value="{{ $kursstarttermin }}">
                             </div>
 
                             <div class="form-field ">
                                 <label for="kurslaenge" class="form-label">Kursdauer</label>
-                                <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input @if(isset($danger)) is-invalid @endif" value="{{ $kurslaenge }}">
+                                <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kurslaenge }}">
                             </div>
 
                             <div class="form-field ">
                                 <label for="kursendtermin" class="form-label">End Datum</label>
-                                <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input @if(isset($danger)) is-invalid @endif" value="{{ $kursendtermin }}">
+                                <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendtermin }}">
                             </div>
 
                             <div class="form-field ">
