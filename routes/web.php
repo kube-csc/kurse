@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\backend\CoursedateController;
+use App\Http\Controllers\Backend\CoursedateController;
 use Illuminate\Support\Facades\Route;
 
 /*

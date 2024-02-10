@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\backend\Coursedate;
+namespace App\View\Components\Backend;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class TrainerCourseDate extends Component
+class FlashMessages extends Component
 {
     /**
      * Create a new component instance.
@@ -21,8 +21,6 @@ class TrainerCourseDate extends Component
      */
     public function render(): View|Closure|string
     {
-        $courseDateCount = \App\Models\CourseDate::where('trainer_id', auth()->user()->id)->count();
-
-        return view('components.backend.coursedate.trainer-course-date', compact('courseDateCount'));
+        return view('components.backend.flash-messages');
     }
 }
