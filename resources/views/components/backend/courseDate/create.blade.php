@@ -4,9 +4,7 @@
             {{ __('backend.Course Date Create') }}
         </h2>
     </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(isset($danger))
                 <div class="alert alert-danger mb-5">
                     {{ $danger }}
@@ -66,12 +64,14 @@
                         </div>
                     </div>
                     <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <a href="{{ route('backend.courseDate.index') }}" class="form-button">
+                            Zurück
+                        </a>
+                        <button type="submit" class="form-button ">
                             Eintragen
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 </x-app-layout>
