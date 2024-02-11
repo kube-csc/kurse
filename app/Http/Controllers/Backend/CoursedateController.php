@@ -21,6 +21,16 @@ class CoursedateController extends Controller
     public function index()
     {
         $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG'))
+            ->where('trainer_id', Auth::user()->id)
+            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->paginate(10);
+
+        return view('components.backend.courseDate.index', compact('coursedates'));
+    }
+
+    public function indexAll()
+    {
+        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG'))
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->paginate(10);
 

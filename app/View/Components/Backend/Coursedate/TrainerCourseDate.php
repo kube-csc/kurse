@@ -22,10 +22,14 @@ class TrainerCourseDate extends Component
      */
     public function render(): View|Closure|string
     {
-        $courseDateCount = CourseDate::where('trainer_id', auth()->user()->id)
+        $courseDateCountYou = CourseDate::where('trainer_id', auth()->user()->id)
                 ->where('sportSection_id', env('KURS_ABTEILUNG'))
                 ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
                 ->count();
+
+        $courseDateCount = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG'))
+            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->count();
 
         $courseDateCountYouAll = CourseDate::where('trainer_id', auth()->user()->id)
             ->where('sportSection_id', env('KURS_ABTEILUNG'))
@@ -35,6 +39,7 @@ class TrainerCourseDate extends Component
             ->count();
 
         return view('components.backend.courseDate.trainer-course-date', [
+            'courseDateCountYou' => $courseDateCountYou,
             'courseDateCount'    => $courseDateCount,
             'courseDateCountYouAll' => $courseDateCountYouAll,
             'courseDateCountAll' => $courseDateCountAll

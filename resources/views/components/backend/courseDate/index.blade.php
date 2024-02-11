@@ -32,6 +32,8 @@
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunden<br>
                         Kurs:<br>
                         {{ $coursedate->getCousename->kursName }}<br>
+                        Kursleiter:<br>
+                        {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}<br>
                         <div>
                             @if($coursedate->sportgeraetanzahl)
                                 ?? von {{ $coursedate->sportgeraetanzahl }}

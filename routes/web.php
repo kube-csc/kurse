@@ -44,6 +44,7 @@ Route::middleware([
         Route::resource('/post', CoursedateController::clas;
     */
         Route::get('/backend/CourseDate', [CoursedateController::class, 'index'])->name('backend.courseDate.index');
+        Route::get('/backend/CourseDateAll', [CoursedateController::class, 'indexAll'])->name('backend.courseDate.indexAll');
         Route::get('/backend/CourseDateCreate', [CoursedateController::class, 'create'])->name('backend.courseDate.create');
         Route::get('/backend/CourseDateEdit/{coursedate}', [CoursedateController::class, 'edit'])->name('backend.courseDate.edit');
         Route::put('/backend/CourseDateUpdate/{coursedate}', [CoursedateController::class, 'update'])->name('backend.courseDate.update');
