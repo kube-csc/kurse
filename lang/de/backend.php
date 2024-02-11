@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'Course Dates' => 'Kurs Termine',
+    'Course Dates' => 'Deine Kurs Termine',
+    'Course Dates All' => 'Alle Kurs Termine',
     'Course Date Create' => 'Kurs Termine erstellen',
 
 ];

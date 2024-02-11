@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'Course Dates' => 'Course Date',
+    'Course Dates' => 'Your Course Date',
+    'Course Dates All' => 'All Course Date',
     'Course Date Create' => 'Course Date Create',
-
 ];

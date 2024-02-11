@@ -2,7 +2,13 @@
     <x-slot name="header">
         <div class="flex items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('backend.Course Dates') }}
+                @if(Route::currentRouteNamed('backend.courseDate.index'))
+                    {{ __('backend.Course Dates') }}
+                @else
+                    {{ __('backend.Course Dates All') }}
+                @endif
+                <!-- Gebe {{ __('backend.Course Dates') }} aus wenn die Route 'backend.courseDate.index' ist -->
+
             </h2>
             <div class="bg-white ml-5 border-2 boarder border-black shadow-gray-950">
                 <a href="{{ route('backend.courseDate.create') }}">
