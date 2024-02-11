@@ -6,7 +6,7 @@
             </h2>
             <div class="bg-white ml-5 border-2 boarder border-black shadow-gray-950">
                 <a href="{{ route('backend.courseDate.create') }}">
-                  <box-icon name='calendar-plus' ></box-icon>
+                  <box-icon name='calendar-plus'></box-icon>
                 </a>
             </div>
         </div>
