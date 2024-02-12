@@ -9,7 +9,6 @@ use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
 use App\Models\SportEquipment;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 
 
@@ -20,7 +19,7 @@ class CoursedateController extends Controller
      */
     public function index()
     {
-        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', $default = 1))
+        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
             ->where('trainer_id', Auth::user()->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->paginate(10);
@@ -30,7 +29,7 @@ class CoursedateController extends Controller
 
     public function indexAll()
     {
-        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', $default = 1))
+        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->paginate(10);
 
@@ -48,7 +47,7 @@ class CoursedateController extends Controller
         $kurslaenge = $kurslaengeStunde.':'.$kurslaengeMinute;
         $kursendtermin = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('Y-m-d H:i');
 
-        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', $default = 1))
+        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
             ->orderByDesc('kursName')
             ->get();
 
@@ -75,12 +74,13 @@ class CoursedateController extends Controller
         $data = $request->validated();
 
         // Parse the date and time to Carbon instances
-        $kursendtermin = Carbon::parse($request->kursendtermin);
+        $date = Carbon::parse($request->kursstarttermin);
         $time = Carbon::parse($request->kurslaenge);
         // Extract the hours and minutes from the time
         $hours = $time->hour;
         $minutes = $time->minute;
         $kurslaeneminuten =  $hours*60 + $minutes;
+        $kursendtermin = $date->addHours($hours)->addMinutes($minutes);
 
         // Parse the dates to Carbon instances
         $kursendterminBerechnung = Carbon::parse($request->kursendtermin);
@@ -102,7 +102,7 @@ class CoursedateController extends Controller
              $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', $default = 1))
+            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
                 ->orderByDesc('kursName')
                 ->get();
 
@@ -127,7 +127,7 @@ class CoursedateController extends Controller
         $coursedate = new coursedate(
             [
                 'trainer_id'         => Auth::user()->id,
-                'sportSection_id'    => env('KURS_ABTEILUNG', $default = 1),
+                'sportSection_id'    => env('KURS_ABTEILUNG', 1),
                 'course_id'          => $request->course_id,
                 'kurslaenge'         => $request->kurslaenge,
                 'kursstarttermin'    => $request->kursstarttermin,
@@ -163,7 +163,7 @@ class CoursedateController extends Controller
     {
         $coursedate = Coursedate::find($id);
 
-        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', $default = 1))
+        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
             ->orderByDesc('kursName')
             ->get();
 
@@ -184,12 +184,13 @@ class CoursedateController extends Controller
         //$coursedate->update($request->validated());
 
         // Parse the date and time to Carbon instances
-        $kursendtermin = Carbon::parse($request->kursendtermin);
+        $date = Carbon::parse($request->kursstarttermin);
         $time = Carbon::parse($request->kurslaenge);
         // Extract the hours and minutes from the time
         $hours = $time->hour;
         $minutes = $time->minute;
         $kurslaeneminuten =  $hours*60 + $minutes;
+        $kursendtermin = $date->addHours($hours)->addMinutes($minutes);
 
         // Parse the dates to Carbon instances
         $kursendterminBerechnung = Carbon::parse($request->kursendtermin);
@@ -211,7 +212,7 @@ class CoursedateController extends Controller
             $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', $default = 1))
+            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
                 ->orderByDesc('kursName')
                 ->get();
 
@@ -270,7 +271,7 @@ class CoursedateController extends Controller
 
     public function sportgeraetanzahlMax()
     {
-        $sportgeraetanzahlMax = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG', $default = 1))->count(); //ToDo - aus der Datenbank holen
+        $sportgeraetanzahlMax = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))->count(); //ToDo - aus der Datenbank holen
         return $sportgeraetanzahlMax;
     }
 }

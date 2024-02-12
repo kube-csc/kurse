@@ -18,7 +18,7 @@
         <div class="dashboard-flexbox-text">
             <h2 class="dasboard-iconbox-h2">aktuell eingestellten Kurse</h2>
             <div class="dasboard-iconbox">
-                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.index') }}">
+                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.indexAll') }}">
                     <box-icon name='calendar'></box-icon>
                 </a>
             </div>

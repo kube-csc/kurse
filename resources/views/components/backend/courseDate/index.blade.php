@@ -7,10 +7,8 @@
                 @else
                     {{ __('backend.Course Dates All') }}
                 @endif
-                <!-- Gebe {{ __('backend.Course Dates') }} aus wenn die Route 'backend.courseDate.index' ist -->
-
             </h2>
-            <div class="bg-white ml-5 border-2 boarder border-black shadow-gray-950">
+            <div class="dasboard-iconbox w-12 ml-4">
                 <a href="{{ route('backend.courseDate.create') }}">
                     <box-icon name='calendar-plus'></box-icon>
                 </a>
@@ -30,15 +28,15 @@
                                 <box-icon name='trash'></box-icon>
                             </a>
                         </div>
-                        Start Datum:<br>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr<br>
-                        End Datum:<br>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr<br>
-                        Kurslänge:<br>
-                        {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunden<br>
-                        Kurs:<br>
+                        <label class="form-label">Datum:</label>
+                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                        <label class="form-label">End Datum:</label>
+                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        <label class="form-label">Kurslänge:</label>
+                        {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
+                        <label class="form-label">Kursname:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
-                        Kursleiter:<br>
+                        <label class="form-label">Kursleiter:</label>
                         {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}<br>
                         <div>
                             @if($coursedate->sportgeraetanzahl)
@@ -48,7 +46,7 @@
                             @endif
                             Sportgeräte
                         </div>
-                        Boote
+                        <!-- ToDo: Sportgeräte anzeigen -->
                     </div>
                 </div>
             @endforeach
