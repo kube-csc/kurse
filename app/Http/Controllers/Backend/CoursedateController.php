@@ -22,6 +22,7 @@ class CoursedateController extends Controller
         $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
             ->where('trainer_id', Auth::user()->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->orderByDesc('kursstarttermin')
             ->paginate(10);
 
         return view('components.backend.courseDate.index', compact('coursedates'));
@@ -31,6 +32,7 @@ class CoursedateController extends Controller
     {
         $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->orderByDesc('kursstarttermin')
             ->paginate(10);
 
         return view('components.backend.courseDate.index', compact('coursedates'));
@@ -41,11 +43,13 @@ class CoursedateController extends Controller
      */
     public function create()
     {
-        $kursstarttermin = Carbon::now()->format('Y-m-d H:i');
+        $kursstartterminDatum = Carbon::now()->format('Y-m-d');
+        $kursstartterminTime = Carbon::now()->format('H:i');
         $kurslaengeStunde = '01';
-        $kurslaengeMinute = '00';
+        $kurslaengeMinute = '30';
         $kurslaenge = $kurslaengeStunde.':'.$kurslaengeMinute;
-        $kursendtermin = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('Y-m-d H:i');
+        $kursendterminDatum=$kursstartterminDatum;
+        $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
         $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
             ->orderByDesc('kursName')
@@ -56,9 +60,11 @@ class CoursedateController extends Controller
         $sportgeraetanzahlMax = $this->sportgeraetanzahlMax();
 
         return view('components.backend.courseDate.create' , compact([
-            'kursstarttermin',
+            'kursstartterminDatum',
+            'kursstartterminTime',
             'kurslaenge',
-            'kursendtermin',
+            'kursendterminDatum',
+            'kursendterminTime',
             'sportgeraetanzahlMax',
             'sportgeraetanzahl',
             'courses',
@@ -71,28 +77,38 @@ class CoursedateController extends Controller
      */
     public function store(StoreCoursedateRequest $request)
     {
-        $data = $request->validated();
+        //$data = $request->validated();
 
         // Parse the date and time to Carbon instances
-        $date = Carbon::parse($request->kursstarttermin);
+        $date = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
         $time = Carbon::parse($request->kurslaenge);
         // Extract the hours and minutes from the time
         $hours = $time->hour;
         $minutes = $time->minute;
         $kurslaeneminuten =  $hours*60 + $minutes;
-        $kursendtermin = $date->addHours($hours)->addMinutes($minutes);
+        $hoursStart = Carbon::parse($request->kursstartterminTime)->hour;
+        $minutesStart = Carbon::parse($request->kursstartterminTime)->minute;
+        $kurslaeneminutenStart =  $hoursStart*60 + $minutesStart;
 
         // Parse the dates to Carbon instances
-        $kursendterminBerechnung = Carbon::parse($request->kursendtermin);
-        $kursstarttermin = Carbon::parse($request->kursstarttermin);
+        $kursendterminBerechnung = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
+        $kursstarttermin = Carbon::parse($request->kursstarttermin.' '.$request->kursstartterminTime);
         // Calculate the difference in minutes
-        $diffDay = $kursendterminBerechnung->diffInDays($kursstarttermin);
+        // $diffDay = $kursendterminBerechnung->diffInDays($kursstarttermin);
         $kursendterminBerechnungDatum = Carbon::parse($request->kursendtermin)->format('Y-m-d');
         $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
         $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
-        if($kursendterminBerechnungDatum < $kursstartterminDatum)
+
+        if($kursendterminBerechnungDatum <= $kursstartterminDatum)
         {
-            $diffMinute = $diffMinute * -1;
+            if ($kurslaeneminuten > $kurslaeneminutenStart)
+            {
+                $diffMinute = $diffMinute * 1;
+            }
+            else
+            {
+                $diffMinute = $diffMinute * -1;
+            }
         }
 
         if($diffMinute< $kurslaeneminuten)
@@ -102,27 +118,25 @@ class CoursedateController extends Controller
              $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
-                ->orderByDesc('kursName')
-                ->get();
+             // ToDo: Wird die If-Abfrage benötigt?
+             if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
+             {
+                 $hoursAdd = $hours+0;
+                 $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hoursAdd)->addMinutes($minutes);
+             }
+             else
+             {
+                 $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
+             }
 
-            $course_id = $request->course_id;
-            $sportgeraetanzahl= $request->sportgeraetanzahl;
-            $kurslaenge = $request->kurslaenge;
-            $sportgeraetanzahlMax = $this->sportgeraetanzahlMax();
-
-            return view('components.backend.courseDate.create' , compact([
-                'kursstarttermin',
-                'kurslaenge',
-                'kursendtermin',
-                'sportgeraetanzahlMax',
-                'sportgeraetanzahl',
-                'courses',
-                'danger',
-                'course_id'
-
-            ]));
-        }
+             self::warning('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
+             Der Kurs Endtermin wurde automatisch berechnet wurde erfolgreich angelegt');
+         }
+        else
+         {
+            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
+            self::success('Kurstermin wurde erfolgreich angelegt.');
+         }
 
         $coursedate = new coursedate(
             [
@@ -130,9 +144,9 @@ class CoursedateController extends Controller
                 'sportSection_id'    => env('KURS_ABTEILUNG', 1),
                 'course_id'          => $request->course_id,
                 'kurslaenge'         => $request->kurslaenge,
-                'kursstarttermin'    => $request->kursstarttermin,
+                'kursstarttermin'    => $date,
                 'kursendtermin'      => $kursendtermin,
-                'kursstartvorschlag' => $request->kursstarttermin,
+                'kursstartvorschlag' => $date,
                 'kursendvorschlag'   => $kursendtermin,
                 'sportgeraetanzahl'  => $request->sportgeraetanzahl,
                 'bearbeiter_id'      => Auth::user()->id,
@@ -142,8 +156,6 @@ class CoursedateController extends Controller
             ]
         );
         $coursedate->save();
-
-        self::success('Kurstermin wurde erfolgreich angelegt.');
 
         return redirect()->route('backend.courseDate.index');
     }
@@ -184,25 +196,34 @@ class CoursedateController extends Controller
         //$coursedate->update($request->validated());
 
         // Parse the date and time to Carbon instances
-        $date = Carbon::parse($request->kursstarttermin);
+        $date = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
         $time = Carbon::parse($request->kurslaenge);
         // Extract the hours and minutes from the time
         $hours = $time->hour;
         $minutes = $time->minute;
         $kurslaeneminuten =  $hours*60 + $minutes;
-        $kursendtermin = $date->addHours($hours)->addMinutes($minutes);
+        $hoursStart = Carbon::parse($request->kursstartterminTime)->hour;
+        $minutesStart = Carbon::parse($request->kursstartterminTime)->minute;
+        $kurslaeneminutenStart =  $hoursStart*60 + $minutesStart;
 
         // Parse the dates to Carbon instances
-        $kursendterminBerechnung = Carbon::parse($request->kursendtermin);
-        $kursstarttermin = Carbon::parse($request->kursstarttermin);
+        $kursendterminBerechnung = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
+        $kursstarttermin = Carbon::parse($request->kursstarttermin.' '.$request->kursstartterminTime);
         // Calculate the difference in minutes
-        $diffDay = $kursendterminBerechnung->diffInDays($kursstarttermin);
         $kursendterminBerechnungDatum = Carbon::parse($request->kursendtermin)->format('Y-m-d');
         $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
         $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
-        if($kursendterminBerechnungDatum < $kursstartterminDatum)
+
+        if($kursendterminBerechnungDatum <= $kursstartterminDatum)
         {
-            $diffMinute = $diffMinute * -1;
+            if ($kurslaeneminuten > $kurslaeneminutenStart)
+            {
+                $diffMinute = $diffMinute * 1;
+            }
+            else
+            {
+                $diffMinute = $diffMinute * -1;
+            }
         }
 
         if($diffMinute < $kurslaeneminuten)
@@ -212,47 +233,38 @@ class CoursedateController extends Controller
             $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-            $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
-                ->orderByDesc('kursName')
-                ->get();
+            // ToDo: Wird die If-Abfrage benötigt?
+            if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
+            {
+                $hoursAdd = $hours+0;
+                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hoursAdd)->addMinutes($minutes);
+            }
+            else
+            {
+                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
+            }
 
-            $course_id = $request->course_id;
-            $sportgeraetanzahl= $request->sportgeraetanzahl;
-            $kurslaenge = $request->kurslaenge;
-
-            $coursedate = $request->coursedate;
-
-            $sportgeraetanzahlMax = $this->sportgeraetanzahlMax();
-
-            return view('components.backend.courseDate.edit' , compact([
-                'coursedate',
-                'courses',
-                'kursstarttermin',
-                'kurslaenge',
-                'kursendtermin',
-                'sportgeraetanzahlMax',
-                'sportgeraetanzahl',
-                'danger',
-                'course_id'
-
-            ]));
+            self::warning('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
+         }
+        else
+        {
+            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
+            self::success('Kurstermin wurde erfolgreich bearbeitet.');
         }
 
         $coursedate->update(
             [
                 'course_id'          => $request->course_id,
                 'kurslaenge'         => $request->kurslaenge,
-                'kursstarttermin'    => $request->kursstarttermin,
-                'kursendtermin'      => $request->kursendtermin,
-                'kursstartvorschlag' => $request->kursstarttermin,
-                'kursendvorschlag'   => $request->kursendtermin,
+                'kursstarttermin'    => $date,
+                'kursendtermin'      => $kursendtermin,
+                'kursstartvorschlag' => $date,
+                'kursendvorschlag'   => $kursendtermin,
                 'sportgeraetanzahl'  => $request->sportgeraetanzahl,
                 'bearbeiter_id'      => Auth::user()->id,
                 'updated_at'         => Carbon::now()
             ]
         );
-
-        self::success('Kurstermin wurde erfolgreich bearbeitet.');
 
         return redirect()->route('backend.courseDate.index');
     }

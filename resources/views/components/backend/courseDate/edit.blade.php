@@ -5,8 +5,9 @@
         </h2>
     </x-slot>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->
         @if(isset($danger))
-            <div class="alert alert-danger mb-5">
+            <div class="alert alert-danger mb-5 mt-1">
                 {{ $danger }}
             </div>
         @endif
@@ -18,16 +19,25 @@
                     <div class="form-card ">
                         <div class="form-field ">
                             <label for="kursstarttermin" class="form-label">Start Datum</label>
-                            <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input-date"
-                                    @if(isset($kursstarttermin))
-                                        value="{{ $kursstarttermin }}"
-                                    @else
-                                        value="{{ $coursedate->kursstarttermin }}"
-                                    @endif
-                            >
+                            <div class="form-field flex">
+                                <input type="date" name="kursstarttermin" id="kursstarttermin" class="form-input-date"
+                                        @if(isset($kursstarttermin))
+                                            value="{{ $kursstarttermin }}"
+                                        @else
+                                            value="{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}"
+                                        @endif
+                                >
+                                <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date"
+                                       @if(isset($kursstartterminTime))
+                                           value="{{ $kursstartterminTime }}"
+                                       @else
+                                           value="{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }}"
+                                       @endif
+                                >
+                            </div>
                         </div>
 
-                        <div class="form-field ">
+                        <div class="form-field">
                             <label for="kurslaenge" class="form-label">Kursdauer</label>
                             <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif"
                                     @if(isset($kurslaenge))
@@ -40,13 +50,22 @@
 
                         <div class="form-field ">
                             <label for="kursendtermin" class="form-label">End Datum</label>
-                            <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input-date @if(isset($danger)) is-invalid @endif"
-                                    @if(isset($kursendtermin))
-                                        value="{{ $kursendtermin }}"
-                                    @else
-                                        value="{{ $coursedate->kursendtermin }}"
+                            <div class="form-field flex">
+                                <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif"
+                                        @if(isset($kursendterminDatum))
+                                            value="{{ $kursendterminDatum }}"
+                                        @else
+                                            value="{{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('Y-m-d') }}"
+                                        @endif
+                                >
+                                <input type="time" name="kursendterminTime" id="kursendterminTime" class="form-input-date @if(isset($danger)) is-invalid @endif"
+                                       @if(isset($kursendterminTime))
+                                           value="{{ $kursendterminTime }}"
+                                       @else
+                                           value="{{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }}"
                                     @endif
                                 >
+                            </div>
                         </div>
 
                         <div class="form-field ">

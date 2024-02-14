@@ -4,9 +4,10 @@
             {{ __('backend.Course Date Create') }}
         </h2>
     </x-slot>
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">s
+        <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->
             @if(isset($danger))
-                <div class="alert alert-danger mb-5">
+                <div class="alert alert-danger mb-5 mt-1">
                     {{ $danger }}
                 </div>
             @endif
@@ -16,9 +17,12 @@
                     @method('PUT')
                     <div class="form-group ">
                         <div class="form-card ">
-                            <div class="form-field ">
+                            <div class="form-field">
                                 <label for="kursstarttermin" class="form-label">Start Datum</label>
-                                <input type="datetime-local" name="kursstarttermin" id="kursstarttermin" class="form-input-date " value="{{ $kursstarttermin }}">
+                                <div class="form-field flex">
+                                    <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date" value="{{ $kursstartterminDatum }}">
+                                    <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date" value="{{ $kursstartterminTime }}">
+                                </div>
                             </div>
 
                             <div class="form-field ">
@@ -26,9 +30,12 @@
                                 <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kurslaenge }}">
                             </div>
 
-                            <div class="form-field ">
+                            <div class="form-field">
                                 <label for="kursendtermin" class="form-label">End Datum</label>
-                                <input type="datetime-local" name="kursendtermin" id="kursendtermin" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendtermin }}">
+                                <div class="form-field flex">
+                                    <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminDatum }}">
+                                    <input type="time" name="kursendterminTime" id="kursendterminTime" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminTime }}">
+                                </div>
                             </div>
 
                             <div class="form-field ">

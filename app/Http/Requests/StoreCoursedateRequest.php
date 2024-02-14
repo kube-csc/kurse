@@ -30,10 +30,7 @@ class StoreCoursedateRequest extends FormRequest
     {
         // ToDo - Add more validation rules
         return [
-            'kurslaenge'      => 'required',
-            'kursstarttermin' => 'required',
-            'kursendtermin'   => 'required',
-            'course_id'       => 'min:1',
-       ];
+            'kurslaenge'          => 'required',
+        ];
     }
 }
