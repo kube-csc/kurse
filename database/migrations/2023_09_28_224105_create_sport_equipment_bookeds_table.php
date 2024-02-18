@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sport_equipment_bookeds', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('trainer_id');
+            $table->unsignedBigInteger('trainer_id')->nullable();
             $table->unsignedBigInteger('mitglied_id')->nullable();
             $table->unsignedBigInteger('teilnehmer_id')->nullable();
             $table->unsignedBigInteger('sportgeraet_id')->nullable();
@@ -23,7 +23,8 @@ return new class extends Migration
             $table->SoftDeletes();
             $table->timestamps();
 
-            $table->foreign('trainer_id')->references('id')->on('users');
+            //ToDO: Wir das foreign-Key noch benötigt?
+            //$table->foreign('trainer_id')->references('id')->on('users');
         });
     }
 

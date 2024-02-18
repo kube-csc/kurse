@@ -51,8 +51,9 @@ Route::middleware([
     Route::put('/backend/CourseDateStore', [CoursedateController::class, 'store'])->name('backend.courseDate.store');
     Route::get('/backend/CourseDateDestroy/{coursedate}', [CoursedateController::class, 'destroy'])->name('backend.courseDate.destroy');
     Route::get('/backend/CourseDatesportingEquipment/{coursedate}', [CoursedateController::class, 'sportingEquipment'])->name('backend.courseDate.sportingEquipment');
-    Route::get('/backend/Book/{coursedateId}/{sportequipmentId}', [CoursedateController::class, 'Book'])->name('backend.courseDate.Book');
+    Route::get('/backend/Book/{coursedateId}', [CoursedateController::class, 'Book'])->name('backend.courseDate.Book');
     Route::get('/backend/destroyBooked/{coursedateId}/{couseBookId}', [CoursedateController::class, 'destroyBooked'])->name('backend.courseDate.destroyBooked');
-
+    Route::get('/backend/CourseDateEquipmentBooked/{coursedateId}/{sportequipmentId}', [CoursedateController::class, 'equipmentBooked'])->name('backend.courseDate.equipmentBooked');
+    Route::get('/backend/CourseDateEquipmentBookedDestroy/{coursedateId}/{kursId}/{sportgeraet}', [CoursedateController::class, 'equipmentBookedDestroy'])->name('backend.courseDate.equipmentBookedDestroy');
 });
 

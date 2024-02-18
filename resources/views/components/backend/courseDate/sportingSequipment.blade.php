@@ -57,8 +57,7 @@
                                 @if($sportgeraetanzahlMax>0)
                                     <a href="{{ route('backend.courseDate.Book' ,
                                         [
-                                            'sportequipmentId' => 0,
-                                            'coursedateId'     => $coursedate->id
+                                           'coursedateId'     => $coursedate->id
                                         ] ) }}"
                                     >
                                         <box-icon name='user-plus'></box-icon>
@@ -84,26 +83,48 @@
                             <label for="course_id" class="form-label">{{ $sportEquipments->count() }} freie Sportgeräte</label>
                                 <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
                                    @foreach($sportEquipments as $sportEquipment)
-                                    <a href="{{ route('backend.courseDate.Book' ,
+                                    <a href="{{ route('backend.courseDate.equipmentBooked' ,
                                     [
-                                        'sportequipmentId' => $sportEquipment->id,
-                                        'coursedateId'     => $coursedate->id
+                                        'coursedateId'     => $coursedate->id,
+                                        'sportequipmentId' => $sportEquipment->id
                                     ] ) }}"
                                     >
-                                        <button class="form-button">{{ $sportEquipment->sportgeraet }}</button>
+                                        <button class="form-button">
+                                            <box-icon name='plus-circle'></box-icon>
+                                            {{ $sportEquipment->sportgeraet }}
+                                        </button>
                                     </a>
                                    @endforeach
                                </div>
                         </div>
 
                         <div class="form-field ">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegte Sportgeräte</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegte Sportgeräte im Kurs</label>
+                            <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
+                                @foreach($sportEquipmentKursBookeds as $sportEquipmentKursBooked)
+                                    <a href="{{ route('backend.courseDate.equipmentBookedDestroy' ,
+                                    [
+                                        'coursedateId'     => $coursedate->id,
+                                        'kursId'           => $sportEquipmentKursBooked->kurs_id,
+                                        'sportgeraet'      => $sportEquipmentKursBooked->sportgeraet
+                                    ] ) }}"
+                                    >
+                                    <button class="form-button">
+                                        <box-icon name='minus-circle'></box-icon>
+                                        {{ $sportEquipmentKursBooked->sportgeraet}}
+                                    </button>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="form-field ">
+                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegte Sportgeräte in anderen Kursen</label>
                             <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
                                     <span class="form-text">
                                         {{ $sportEquipmentBooked->sportgeraet}} /
-                                        {{ $sportEquipmentBooked->vorname }} /
-                                        {{ $sportEquipmentBooked->nachname }}
+                                        {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
 
                                     </span><br>
                                 @endforeach

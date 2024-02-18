@@ -290,7 +290,9 @@ class CoursedateController extends Controller
             ->orderBy('sportgeraet')
             ->get();
 
-        $couseBookes = SportEquipmentBooked::where('kurs_id', $id)->get();
+        $couseBookes = SportEquipmentBooked::where('kurs_id', $id)
+            ->where('trainer_id', '<>', 0)
+            ->get();
 
         $sportEquipmentBookeds  = SportEquipment::where('sport_equipment.sportSection_id' , env('KURS_ABTEILUNG',1))
             ->join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
@@ -299,17 +301,29 @@ class CoursedateController extends Controller
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->get();
+
+        $sportEquipmentKursBookeds  = SportEquipment::where('sport_equipment.sportSection_id' , env('KURS_ABTEILUNG',1))
+            ->join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->join('users', 'users.id', '=', 'coursedates.trainer_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
         $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet');
+        $kursBbookeIds =  $sportEquipmentKursBookeds->pluck('sportgeraet');
         $sportEquipments= $sportEquipmentVerfuegbars->whereNotIn('sportgeraet', $bookedIds);
+        $sportEquipments= $sportEquipments->whereNotIn('sportgeraet', $kursBbookeIds);
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipments->count();
+            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$couseBookes->count();
         }
         else {
-            if($sportEquipments->count()>$coursedate->sportgeraetanzahl) {
+            if($sportEquipments->count()+$sportEquipmentKursBookeds->count()>$coursedate->sportgeraetanzahl) {
                 $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$couseBookes->count();
             }
             else {
@@ -321,17 +335,17 @@ class CoursedateController extends Controller
             'coursedate',
             'course',
             'sportEquipments',
+            'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
             'couseBookes',
             'sportgeraetanzahlMax'
         ]));
     }
 
-    public function Book($coursedateId , $sportequipmentId)
+    public function Book($coursedateId)
     {
         $sportEquipmentBooked = new SportEquipmentBooked(
             [
-                'sportgeraet_id'    => $sportequipmentId,
                 'trainer_id'        => Auth::user()->id,
                 'kurs_id'           => $coursedateId,
                 'user_id'           => Auth::user()->id,
@@ -341,12 +355,32 @@ class CoursedateController extends Controller
             ]
         );
 
-
         $sportEquipmentBooked->save();
 
-        self::success('Sportgerät wurde erfolgreich gebucht.');
+        self::success('Teilnehmer wurde erfolgreich gebucht.');
 
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+    }
+
+    public function equipmentBooked($coursedateId , $sportequipmentId)
+    {
+            $sportEquipmentBooked = new SportEquipmentBooked(
+                [
+                    'sportgeraet_id'    => $sportequipmentId,
+                    //'trainer_id'        => Auth::user()->id,
+                    'kurs_id'           => $coursedateId,
+                    'user_id'           => Auth::user()->id,
+                    'bearbeiter_id'     => Auth::user()->id,
+                    'updated_at'        => Carbon::now(),
+                    'created_at'        => Carbon::now()
+                ]
+            );
+
+            $sportEquipmentBooked->save();
+
+            self::success('Sportgerät wurde erfolgreich gebucht.');
+
+            return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
     }
 
     public function destroyBooked($coursedateId , $couseBookId)
@@ -354,6 +388,20 @@ class CoursedateController extends Controller
         $sportEquipmentBooked = SportEquipmentBooked::find($couseBookId);
 
         $sportEquipmentBooked->delete();
+
+        self::success('Teilnehmer wurde erfolgreich gelöscht.');
+
+        return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+    }
+
+    public function equipmentBookedDestroy($coursedateId , $kursId , $sportgeraet)
+    {
+        //ToDo: Es kann nicht direkt über die ID gelöscht werden, da die ID immer 1 ist.
+        $sportEquipmentBooked = SportEquipmentBooked::
+              join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->where('kurs_id', $kursId)
+            ->where('sportgeraet', $sportgeraet)
+            ->delete();
 
         self::success('Sportgerät wurde erfolgreich gelöscht.');
 
