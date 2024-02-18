@@ -43,13 +43,12 @@
                         {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}<br>
                         <div>
                             @if($coursedate->sportgeraetanzahl)
-                                ?? von {{ $coursedate->sportgeraetanzahl }}
+                                {{ $coursedate->sportgeraetanzahl }}
                             @else
-                                ?? von alle verfügbaren
+                                alle verfügbaren
                             @endif
                             Sportgeräte
                         </div>
-                        <!-- ToDo: Sportgeräte anzeigen -->
                     </div>
                 </div>
             @endforeach

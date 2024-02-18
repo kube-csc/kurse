@@ -119,7 +119,6 @@ class CoursedateController extends Controller
              $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-             // ToDo: Wird die If-Abfrage benötigt?
              if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
              {
                  $hoursAdd = $hours+0;
@@ -234,7 +233,6 @@ class CoursedateController extends Controller
             $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
              Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
 
-            // ToDo: Wird die If-Abfrage benötigt?
             if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
             {
                 $hoursAdd = $hours+0;
@@ -282,12 +280,6 @@ class CoursedateController extends Controller
         return redirect()->route('backend.courseDate.index');
     }
 
-    public function sportgeraetanzahlMax()
-    {
-        $sportgeraetanzahlMax = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))->count(); //ToDo - aus der Datenbank holen
-        return $sportgeraetanzahlMax;
-    }
-
     public function sportingEquipment($id)
     {
         $coursedate = Coursedate::find($id);
@@ -325,7 +317,6 @@ class CoursedateController extends Controller
             }
         }
 
-
         return view('components.backend.courseDate.sportingSequipment', compact([
             'coursedate',
             'course',
@@ -358,7 +349,6 @@ class CoursedateController extends Controller
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
     }
 
-    //Programier das löschen von Teilnehmern
     public function destroyBooked($coursedateId , $couseBookId)
     {
         $sportEquipmentBooked = SportEquipmentBooked::find($couseBookId);
@@ -368,6 +358,13 @@ class CoursedateController extends Controller
         self::success('Sportgerät wurde erfolgreich gelöscht.');
 
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+    }
+
+    //ToDo: Wird das noch benötigt?
+    public function sportgeraetanzahlMax()
+    {
+        $sportgeraetanzahlMax = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))->count(); //ToDo - aus der Datenbank holen
+        return $sportgeraetanzahlMax;
     }
 
 }

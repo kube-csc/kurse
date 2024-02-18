@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="form-field ">
-                            <label for="course_id" class="form-label">{{ $couseBookes->count() }} Belegte Plätze in Sportgeräte / {{ $sportgeraetanzahlMax }} Teilnehmer feie Plätze</label>
+                            <label for="course_id" class="form-label">{{ $couseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e)</label>
                             <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
                                 @if($sportgeraetanzahlMax>0)
                                     <a href="{{ route('backend.courseDate.Book' ,

@@ -28,9 +28,9 @@
                         <div class="form-field ">
                             <label for="kursstarttermin" class="form-label">Start Datum</label>
                             <div class="form-field flex">
-                                <input type="date" name="kursstarttermin" id="kursstarttermin" class="form-input-date"
-                                        @if(isset($kursstarttermin))
-                                            value="{{ $kursstarttermin }}"
+                                <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date"
+                                        @if(isset($kursstartterminDatum))
+                                            value="{{ $kursstartterminDatum }}"
                                         @else
                                             value="{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}"
                                         @endif
