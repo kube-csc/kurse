@@ -14,14 +14,16 @@ return new class extends Migration
         Schema::create('sport_equipment_bookeds', function (Blueprint $table) {
             $table->id();
 
-            $table->integer('trainer_id');
-            $table->integer('mitglied_id')->nullable();
-            $table->integer('teilnehmer_id')->nullable();
-            $table->integer('sportgeraet_id')->nullable();
-            $table->integer('kurs_id');
+            $table->unsignedBigInteger('trainer_id');
+            $table->unsignedBigInteger('mitglied_id')->nullable();
+            $table->unsignedBigInteger('teilnehmer_id')->nullable();
+            $table->unsignedBigInteger('sportgeraet_id')->nullable();
+            $table->unsignedBigInteger('kurs_id');
 
             $table->SoftDeletes();
             $table->timestamps();
+
+            $table->foreign('trainer_id')->references('id')->on('users');
         });
     }
 
@@ -30,6 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        $table->dropForeign(['trainer_id']);
         Schema::dropIfExists('sport_equipment_bookeds');
     }
 };

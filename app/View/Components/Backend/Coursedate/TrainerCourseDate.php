@@ -26,23 +26,23 @@ class TrainerCourseDate extends Component
 
         $courseDateCountYou = CourseDate::where('trainer_id', auth()->user()->id)
                 ->where('sportSection_id', env('KURS_ABTEILUNG' , 1))
-                ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+                ->where('kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
                 ->withoutTrashed()
                 ->count();
 
         $courseDateCount = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG' , 1))
-            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->where('kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
             ->withoutTrashed()
             ->count();
 
         $courseDateCountYouAll = CourseDate::where('trainer_id', auth()->user()->id)
             ->where('sportSection_id', env('KURS_ABTEILUNG' , 1 ))
-            ->where('kursstarttermin', '>=' , $Yearnow)
+            ->where('kursendtermin', '>=' , $Yearnow)
             ->withoutTrashed()
             ->count();
 
         $courseDateCountAll = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG', 1 ))
-            ->where('kursstarttermin', '>=' , $Yearnow)
+            ->where('kursendtermin', '>=' , $Yearnow)
             ->withoutTrashed()
             ->count();
 

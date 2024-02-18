@@ -3,6 +3,14 @@
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('backend.Course Date Create') }}
         </h2>
+        <div x-data="{ open: false }" class="dasboard-iconbox">
+            <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
+            <div class="help-box" x-show="open" @click.away="open = false">
+                <p class="help-text">
+                    {!! __('backend.Course Date Create Help') !!}
+                </p>
+            </div>
+        </div>
     </x-slot>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">s
         <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->

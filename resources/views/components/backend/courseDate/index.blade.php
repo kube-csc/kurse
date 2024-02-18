@@ -24,6 +24,9 @@
                             <a href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
                                 <box-icon name='edit'></box-icon>
                             </a>
+                            <a href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
+                                <box-icon name='user'></box-icon>
+                            </a>
                             <a href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                 <box-icon name='trash'></box-icon>
                             </a>
