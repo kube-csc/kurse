@@ -131,6 +131,19 @@
                             </div>
                         </div>
 
+                        <div class="form-field ">
+                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Kursen</label>
+                            <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
+                                @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
+                                    <span class="form-text">
+                                        {{ $loop->iteration }} Teilnehmer /
+                                        {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                    </span><br>
+                                @endforeach
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
                 <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">

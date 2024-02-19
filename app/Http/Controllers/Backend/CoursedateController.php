@@ -286,12 +286,20 @@ class CoursedateController extends Controller
 
         $course = Course::find($coursedate->course_id);
 
-        $sportEquipmentVerfuegbars = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))
+        $sportEquipmens = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))
             ->orderBy('sportgeraet')
             ->get();
 
         $couseBookes = SportEquipmentBooked::where('kurs_id', $id)
             ->where('trainer_id', '<>', 0)
+            ->get();
+
+        $teilnehmerKursBookeds = SportEquipmentBooked::where('kurs_id', '<>' , $id)
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
+            ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
             ->get();
 
         $sportEquipmentBookeds  = SportEquipment::where('sport_equipment.sportSection_id' , env('KURS_ABTEILUNG',1))
@@ -316,11 +324,16 @@ class CoursedateController extends Controller
 
         $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet');
         $kursBbookeIds =  $sportEquipmentKursBookeds->pluck('sportgeraet');
-        $sportEquipments= $sportEquipmentVerfuegbars->whereNotIn('sportgeraet', $bookedIds);
+        $sportEquipments= $sportEquipmens->whereNotIn('sportgeraet', $bookedIds);
         $sportEquipments= $sportEquipments->whereNotIn('sportgeraet', $kursBbookeIds);
 
+        $freeSportEquipment =$sportEquipmentBookeds->count()-$teilnehmerKursBookeds->count();
+        if($freeSportEquipment>0){
+            $freeSportEquipment=0;
+        }
+
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$couseBookes->count();
+            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$couseBookes->count()+$freeSportEquipment;
         }
         else {
             if($sportEquipments->count()+$sportEquipmentKursBookeds->count()>$coursedate->sportgeraetanzahl) {
@@ -338,6 +351,7 @@ class CoursedateController extends Controller
             'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
             'couseBookes',
+            'teilnehmerKursBookeds',
             'sportgeraetanzahlMax'
         ]));
     }
