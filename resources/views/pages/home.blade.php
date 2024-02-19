@@ -1,4 +1,4 @@
-@section('title' ,'Kurse')
+@section('title' ,'Terminplan Kurse')
 
 <x-frontend.layout>
 
@@ -10,7 +10,12 @@
 
     @include('components.frontend.services');
 
+    @include('components.frontend.counts');
+
+    {{--
+    ToDo: Wird das noch benötigt?
     @include('components.frontend.team');
+    --}}
 
 </main><!-- End #main -->
 

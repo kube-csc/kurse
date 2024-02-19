@@ -15,12 +15,14 @@
 
             <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                 <div class="icon-box" data-aos="fade-up">
-                    <a href=""> <div class="icon"><i class="bx bxl-windows"></i></div></a>
+                    <a href="{{ route('frontend.course' , $coursdate->id)  }}"> <div class="icon"><i class="bx bx-calendar"></i></div></a>
                     <h4 class="title"><a href="">{{ $coursdate->getCousename->kursName }} </a></h4>
                     <p class="description">
+                        Kurs im Zeitfenster<br>
                         {{ date("d.m.Y", strtotime($coursdate->kursstarttermin)) }} {{ date("H:i", strtotime($coursdate->kursstarttermin)) }} Uhr<br>
                         {{ date("d.m.Y", strtotime($coursdate->kursendtermin)) }} {{ date("H:i", strtotime($coursdate->kursendtermin)) }} Uhr<br>
-                        Trainer: {{ $coursdate->getTrainerName->nachname }}
+                        Kurslänge: {{ date('H:i', strtotime($coursdate->kurslaenge)) }} Stunde(n)<br>
+                        Trainer: {{ $coursdate->getTrainerName->vorname }} {{ $coursdate->getTrainerName->nachname }}
                     </p>
                 </div>
             </div>

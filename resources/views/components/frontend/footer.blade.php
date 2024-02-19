@@ -58,7 +58,7 @@
                 <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
                     <h4>Intern</h4>
                     <ul>
-                        <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
+                        <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Kursleiter Login</a></li>
                         <?php // ToDo: Regestrieren noch nicht fertig ?>
                         @if (Route::has('register') && 1==2)
                             <li><a href="{{ route('register') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>

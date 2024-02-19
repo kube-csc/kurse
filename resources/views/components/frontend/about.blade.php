@@ -6,7 +6,7 @@
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                 <div class="content">
                     @include('textimport.kurseInfoAllgemein')
-                    <a href="/Kurse" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
+                    <a href="{{ route('frontend.offer') }}" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
                 </div>
             </div>
             <div class="col-xl-7 d-flex align-items-stretch">
