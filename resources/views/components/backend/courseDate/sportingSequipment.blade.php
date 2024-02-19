@@ -137,7 +137,7 @@
                                 @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
                                     <span class="form-text">
                                         {{ $loop->iteration }} Teilnehmer /
-                                        {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                        {{ $teilnehmerKursBooked->vorname }} {{ $teilnehmerKursBooked->nachname }}
                                     </span><br>
                                 @endforeach
                             </div>

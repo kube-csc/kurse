@@ -296,6 +296,7 @@ class CoursedateController extends Controller
 
         $teilnehmerKursBookeds = SportEquipmentBooked::where('kurs_id', '<>' , $id)
             ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->join('users', 'users.id', '=', 'coursedates.trainer_id')
             ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
