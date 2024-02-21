@@ -12,13 +12,7 @@
             </div>
        </div>
     </x-slot>
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->
-        @if(isset($danger))
-            <div class="alert alert-danger mb-5 mt-1">
-                {{ $danger }}
-            </div>
-        @endif
+    <div class="main-box">
         <div class="box">
             <form action="{{ route('backend.sportEquipment.update', $sportEquipment->id) }}" method="POST">
                 @csrf
@@ -129,7 +123,7 @@
                     </div>
                 </div>
 
-                <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
+                <div class="form-footer">
                     <a href="{{ route('backend.sportEquipment.index') }}" class="form-button">
                         Zurück
                     </a>

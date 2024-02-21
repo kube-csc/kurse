@@ -12,7 +12,7 @@
             </div>
        </div>
     </x-slot>
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="main-box">
         <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->
         @if(isset($danger))
             <div class="alert alert-danger mb-5 mt-1">
@@ -23,9 +23,9 @@
             <form action="{{ route('backend.courseDate.update', $coursedate->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="form-group ">
-                    <div class="form-card ">
-                        <div class="form-field ">
+                <div class="form-group">
+                    <div class="form-card">
+                        <div class="form-field">
                             <label for="kursstarttermin" class="form-label">Start Datum</label>
                             <div class="form-field flex">
                                 <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date"
@@ -56,7 +56,7 @@
                             >
                         </div>
 
-                        <div class="form-field ">
+                        <div class="form-field">
                             <label for="kursendtermin" class="form-label">End Datum</label>
                             <div class="form-field flex">
                                 <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif"
@@ -76,12 +76,12 @@
                             </div>
                         </div>
 
-                        <div class="form-field ">
+                        <div class="form-field">
                             <label for="trainer_id" class="form-label">Trainer</label>
                             <div class="form-text">{{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}</div>
                         </div>
 
-                        <div class="form-field ">
+                        <div class="form-field">
                             <label for="course_id" class="form-label">Kursname</label>
                             <select name="course_id">
                                 <!-- Fixme: Kursname bei Edit Aufruf kein alter Wert -->
@@ -99,7 +99,7 @@
                             </select>
                         </div>
 
-                        <div class="form-field ">
+                        <div class="form-field">
                             <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte {{ $coursedate->sportgeraetanzahl }}</label>
                             <select name="sportgeraetanzahl">
                                 <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
@@ -120,7 +120,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="px-4 py-3 bg-gray-300 text-right sm:px-6">
+                <div class="form-footer">
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
                         Zurück
                     </a>
