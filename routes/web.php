@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\CoursedateController;
+use App\Http\Controllers\Backend\SportEquipmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,5 +57,9 @@ Route::middleware([
     Route::get('/backend/destroyBooked/{coursedateId}/{couseBookId}', [CoursedateController::class, 'destroyBooked'])->name('backend.courseDate.destroyBooked');
     Route::get('/backend/CourseDateEquipmentBooked/{coursedateId}/{sportequipmentId}', [CoursedateController::class, 'equipmentBooked'])->name('backend.courseDate.equipmentBooked');
     Route::get('/backend/CourseDateEquipmentBookedDestroy/{coursedateId}/{kursId}/{sportgeraet}', [CoursedateController::class, 'equipmentBookedDestroy'])->name('backend.courseDate.equipmentBookedDestroy');
+
+    Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
+    Route::get('/backend/SportgeraeteEdit/{sportEquipment}', [SportEquipmentController::class, 'edit'])->name('backend.sportEquipment.edit');
+    Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
 });
 

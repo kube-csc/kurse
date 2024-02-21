@@ -29,13 +29,14 @@
     <div class="dashboard-flexbox-b1-2">
         <div class="dashboard-flexbox-text">
             <h2 class="dasboard-iconbox-h2">Alle deine Kurse</h2>
-            Du hast {{ $courseDateCountYouAll }} Kurs(e) insgesamt eingestellt.
+            Du hast {{ $courseDateCountYouAll }} Kurs(e) insgesamt im laufenden Jahr eingestellt.
         </div>
     </div>
     <div class="dashboard-flexbox-b1-2">
         <div class="dashboard-flexbox-text">
             <h2 class="dasboard-iconbox-h2">Alle Kurse</h2>
-            Es {{ $courseDateCountAll }} Kurs(e) insgesamt eingestellt.
+            Es {{ $courseDateCountAll }} Kurs(e) insgesamt im laufenden Jahr eingestellt.
         </div>
     </div>
 </div>
+
