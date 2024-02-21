@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use Illuminate\Support\Facades\Route;
@@ -61,5 +62,9 @@ Route::middleware([
     Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
     Route::get('/backend/SportgeraeteEdit/{sportEquipment}', [SportEquipmentController::class, 'edit'])->name('backend.sportEquipment.edit');
     Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
+
+    Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
+    Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
+    Route::put('/backend/CourseUpdate/{course}', [CourseController::class, 'update'])->name('backend.course.update');
 });
 

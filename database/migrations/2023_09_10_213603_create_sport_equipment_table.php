@@ -31,6 +31,7 @@ return new class extends Migration
             $table->text('typ')->nullable();
             $table->string('privat', 1);
             $table->unsignedBigInteger('mitgliedprivat_id')->nullable();
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('bearbeiter_id');

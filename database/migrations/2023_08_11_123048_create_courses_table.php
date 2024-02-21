@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sportSection_id');
             $table->string('kursName');
             $table->text('kursBeschreibung')->nullable();
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
 
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
@@ -32,6 +33,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Entferne die Foren-Keys
+        Schema::table('courses', function (Blueprint $table) {
+            $table->dropForeign(['sportSection_id']);
+        });
         Schema::dropIfExists('courses');
     }
 };

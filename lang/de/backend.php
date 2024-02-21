@@ -32,5 +32,10 @@ Trainer: Dieses Feld zeigt deinen Namen an, da du als Trainer für den Kurs eing
 Kursname: Hier wählst du den Namen des Kurses aus einer Dropdown-Liste aus. Die Liste wird aus der Datenbank gefüllt.<br>
 Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs aus einer Dropdown-Liste aus.<br>
 Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die kursdaten zu speichern.',
+    'Course' => 'Kurs',
+    'Course Edit' => 'Kurs bearbeiten',
+    'Course Edit Help' => 'Kursname: Hier gibst du den Namen des Kurses ein.',
+    'Sport Equipment' => 'Sportgeräte',
+
 
 ];

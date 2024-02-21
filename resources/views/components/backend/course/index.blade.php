@@ -1,0 +1,32 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ __('backend.Course') }}
+            </h2>
+        </div>
+    </x-slot>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
+        <div class="dashboard-flexbox">
+            @foreach($courses as $course)
+                <div class="dashboard-flexbox-b1-2">
+                    <div class="dashboard-flexbox-text">
+                        <div class="dasboard-iconbox">
+                            <a href="{{ route('backend.course.edit', $course->id) }}">
+                                <box-icon name='edit'></box-icon>
+                            </a>
+                        </div>
+                        <label class="form-label">Kurs:</label>
+                        {{ $course->kursName }}<br>
+                        @if($course->kursBeschreibung != null)
+                            <label class="form-label">Beschreibung:</label>
+                            {!! $course->kursBeschreibung !!}<br>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</x-app-layout>
+
+

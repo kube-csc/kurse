@@ -65,7 +65,7 @@ class SportEquipmentController extends Controller
      */
     public function update(UpdateSportEquipmentRequest $request, SportEquipment $sportEquipment)
     {
-
+        //ToDO: Verbessern der Valentierung
         $data = $request->validate([
             'sportgeraet' => 'required|string|max:255',
             'anschafdatum' => 'required|date',
@@ -82,6 +82,8 @@ class SportEquipmentController extends Controller
         $data['updated_at'] = Carbon::now();
 
         $sportEquipment->update($data);
+
+        self::success('Sportgerätedaten erfolgreich geändert');
 
         return redirect()->route('backend.sportEquipment.index');
     }
