@@ -5,7 +5,6 @@
                 <a class="dasboard-iconbox-a" href="{{ route('backend.course.index') }}">
                     <box-icon name='edit'></box-icon>
                 </a>
-            </div>
         </div>
     </div>
 </div>

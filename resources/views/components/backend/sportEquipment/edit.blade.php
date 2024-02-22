@@ -10,6 +10,16 @@
                     {!!  __('backend.Sport Equipment Edit Help') !!}
                 </p>
             </div>
+            <div x-data="{ openHelpEdit: false }" class="text-left">
+                <button @click="openHelpEdit = !openHelpEdit">
+                    {{ __('backend.Edit help HTML button') }}
+                    Hilfe zum editieren</button>
+                <div class="help-box" x-show="openHelpEdit" @click.away="openHelpEdit = false">
+                    <p class="help-text">
+                        {!! __('backend.Edit help HTML') !!}
+                    </p>
+                </div>
+            </div>
        </div>
     </x-slot>
     <div class="main-box">
@@ -21,7 +31,7 @@
                     <div class="form-card">
                         <div class="form-field">
                             <label class="form-label">Sportgerät:</label>
-                            <input type="text" name="sportgeraet" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ $sportEquipment->sportgeraet }}">
+                            <input type="text" name="sportgeraet" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old('sportgeraet', $sportEquipment->sportgeraet) }}">
                             @error('sportgeraet')
                             <div class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
