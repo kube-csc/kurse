@@ -36,6 +36,22 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     'Course Edit' => 'Kurs bearbeiten',
     'Course Edit Help' => 'Kursname: Hier gibst du den Namen des Kurses ein.',
     'Sport Equipment' => 'Sportgeräte',
-
+    'Organiser' => 'Veranstalter',
+    'Organiser Edit' => 'Veranstalter bearbeiten',
+    'Organiser Edit Help' => 'Veranstalter: Hier gibst du den Namen des Veranstalters ein.',
+    'Edit help HTML button' => 'Hilfe zum Editieren',
+    'Edit help HTML' => '<p>[p]Dies ist ein Absatz.[/p]</p>
+<p>
+[ul]<br>
+    [li]Listenelement 1[/li]<br>
+    [li]Listenelement 2[/li]<br>
+[/ul]
+</p>
+<p>
+[p]Dies ist ein Absatz mit einem [br] Zeilenumbruch.[/p]
+</p>
+<p>
+Die [ durch < und ] durch > ersetzen.
+</p>',
 
 ];

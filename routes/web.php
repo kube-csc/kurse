@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
+use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,5 +67,9 @@ Route::middleware([
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
     Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
     Route::put('/backend/CourseUpdate/{course}', [CourseController::class, 'update'])->name('backend.course.update');
+
+    Route::get('/backend/Oranisation', [OrganiserController::class, 'index'])->name('backend.organiser.index');
+    Route::get('/backend/OranisationEdit/{organiser}', [OrganiserController::class, 'edit'])->name('backend.organiser.edit');
+    Route::put('/backend/OranisationUpdate/{organiser}', [OrganiserController::class, 'update'])->name('backend.organiser.update');
 });
 

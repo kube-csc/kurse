@@ -5,13 +5,36 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="main-box">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="main-box">
+        <div class="box">
+            <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
                 <x-backend.coursedate.trainer-course-date />
+            </div>
+        </div>
+    </div>
+
+    <div class="main-box">
+        <div class="box">
+            <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
                 <x-backend.sportEquipment.dashboard />
+            </div>
+        </div>
+    </div>
+
+    <div class="main-box">
+        <div class="box">
+            <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
                 <x-backend.course.dashboard />
             </div>
         </div>
     </div>
+
+    <div class="main-box">
+        <div class="box">
+            <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
+                <x-backend.organiser.dashboard />
+            </div>
+        </div>
+    </div>
+
 </x-app-layout>

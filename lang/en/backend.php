@@ -38,4 +38,17 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     'Course Edit' => 'Course Edit',
     'Course Edit Help' => 'Course Name: Here you enter the name of the course.',
     'Sport Equipment' => 'Sport Equipment',
+    'Organiser' => 'Organiser',
+    'Organiser Edit' => 'Organiser Edit',
+    'Organiser Edit Help' => 'Organiser: Here you enter the name of the organiser.',
+    'Edit help HTML' => '<p>[p]This is a paragraph.[/p]</p>
+    <p>
+    [ul]<br>
+        [li]List item 1[/li]<br>
+        [li]List item 2[/li]<br>
+    [/ul]<
+    </p>
+    <p>
+    [p]This is a paragraph with a [br] line break.[/p]</p>
+    <p>Replace [ with &lt; and ] with &gt;.</p>',
 ];

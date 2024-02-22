@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Organiser;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,5 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CoursedateSeeder::class);
         $this->call(SportEquipmentSeeder::class);
         $this->call(SportEquipmentBookedSeeder::class);
+        $this->call(OrganiserSeeder::class);
+        $this->call(OrganiserSportSectionSeeder::class);
     }
 }
