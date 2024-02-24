@@ -93,8 +93,8 @@ class HomeController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $coursdates = Coursedate::
-              join('coursedates', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+        $coursdates = Coursedate::join('courses', 'coursedates.course_id', '=', 'courses.id')
+            ->join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
             ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
             ->where('organisers.id', $organiser->id)
             ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
