@@ -18,9 +18,9 @@
                         </div>
                         <label class="form-label">Veranstalter:</label>
                         {{ $organiser->veranstalter }}<br>
-                        @if($organiser->veranstalterBeschreibung != null)
-                            <label class="form-label">Beschreibung:</label>
-                            {!! $organiser->veranstalterBeschreibung !!}<br>
+                        @if($organiser->veranstalterDomain != null)
+                            <label class="form-label">Veranstalter Domain:</label>
+                            {!! $organiser->veranstalterDomain!!}<br>
                         @endif
                     </div>
                 </div>

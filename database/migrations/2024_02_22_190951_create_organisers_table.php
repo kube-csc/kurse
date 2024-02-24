@@ -16,8 +16,12 @@ return new class extends Migration
 
             $table->string('veranstalter');
             $table->string('veranstalterBild', 100);
-            $table->text('veranstalterBeschreibung')->nullable();
-            $table->string('veranstalterrDomain');
+            $table->text('veranstalterBeschreibungLang')->nullable();
+            $table->text('veranstalterBeschreibungKurz')->nullable();
+            $table->text('sportartBeschreibungLang')->nullable();
+            $table->text('sportartBeschreibungKurz')->nullable();
+            $table->text('keineKurse')->nullable();
+            $table->string('veranstalterDomain')->nullable();
 
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');

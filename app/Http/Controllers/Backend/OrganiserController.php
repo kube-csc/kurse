@@ -66,7 +66,13 @@ class OrganiserController extends Controller
 
         $data = $request->validate([
             'veranstalter' => 'required',
-            'veranstalterBeschreibung' => 'nullable'
+            'veranstalterBeschreibungLang' => 'nullable',
+            'veranstalterBeschreibungKurz' => 'nullable',
+            'sportartBeschreibungLang' => 'nullable',
+            'sportartBeschreibungKurz' => 'nullable',
+            'veranstalterDomain' => 'nullable',
+            'keineKurse' => 'nullable',
+             's'
         ]);
 
         $data['bearbeiter_id'] = Auth::user()->id;

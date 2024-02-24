@@ -29,8 +29,14 @@ class UpdateOrganiserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'veranstalter'             => 'required',
-            'veranstalterBeschreibung' => 'nullable'
+            'veranstalter'                 => 'required',
+            'veranstalterBeschreibungLang' => 'nullable',
+            'veranstalterBeschreibungKurz' => 'nullable',
+            'sportartBeschreibungLang'     => 'nullable',
+            'sportartBeschreibungKurz'     => 'nullable',
+            'veranstalterDomain'           => 'nullable',
+            'keineKurse'                   => 'nullable',
+            ''
         ];
     }
 }

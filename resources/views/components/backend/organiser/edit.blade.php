@@ -40,11 +40,63 @@
                         </div>
 
                         <div class="form-field">
+                            <label class="form-label">Aktuelle Domain:</label>
+                            <p class="text">{{ $_SERVER['HTTP_HOST'] }}</p>
+                            <label class="form-label">Veranstalter Domain:</label>
+                            <input type="text" name="veranstalterDomain" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstalterDomain', $organiser->veranstalterDomain) }}">
+                            @error('veranstalterDomain')
+                            <div class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="form-field">
                             <label class="form-label">Veranstalter Beschreibung:</label>
-                            <textarea name="veranstalterBeschreibung" class="form-input-textarea @if($errors->has('veranstalterBeschreibung')) is-invalid @endif">{{ old('veranstalterBeschreibung', $organiser->veranstalterBeschreibung) }}</textarea>
-                            @if ($errors->has('veranstalterBeschreibung'))
+                            <textarea name="veranstalterBeschreibungLang" class="form-input-textarea @if($errors->has('veranstalterBeschreibungLang')) is-invalid @endif">{{ old('veranstalterBeschreibungLang', $organiser->veranstalterBeschreibungLang) }}</textarea>
+                            @if ($errors->has('veranstalterBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('veranstalterBeschreibung') }}</strong>
+                                    <strong>{{ $errors->first('veranstalterBeschreibungLang') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Veranstalterbeschreibung kurz:</label>
+                            <textarea name="veranstalterBeschreibungKurz" class="form-input-textarea @if($errors->has('veranstalterBeschreibungKurz')) is-invalid @endif">{{ old('veranstalterBeschreibungKurz', $organiser->veranstalterBeschreibungKurz) }}</textarea>
+                            @if ($errors->has('veranstalterBeschreibungKurz'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('veranstalterBeschreibungKurz') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Sportartbeschreibung langer Text:</label>
+                            <textarea name="sportartBeschreibungLang" class="form-input-textarea @if($errors->has('sportartBeschreibungLang')) is-invalid @endif">{{ old('sportartBeschreibungLang', $organiser->sportartBeschreibungLang) }}</textarea>
+                            @if ($errors->has('sportartBeschreibungLang'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportartBeschreibungLang') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Sportartbeschreibung kurzer Text:</label>
+                            <textarea name="sportartBeschreibungKurz" class="form-input-textarea @if($errors->has('sportartBeschreibungKurz')) is-invalid @endif">{{ old('sportartBeschreibungKurz', $organiser->sportartBeschreibungKurz) }}</textarea>
+                            @if ($errors->has('sportartBeschreibungKurz'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportartBeschreibungKurz') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Text Keine Kurse eingestellt:</label>
+                            <textarea name="keineKurse" class="form-input-textarea @if($errors->has('keineKurse')) is-invalid @endif">{{ old('keineKurse', $organiser->keineKurse) }}</textarea>
+                            @if ($errors->has('keineKurse'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('keineKurse') }}</strong>
                                 </span>
                             @endif
                         </div>

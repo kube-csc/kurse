@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Organiser extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
         'veranstalter',
         'veranstalterBild',
-        'veranstalterBeschreibung',
-        'veranstalterrDomain',
-        'bearbeiter_id',
-        'user_id'
+        'veranstalterBeschreibungLang',
+        'veranstalterBeschreibungKurz',
+        'sportartBeschreibungLang',
+        'sportartBeschreibungKurz',
+        'keineKurse',
+        'veranstalterDomain',
+        'user_id',
+        'bearbeiter_id'
     ];
 
     public function sportSections()
