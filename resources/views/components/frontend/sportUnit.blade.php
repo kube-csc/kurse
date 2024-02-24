@@ -23,20 +23,40 @@
                                 @endauth
                             @endif
                         @endif
+                        @if($sportEquipment->typ != Null)
+                            <p class="description">
+                                {!! $sportEquipment->typ !!}
+                            </p>
+                        @endif
+
+                        @if($sportEquipment->laenge > 0 || $sportEquipment->breite > 0 || $sportEquipment->hoehe > 0)
+                            <p class="description">
+                                Masse:
+                                @if($sportEquipment->laenge > 0)
+                                    L: {{ $sportEquipment->laenge }} m <br>
+                                @endif
+                                @if($sportEquipment->breite > 0)
+                                    B: {{ $sportEquipment->breite }} m <br>
+                                @endif
+                                @if($sportEquipment->hoehe > 0)
+                                    H: {{ $sportEquipment->hoehe }} m <br>
+                                @endif
+                            </p>
+                        @endif
                         <p class="description">
-                            {!! $sportEquipment->typ !!}
-                        </p>
-                        <p class="description">
-                          Masse (L/B/H): {{ $sportEquipment->laenge }} x {{ $sportEquipment->breite }} x {{ $sportEquipment->hoehe }} m<br>
-                          Gewicht: {{ $sportEquipment->gewicht }} kg<br>
-                          Tragkraft: {{ $sportEquipment->tragkraft }} kg<br>
+                          @if($sportEquipment->tragkraft != Null && $sportEquipment->tragkraft != 0)
+                                Tragkraft: {{ $sportEquipment->tragkraft }} kg<br>
+                          @endif
+                          @if($sportEquipment->gewicht != Null && $sportEquipment->gewicht != 0)
+                                Gewicht: {{ $sportEquipment->volumen }} kg<br>
+                          @endif
                         </p>
                     </div>
                 </div>
 
-@endforeach
+            @endforeach
 
-</div>
+        </div>
 
-</div>
+    </div>
 </section><!-- End Services Section -->

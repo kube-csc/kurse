@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Organiser;
 use App\Models\SportEquipmentBooked;
 use App\Models\Trainertable;
 use App\Models\Coursedate;
@@ -16,38 +17,59 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $trainers   = Trainertable::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
 
         $coursdates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG',1))
                                 ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
                                 ->orderBy('kursendtermin')
                                 ->get();
 
-        $courses = Course::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+        $courses = Course::join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->get();
 
-        $sportEquipments = SportEquipment::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+        $sportEquipments = SportEquipment::join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->get();
 
         $yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
-        $courseDateCountAll = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG', 1 ))
+
+        $courseDateCountAll = CourseDate::join('organiser_sport_section', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
             ->where('kursendtermin', '>=' , $yearnow)
             ->withoutTrashed()
             ->count();
 
-        $teilnehmerKursBookeds = SportEquipmentBooked::
-              join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+        $teilnehmerKursBookeds = SportEquipmentBooked::join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+
+            ->join('organiser_sport_section', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+
             ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '>=', $yearnow)
             ->where('coursedates.kursendtermin', '=<' , date('Y-m-d', strtotime('now')))
             ->get()->count();
 
-        $teilnehmerKursBookedNows = SportEquipmentBooked::
-               join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+        $teilnehmerKursBookedNows = SportEquipmentBooked::join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
             ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursendtermin', '>=', $yearnow)
             ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->get()->count();
+
+        $trainers = Trainertable::join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->get();
 
         return view('pages.home' , [
                     'trainers'                  => $trainers,
@@ -58,29 +80,55 @@ class HomeController extends Controller
                     'sportEquipments'           => $sportEquipments,
                     'courseDateCountAll'        => $courseDateCountAll,
                     'teilnehmerKursBookeds'     => $teilnehmerKursBookeds,
-                    'teilnehmerKursBookedNows'  => $teilnehmerKursBookedNows
+                    'teilnehmerKursBookedNows'  => $teilnehmerKursBookedNows,
+                    'organiser'                 => $organiser
         ]);
     }
 
     public function offer()
     {
-        $coursdates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG',1))
-            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $coursdates = Coursedate::
+              join('coursedates', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->orderBy('coursedates.kursstarttermin')
             ->get();
 
         return view('pages.offer' , [
-            'countCoursdates' => $coursdates->count(),
+            'organiser'          => $organiser,
+            'countCoursdates'    => $coursdates->count(),
         ]);
     }
 
     public function sportType()
     {
-        return view('pages.sportType' );
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            $organiser = Organiser::find(1);
+        }
+        return view('pages.sportType')->with('organiser', $organiser);
     }
 
     public function trainer()
     {
-        $trainers = Trainertable::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            $organiser = Organiser::find(1);
+        }
+
+        $trainers = Trainertable::
+              join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->get();
 
         return view('pages.trainer'  , [
             'trainers'        => $trainers,
@@ -90,20 +138,38 @@ class HomeController extends Controller
 
     public function sportUnit()
     {
-        $sportEquipments = SportEquipment::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            $organiser = Organiser::find(1);
+        }
+
+        $sportEquipments = SportEquipment::
+                  join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+                ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+                ->where('organisers.id', $organiser->id)
+                ->get();
 
         return view('pages.sportUnit' , [
             'countSportEquipments' => $sportEquipments->count(),
-            'sportEquipments' => $sportEquipments,
+            'sportEquipments'      => $sportEquipments,
         ]);
     }
 
     public function courseType()
     {
-        $courses    = Course::where('sportSection_id', env('KURS_ABTEILUNG',1))->get();
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            $organiser = Organiser::find(1);
+        }
+
+        $courses  = Course::
+              join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
+            ->get();
 
         return view('pages.course' , [
-            'courses'         => $courses
+            'courses' => $courses
         ]);
     }
 

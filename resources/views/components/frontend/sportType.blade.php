@@ -17,7 +17,7 @@
 
       <div class="section-title" data-aos="fade-in" data-aos-delay="100">
           <div style="text-align: left;">
-            @include('textimport.sportartbeschreibung')
+              {!! $organiser->sportartBeschreibungLang !!}
           </div>
       </div>
 

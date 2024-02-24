@@ -5,7 +5,11 @@
         <div class="row no-gutters">
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                 <div class="content">
-                    @include('textimport.kurseInfoAllgemein')
+                    @if($countCoursdates==0)
+                        {!! $organiser->keineKurse !!}
+                        <br>
+                    @endif
+                    <p>{!! $organiser->veranstalterBeschreibungKurz !!}</p>
                     <a href="{{ route('frontend.offer') }}" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
                 </div>
             </div>
@@ -15,7 +19,7 @@
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
                             <i class="bx bx-info-circle"></i>
                             <!-- Was ist -->
-                            @include('textimport.sportartbeschreibungKurz')
+                            {!! $organiser->sportartBeschreibungKurz !!}
                             <div class="read-more">
                                 <a href="/Sportart" class="icofont-arrow-right">mehr</a>
                             </div>
