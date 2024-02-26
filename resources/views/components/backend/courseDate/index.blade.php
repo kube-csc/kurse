@@ -31,23 +31,22 @@
                                 <box-icon name='trash'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Datum:</label>
+                        <label class="form-label">Start Datum:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                         <label class="form-label">End Datum:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
-                        <label class="form-label">Kurslänge:</label>
+                        <label class="form-label">Länge des Kurses:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
-                        <label class="form-label">Kursname:</label>
+                        <label class="form-label">Name des Kurses:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
                         <label class="form-label">Kursleiter:</label>
                         {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}<br>
                         <div>
                             @if($coursedate->sportgeraetanzahl)
-                                {{ $coursedate->sportgeraetanzahl }}
+                                {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             @else
-                                alle verfügbaren
+                                alle verfügbaren Plätze
                             @endif
-                            Sportgeräte
                         </div>
                     </div>
                 </div>

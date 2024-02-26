@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSportEquipmentRequest;
 use App\Http\Requests\UpdateSportEquipmentRequest;
+use App\Models\Organiser;
 use App\Models\SportEquipment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +17,27 @@ class SportEquipmentController extends Controller
      */
     public function index()
     {
-        // Alle Sportgeräte aus der Datenbank abrufen
-        $sportEquipments = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $sportEquipments = SportEquipment::join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->where('organisers.id', $organiser->id)
             ->orderBy('anschafdatum',)
+            ->orderBy('sportgeraet')
+            ->get();
+
+        // Die Ansicht 'sportEquipment.index' rendern und die Sportgeräte übergeben
+        return view('components.backend.sportEquipment.index', compact('sportEquipments'));
+    }
+
+    public function indexAll()
+    {
+        // ToDo: Die Sportgeräte der Verwaltung ausgeben
+        $sportEquipments = SportEquipment::orderBy('anschafdatum',)
             ->orderBy('sportgeraet')
             ->get();
 

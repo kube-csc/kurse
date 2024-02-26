@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
 
-        // DoTO: bearbeiten nullable
+        // ToDo: bearbeiten nullable
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trainer_id');        //idtrainer
             $table->unsignedBigInteger('course_id');        //idkurs
-            $table->unsignedBigInteger('sportSection_id');   //idgruppe
+            $table->unsignedBigInteger('organiser_id');     //idveranstalter
+            //$table->unsignedBigInteger('sportSection_id');   //idgruppe   // UpdateorgID: Anpassung von sportSection_id auf organiser_id
             $table->date('kurstermin')->nullable();
             $table->time('startzeit')->nullable();
             $table->time('startzeitmax')->nullable();
@@ -40,7 +41,6 @@ return new class extends Migration
 
             $table->foreign('trainer_id')->references('id')->on('users');
             $table->foreign('course_id')->references('id')->on('courses');
-            $table->foreign('sportSection_id')->references('id')->on('sport_sections');
         });
     }
 
@@ -53,7 +53,6 @@ return new class extends Migration
         Schema::table('coursedates', function (Blueprint $table) {
             $table->dropForeign(['trainer_id']);
             $table->dropForeign(['course_id']);
-            $table->dropForeign(['sportSection_id']);
         });
         Schema::dropIfExists('coursedates');
     }

@@ -20,11 +20,12 @@ class DatabaseSeeder extends Seeder
         $this->call(TrainertableSeeder::class);
         $this->call(InstructionSeeder::class);
         $this->call(CourseParticipantSeeder::class);
+        $this->call(OrganiserSeeder::class);
         $this->call(CourseSeeder::class);
         $this->call(CoursedateSeeder::class);
         $this->call(SportEquipmentSeeder::class);
         $this->call(SportEquipmentBookedSeeder::class);
-        $this->call(OrganiserSeeder::class);
         $this->call(OrganiserSportSectionSeeder::class);
+        $this->call(CourseSportSectionSeeder::class);
     }
 }

@@ -30,6 +30,7 @@ class CreateSportSectionsTable extends Migration
             $table->SoftDeletes();
             $table->timestamps();
 
+            //ToDo: Was ist mit den Foreign-Keys?
             /*
             $table->foreign('user_id')
               ->references('id')->on('users');

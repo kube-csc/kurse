@@ -13,13 +13,8 @@
        </div>
     </x-slot>
     <div class="main-box">
-        <!--Temp: Fehlermeldung anzeigen wird nicht benutz-->
-        @if(isset($danger))
-            <div class="alert alert-danger mb-5 mt-1">
-                {{ $danger }}
-            </div>
-        @endif
         <div class="box">
+
             <form action="{{ route('backend.courseDate.update', $coursedate->id) }}" method="POST">
                 @csrf
                 @method('PUT')

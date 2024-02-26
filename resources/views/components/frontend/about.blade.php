@@ -17,7 +17,7 @@
                 <div class="icon-boxes d-flex flex-column justify-content-center">
                     <div class="row">
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                            <i class="bx bx-info-circle"></i>
+                            <a href="/Sportart"><i class="bx bx-info-circle"></i></a>
                             <!-- Was ist -->
                             {!! $organiser->sportartBeschreibungKurz !!}
                             <div class="read-more">
@@ -25,7 +25,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="200">
-                            <i class="bx bx-info-circle"></i>
+                            <a href="/Trainer"><i class="bx bx-info-circle"></i></a>
                             <h4>Trainer</h4>
                             @foreach($trainers as $trainer)
                                 <ul>
@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
-                            <i class="bx bx-info-circle"></i>
+                            <a href="/Sportgeräte"><i class="bx bx-info-circle"></i></a>
                             <h4>Sportgeräte</h4>
                             <ul>
                                 @foreach($sportEquipments as $sportEquipment)
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">
-                            <i class="bx bx-info-circle"></i>
+                            <a href="/Kurse"><i class="bx bx-info-circle"></i></a>
                             <h4>Welche Kurse gibt es?</h4>
                             <ul>
                                 @foreach($courses as $course)

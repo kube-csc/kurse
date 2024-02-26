@@ -22,8 +22,14 @@ class Organiser extends Model
         'bearbeiter_id'
     ];
 
+    //ToDo: Wird dieses Benötigt?
     public function sportSections()
     {
         return $this->belongsToMany('App\SportSection', 'organiser_sport_section', 'organiser_id', 'sport_section_id');
+    }
+
+    public function sportSection()
+    {
+        return $this->belongsToMany(SportSection::class);
     }
 }

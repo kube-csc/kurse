@@ -17,42 +17,33 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
+
         $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
         }
 
-        $coursdates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG',1))
+        $coursdates = Coursedate::where('organiser_id', $organiser->id)
                                 ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
                                 ->orderBy('kursendtermin')
                                 ->get();
 
-        $courses = Course::join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
-            ->get();
+        $courses = Course::where('organiser_id', $organiser->id)->get();
 
         $sportEquipments = SportEquipment::join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
             ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
             ->where('organisers.id', $organiser->id)
             ->get();
 
-        $yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
-
-        $courseDateCountAll = CourseDate::join('organiser_sport_section', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
+        $courseDateCountAll = CourseDate::where('organiser_id', $organiser->id)
             ->where('kursendtermin', '>=' , $yearnow)
             ->withoutTrashed()
             ->count();
 
         $teilnehmerKursBookeds = SportEquipmentBooked::join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-
-            ->join('organiser_sport_section', 'coursedates.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
-
+            ->where('coursedates.organiser_id', $organiser->id)
             ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '>=', $yearnow)
@@ -143,6 +134,7 @@ class HomeController extends Controller
             $organiser = Organiser::find(1);
         }
 
+        //ToDo: Muss noch angepasst werden
         $sportEquipments = SportEquipment::
                   join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
                 ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')

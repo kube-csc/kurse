@@ -20,4 +20,9 @@ class Course extends Model
     protected $dates = [
         'deleted_at'
     ];
+
+    public function sportSection()
+    {
+        return $this->belongsToMany(SportSection::class);
+    }
 }

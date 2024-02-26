@@ -16,8 +16,7 @@ return [
     'Course Dates' => 'Your Course Date',
     'Course Dates All' => 'All Course Date',
     'Course Date Create' => 'Course Date Create',
-    'sporting quipment' => 'Sporting quipment',
-    'sporting quipment help' => 'This module allows you to manage the sports equipment administration for courses. You can see when a course starts and ends, who the trainer is, and which course name is assigned.
+    'sport quipment help' => 'This module allows you to manage the sports equipment administration for courses. You can see when a course starts and ends, who the trainer is, and which course name is assigned.
 
 It also shows you the number of occupied places for sports equipment and the number of free places for participants. If there are still free places available, you can add a new participant.
 
@@ -34,10 +33,11 @@ Trainer: Dieses Feld zeigt deinen Namen an, da du als Trainer für den Kurs eing
 Kursname: Hier wählst du den Namen des Kurses aus einer Dropdown-Liste aus. Die Liste wird aus der Datenbank gefüllt.<br>
 Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs aus einer Dropdown-Liste aus.<br>
 Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die kursdaten zu speichern.',
-    'Course' => 'Course',
-    'Course Edit' => 'Course Edit',
+    'Course' => 'Courses Description',
+    'Course Edit' => 'Course Description Edit',
     'Course Edit Help' => 'Course Name: Here you enter the name of the course.',
     'Sport Equipment' => 'Sport Equipment',
+    'Sport Equipment Edit' => 'Sport Equipment Edit',
     'Organiser' => 'Organiser',
     'Organiser Edit' => 'Organiser Edit',
     'Organiser Edit Help' => 'Organiser: Here you enter the name of the organiser.',

@@ -24,6 +24,44 @@
     </x-slot>
     <div class="main-box">
         <div class="box">
+            <div class="form-field">
+                <label for="course_id" class="form-label">{{ $pickedSportSections->count() }} zugewiesende Abteilung(en) für Sportgeräte</label>
+                <div class="form-box">
+                    @foreach($pickedSportSections as $pickedSportSection)
+                        <a href="{{ route('backend.organiser.destroySportSection',
+                                        [
+                                            'organiserId'             => $organiser->id,
+                                            'destroySportSectionId'   => $pickedSportSection->sport_section_id,
+                                       ]
+                                        ) }}"
+                        >
+                            <button class="form-button"><box-icon name='minus-circle'></box-icon>
+                                {{ $pickedSportSection->abteilung }}
+                            </button>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesende Abteilung(en)</label>
+                <div class="form-box">
+                    @foreach($sportSections as $sportSection)
+                        <a href="{{ route('backend.organiser.pickSportSection',
+                                    [
+                                        'organiserId'           => $organiser->id,
+                                        'pickSportSectionId'    => $sportSection->id
+                                    ] ) }}"
+                        >
+                            <button class="form-button">
+                                <box-icon name='plus-circle'></box-icon>
+                                {{ $sportSection->abteilung }}
+                            </button>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
             <form action="{{ route('backend.organiser.update', $organiser->id) }}" method="POST">
                 @csrf
                 @method('PUT')

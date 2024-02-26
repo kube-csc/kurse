@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('backend.Course Dates') }}   {{  __('backend.sporting quipment') }}
+            {{ __('backend.Course Dates') }}  - {{  __('backend.Sport Equipment') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
             <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
@@ -19,14 +19,14 @@
                         <div class="form-field">
                             <label for="kursstarttermin" class="form-label">Start Datum</label>
                             <div class="form-field flex text">
-                                {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d-m-Y') }}
+                                {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }} Uhr
                             </div>
                         </div>
                         <div class="form-field">
                             <label for="kursstarttermin" class="form-label">End Datum</label>
                             <div class="form-field flex text">
-                                {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d-m-Y') }}
+                                {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }} Uhr
                             </div>
                         </div>

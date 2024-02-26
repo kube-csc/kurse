@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
+//ToDo: Wird dieses Benötigt?
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Models\Course;
+use App\Models\Organiser;
+use App\Models\SportEquipment;
+use App\Models\SportSection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +20,12 @@ class CourseController extends Controller
      */
     public function index()
     {
-       $courses = Course::where('sportSection_id', env('KURS_ABTEILUNG', 1))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+       $courses = Course::where('organiser_id', $organiser->id)
               ->orderBy('kursName')
               ->get();
 
@@ -54,7 +63,28 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
-        return view('components.backend.course.edit', compact('course'));
+        //ToDo: Verbessern der Abfrage
+        $pickedSportSections = SportSection::join('course_sport_section', 'course_sport_section.sport_section_id', '=', 'sport_sections.id')
+            ->where('course_sport_section.course_id', $course->id)
+            ->orderBy('abteilung')
+            ->get();
+
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+        $spotsectionOrganisers = SportSection::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_sections.id')
+            ->where('organiser_sport_section.organiser_id', $organiser->id)
+            ->get();
+
+        $sportSections = SportSection::orderBy('abteilung')->get();
+        $pickedSportSectionIds = $pickedSportSections->pluck('sport_section_id');
+        $sportSections = $sportSections->whereNotIn('id', $pickedSportSectionIds);
+        $spotsectionOrganiserids = $spotsectionOrganisers->pluck('sport_section_id');
+        $sportSections = $sportSections->whereIn('id', $spotsectionOrganiserids);
+
+        return view('components.backend.course.edit', compact('course', 'sportSections', 'pickedSportSections'));
     }
 
     /**
@@ -86,5 +116,25 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         //
+    }
+
+    public function pickSportSection($courseId, $pickSportSectionId)
+    {
+        $course = Course::find($courseId);
+        $course->sportSection()->attach($pickSportSectionId);
+
+        self::success('Sportart wurde erfolgreich zugeordnet.');
+
+        return redirect()->route('backend.course.edit', $courseId);
+    }
+
+    public function destroySportSection($courseId, $destroySportSectionId)
+    {
+        $course = Course::find($courseId);
+        $course->sportSection()->detach($destroySportSectionId);
+
+        self::success('Sportart wurde erfolgreich entfernt.');
+
+        return redirect()->route('backend.course.edit', $courseId);
     }
 }

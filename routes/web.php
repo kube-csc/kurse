@@ -44,7 +44,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-    /*  ToDO: Auf Resource umstellen
+    /*  ToDo: Auf Resource umstellen
         Route::resource('/post', CoursedateController::clas;
     */
     Route::get('/backend/CourseDate', [CoursedateController::class, 'index'])->name('backend.courseDate.index');
@@ -61,15 +61,20 @@ Route::middleware([
     Route::get('/backend/CourseDateEquipmentBookedDestroy/{coursedateId}/{kursId}/{sportgeraet}', [CoursedateController::class, 'equipmentBookedDestroy'])->name('backend.courseDate.equipmentBookedDestroy');
 
     Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
+    Route::get('/backend/SportgeraeteAlle', [SportEquipmentController::class, 'indexAll'])->name('backend.sportEquipment.indexAll');
     Route::get('/backend/SportgeraeteEdit/{sportEquipment}', [SportEquipmentController::class, 'edit'])->name('backend.sportEquipment.edit');
     Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
     Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
     Route::put('/backend/CourseUpdate/{course}', [CourseController::class, 'update'])->name('backend.course.update');
+    Route::get('/backend/CourseSportartPick/{courseId}/{pickSportSectionId}', [CourseController::class, 'pickSportSection'])->name('backend.course.pickSportSection');
+    Route::get('/backend/CourseSportartDestroy/{courseId}/{destroySportSectionId}', [CourseController::class, 'destroySportSection'])->name('backend.course.destroySportSection');
 
     Route::get('/backend/Oranisation', [OrganiserController::class, 'index'])->name('backend.organiser.index');
     Route::get('/backend/OranisationEdit/{organiser}', [OrganiserController::class, 'edit'])->name('backend.organiser.edit');
     Route::put('/backend/OranisationUpdate/{organiser}', [OrganiserController::class, 'update'])->name('backend.organiser.update');
+    Route::get('/backend/OranisationSportartPick/{organiserId}/{pickSportSectionId}', [OrganiserController::class, 'pickSportSection'])->name('backend.organiser.pickSportSection');
+    Route::get('/backend/OranisationSportartDestroy/{organiserId}/{destroySportSectionId}', [OrganiserController::class, 'destroySportSection'])->name('backend.organiser.destroySportSection');
 });
 

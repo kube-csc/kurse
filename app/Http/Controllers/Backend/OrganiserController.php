@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrganiserRequest;
 use App\Http\Requests\UpdateOrganiserRequest;
 use App\Models\Organiser;
+use App\Models\SportSection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,7 +54,17 @@ class OrganiserController extends Controller
     {
         $organiser = Organiser::find($id);
 
-        return view('components.backend.organiser.edit', compact('organiser'));
+        //ToDo: Verbessern der Abfrage
+        $pickedSportSections = SportSection::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_sections.id')
+            ->where('organiser_sport_section.organiser_id', $organiser->id)
+            ->orderBy('abteilung')
+            ->get();
+
+        $sportSections = SportSection::orderBy('abteilung')->get();
+        $pickedSportSectionIds = $pickedSportSections->pluck('sport_section_id');
+        $sportSections = $sportSections->whereNotIn('id', $pickedSportSectionIds);
+
+        return view('components.backend.organiser.edit', compact('organiser', 'sportSections', 'pickedSportSections'));
     }
 
     /**
@@ -92,5 +103,25 @@ class OrganiserController extends Controller
     public function destroy(Organiser $organiser)
     {
         //
+    }
+
+    public function pickSportSection($organiserId, $pickSportSectionId)
+    {
+        $organiser = Organiser::find($organiserId);
+        $organiser->sportSection()->attach($pickSportSectionId);
+
+        self::success('Sportart wurde erfolgreich zugeordnet.');
+
+        return redirect()->route('backend.organiser.edit', $organiserId);
+    }
+
+    public function destroySportSection($organiserId, $destroySportSectionId)
+    {
+        $organiser = Organiser::find($organiserId);
+        $organiser->sportSection()->detach($destroySportSectionId);
+
+        self::success('Sportart wurde erfolgreich entfernt.');
+
+        return redirect()->route('backend.organiser.edit', $organiserId);
     }
 }

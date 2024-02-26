@@ -16,8 +16,7 @@ return [
     'Course Dates' => 'Deine Kurs Termine',
     'Course Dates All' => 'Alle Kurs Termine',
     'Course Date Create' => 'Kurs Termine erstellen',
-    'sporting quipment' => 'Sportgeräte',
-    'sporting quipment help' => 'Dieses Modul ermöglicht es Dir, die Sportgeräteverwaltung für Kurse zu verwalten. Du kannst sehen, wann ein Kurs beginnt und endet, wer der Trainer ist und welcher Kursname zugeordnet ist.
+    'sport quipment help' => 'Dieses Modul ermöglicht es Dir, die Sportgeräteverwaltung für Kurse zu verwalten. Du kannst sehen, wann ein Kurs beginnt und endet, wer der Trainer ist und welcher Kursname zugeordnet ist.
 
 Es zeigt Dir auch die Anzahl der belegten Plätze für Sportgeräte und die Anzahl der freien Plätze für Teilnehmer. Wenn noch freie Plätze verfügbar sind, kannst Du einen neuen Teilnehmer hinzufügen.
 
@@ -32,10 +31,11 @@ Trainer: Dieses Feld zeigt deinen Namen an, da du als Trainer für den Kurs eing
 Kursname: Hier wählst du den Namen des Kurses aus einer Dropdown-Liste aus. Die Liste wird aus der Datenbank gefüllt.<br>
 Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs aus einer Dropdown-Liste aus.<br>
 Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die kursdaten zu speichern.',
-    'Course' => 'Kurs',
-    'Course Edit' => 'Kurs bearbeiten',
+    'Course' => 'Beschreibung der Kurse',
+    'Course Edit' => 'Beschreibung Kurs bearbeiten',
     'Course Edit Help' => 'Kursname: Hier gibst du den Namen des Kurses ein.',
     'Sport Equipment' => 'Sportgeräte',
+    'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
     'Organiser' => 'Veranstalter',
     'Organiser Edit' => 'Veranstalter bearbeiten',
     'Organiser Edit Help' => 'Veranstalter: Hier gibst du den Namen des Veranstalters ein.',

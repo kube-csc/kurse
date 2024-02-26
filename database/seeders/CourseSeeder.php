@@ -18,10 +18,10 @@ class CourseSeeder extends Seeder
         DB::table('courses')
             ->insert(
                 [
-                    array('id' => '1','sportSection_id' => '4','kursName' => 'SUP Schnupperkurs',  'kursBeschreibung' => 'SUP Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
-                    array('id' => '2','sportSection_id' => '4','kursName' => 'SUP Schnupperkurs für Fortgeschrittene','kursBeschreibung' => 'Kajak Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
-                    array('id' => '3','sportSection_id' => '5','kursName' => 'Kajak Schnupperkurs','kursBeschreibung' => 'Kajak Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
-                    array('id' => '4','sportSection_id' => '5','kursName' => 'Kajak Grundkurs',    'kursBeschreibung' => 'Kajak Grundkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL)
+                    array('id' => '1','organiser_id' => '1','kursName' => 'SUP Schnupperkurs',  'kursBeschreibung' => 'SUP Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
+                    array('id' => '2','organiser_id' => '1','kursName' => 'SUP Schnupperkurs für Fortgeschrittene','kursBeschreibung' => 'Kajak Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
+                    array('id' => '3','organiser_id' => '2','kursName' => 'Kajak Schnupperkurs','kursBeschreibung' => 'Kajak Schnupperkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL),
+                    array('id' => '4','organiser_id' => '2','kursName' => 'Kajak Grundkurs',    'kursBeschreibung' => 'Kajak Grundkurs Kursbeschreibung','autor_id' => '1','bearbeiter_id' => '1','updated_at' => '2019-05-11 15:00:00','created_at' => '2019-05-11 15:00:00','deleted_at' => NULL)
                 ]);
     }
 }

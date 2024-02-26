@@ -25,7 +25,7 @@ class Trainertable extends Model
 
     public function getKursTrainer()
     {
-        return $this->belongsTo(User::class, 'trainer_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getTrainertyp()

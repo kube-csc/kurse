@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Coursedate;
 use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
+use App\Models\Organiser;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +53,13 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $courses = Course::where('sportSection_id' , $organiser->id)
             ->orderByDesc('kursName')
             ->get();
 
@@ -141,7 +148,7 @@ class CoursedateController extends Controller
         $coursedate = new coursedate(
             [
                 'trainer_id'         => Auth::user()->id,
-                'sportSection_id'    => env('KURS_ABTEILUNG', 1),
+                'organiser_id'       => organiserDomainId(),
                 'course_id'          => $request->course_id,
                 'kurslaenge'         => $request->kurslaenge,
                 'kursstarttermin'    => $date,
@@ -175,7 +182,13 @@ class CoursedateController extends Controller
     {
         $coursedate = Coursedate::find($id);
 
-        $courses = Course::where('sportSection_id' , env('KURS_ABTEILUNG', 1))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $courses = Course::where('sportSection_id' , $organiser->id)
             ->orderByDesc('kursName')
             ->get();
 
@@ -286,7 +299,15 @@ class CoursedateController extends Controller
 
         $course = Course::find($coursedate->course_id);
 
-        $sportEquipmens = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $sportEquipmens = SportEquipment::join('course_sport_section', 'course_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'course_sport_section.sport_section_id')
+            ->where('organiser_sport_section.organiser_id' , $organiser->id)
             ->orderBy('sportgeraet')
             ->get();
 
@@ -423,11 +444,32 @@ class CoursedateController extends Controller
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
     }
 
-    //ToDo: Wird das noch benötigt?
     public function sportgeraetanzahlMax()
     {
-        $sportgeraetanzahlMax = SportEquipment::where('sportSection_id' , env('KURS_ABTEILUNG',1))->count(); //ToDo - aus der Datenbank holen
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        $sportEquipmens = SportEquipment::join('course_sport_section', 'course_sport_section.sportSection_id', '=', 'sport_equipment.sportSection_id')
+            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'course_sport_section.sportSection_id')
+            ->where('organiser_sport_section.organiser_id' , $organiser->id)
+            ->orderBy('sportgeraet')
+            ->get();
+
         return $sportgeraetanzahlMax;
+    }
+
+    public function organiserDomainId()
+    {
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return $organiser->id;
     }
 
 }

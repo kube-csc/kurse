@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sportSection_id');
+            $table->unsignedBigInteger('organiser_id');
             $table->string('kursName');
             $table->text('kursBeschreibung')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->SoftDeletes();
             $table->timestamps();
 
-            $table->foreign('sportSection_id')->references('id')->on('sport_sections');
+            $table->foreign('organiser_id')->references('id')->on('organisers');
         });
     }
 
@@ -35,7 +35,7 @@ return new class extends Migration
     {
         // Entferne die Foren-Keys
         Schema::table('courses', function (Blueprint $table) {
-            $table->dropForeign(['sportSection_id']);
+            $table->dropForeign(['organiser_id']);
         });
         Schema::dropIfExists('courses');
     }
