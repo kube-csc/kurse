@@ -3,6 +3,7 @@
 namespace App\View\Components\Backend\Coursedate;
 
 use App\Models\Coursedate;
+use App\Models\Organiser;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -24,24 +25,30 @@ class TrainerCourseDate extends Component
     {
         $Yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
 
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
         $courseDateCountYou = CourseDate::where('trainer_id', auth()->user()->id)
-                ->where('sportSection_id', env('KURS_ABTEILUNG' , 1))
+                ->where('organiser_id', $organiser->id)
                 ->where('kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
                 ->withoutTrashed()
                 ->count();
 
-        $courseDateCount = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG' , 1))
+        $courseDateCount = CourseDate::where('organiser_id', $organiser->id)
             ->where('kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
             ->withoutTrashed()
             ->count();
 
         $courseDateCountYouAll = CourseDate::where('trainer_id', auth()->user()->id)
-            ->where('sportSection_id', env('KURS_ABTEILUNG' , 1 ))
+            ->where('organiser_id', $organiser->id)
             ->where('kursendtermin', '>=' , $Yearnow)
             ->withoutTrashed()
             ->count();
 
-        $courseDateCountAll = CourseDate::where('sportSection_id', env('KURS_ABTEILUNG', 1 ))
+        $courseDateCountAll = CourseDate::where('organiser_id', $organiser->id)
             ->where('kursendtermin', '>=' , $Yearnow)
             ->withoutTrashed()
             ->count();

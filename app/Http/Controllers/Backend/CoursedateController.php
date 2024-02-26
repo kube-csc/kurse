@@ -21,7 +21,7 @@ class CoursedateController extends Controller
      */
     public function index()
     {
-        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
+        $coursedates = Coursedate::where('organiser_id', $this->organiserDomainId())
             ->where('trainer_id', Auth::user()->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->orderBy('kursstarttermin')
@@ -32,7 +32,7 @@ class CoursedateController extends Controller
 
     public function indexAll()
     {
-        $coursedates = Coursedate::where('sportSection_id', env('KURS_ABTEILUNG', 1))
+        $coursedates = Coursedate::where('organiser_id', $this->organiserDomainId())
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->orderBy('kursstarttermin')
             ->paginate(10);

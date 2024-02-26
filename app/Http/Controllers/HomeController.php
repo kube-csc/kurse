@@ -84,10 +84,7 @@ class HomeController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $coursdates = Coursedate::join('courses', 'coursedates.course_id', '=', 'courses.id')
-            ->join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
+        $coursdates = Coursedate::where('organiser_id', $organiser->id)
             ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->orderBy('coursedates.kursstarttermin')
             ->get();
@@ -149,16 +146,7 @@ class HomeController extends Controller
 
     public function courseType()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            $organiser = Organiser::find(1);
-        }
-
-        $courses  = Course::
-              join('organiser_sport_section', 'courses.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
-            ->get();
+        $courses  = Course::where('organiser_id', $this->organiserDomainId())->get();
 
         return view('pages.course' , [
             'courses' => $courses
@@ -172,6 +160,17 @@ class HomeController extends Controller
         return view('pages.coursedate' , [
             'coursedate' => $coursedate
         ]);
+    }
+
+    public function organiserDomainId()
+    {
+        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return $organiser->id;
     }
 
 }
