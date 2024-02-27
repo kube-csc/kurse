@@ -62,7 +62,7 @@
                                     <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $sportgeraetanzahl)>
                                         alle Sportgeräte
                                     </option>
-                                    @for($i = 1; $i < $sportgeraetanzahlMax; $i++)
+                                    @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
                                         <option value="{{ $i }}"  @selected(old('sportgeraetanzahl') ?? $i == $sportgeraetanzahl)>
                                             {{ $i }}
                                         </option>

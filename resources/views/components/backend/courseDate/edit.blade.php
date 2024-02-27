@@ -95,7 +95,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte {{ $coursedate->sportgeraetanzahl }}</label>
+                            <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte:</label>
                             <select name="sportgeraetanzahl">
                                 <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
                                     alle Sportgeräte

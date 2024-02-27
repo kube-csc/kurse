@@ -59,7 +59,7 @@ class CoursedateController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $courses = Course::where('sportSection_id' , $organiser->id)
+        $courses = Course::where('organiser_id' , $this->organiserDomainId())
             ->orderByDesc('kursName')
             ->get();
 
@@ -148,8 +148,8 @@ class CoursedateController extends Controller
         $coursedate = new coursedate(
             [
                 'trainer_id'         => Auth::user()->id,
-                'organiser_id'       => organiserDomainId(),
                 'course_id'          => $request->course_id,
+                'organiser_id'       => $this->organiserDomainId(),
                 'kurslaenge'         => $request->kurslaenge,
                 'kursstarttermin'    => $date,
                 'kursendtermin'      => $kursendtermin,
@@ -188,7 +188,7 @@ class CoursedateController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $courses = Course::where('sportSection_id' , $organiser->id)
+        $courses = Course::where('organiser_id' , $organiser->id)
             ->orderByDesc('kursName')
             ->get();
 
@@ -452,11 +452,16 @@ class CoursedateController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $sportEquipmens = SportEquipment::join('course_sport_section', 'course_sport_section.sportSection_id', '=', 'sport_equipment.sportSection_id')
-            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'course_sport_section.sportSection_id')
+        //ToDo: Die Maximale Bootsberechnung funktioniert noch nicht
+       $sportgeraetanzahlMax = SportEquipment::join('course_sport_section', 'course_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'course_sport_section.sport_section_id')
             ->where('organiser_sport_section.organiser_id' , $organiser->id)
-            ->orderBy('sportgeraet')
             ->get();
+
+        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->where('organiser_sport_section.organiser_id' , $organiser->id)
+            ->count();
+
 
         return $sportgeraetanzahlMax;
     }

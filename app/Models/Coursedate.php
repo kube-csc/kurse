@@ -11,7 +11,7 @@ class Coursedate extends Model
 
     protected $fillable = [
         'trainer_id',
-        'sportSection_id',
+        'organiser_id',
         'course_id',
         'kursstarttermin',
         'kursendtermin',
