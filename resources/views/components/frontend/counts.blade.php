@@ -15,7 +15,7 @@
             <div class="col-lg-3 col-md-6 d-md-flex align-items-md-stretch">
                 <div class="count-box">
                     <i class="icofont-calendar"></i>
-                    <span data-toggle="counter-up">{{ $countCoursdates }}</span>
+                    <span data-toggle="counter-up">{{ $countCoursedates }}</span>
                     <p><strong>Kurse</strong><br>die angeboten werden</p>
                 </div>
             </div>

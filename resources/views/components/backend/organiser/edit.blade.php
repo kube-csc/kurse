@@ -130,6 +130,26 @@
                         </div>
 
                         <div class="form-field">
+                            <label class="form-label">Materialbeschreibung lang für den Kurs:</label>
+                            <textarea name="materialBeschreibungLang" class="form-input-textarea @if($errors->has('materialBeschreibungLang')) is-invalid @endif">{{ old('materialBeschreibungLang', $organiser->materialBeschreibungLang) }}</textarea>
+                            @if ($errors->has('materialBeschreibungLang'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('materialBeschreibungLang') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Materialbeschreibung kurz für den Kurs:</label>
+                            <textarea name="materialBeschreibungKurz" class="form-input-textarea @if($errors->has('materialBeschreibungKurz')) is-invalid @endif">{{ old('materialBeschreibungKurz', $organiser->materialBeschreibungKurz) }}</textarea>
+                            @if ($errors->has('materialBeschreibungKurz'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('materialBeschreibungKurz') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
                             <label class="form-label">Text Keine Kurse eingestellt:</label>
                             <textarea name="keineKurse" class="form-input-textarea @if($errors->has('keineKurse')) is-invalid @endif">{{ old('keineKurse', $organiser->keineKurse) }}</textarea>
                             @if ($errors->has('keineKurse'))

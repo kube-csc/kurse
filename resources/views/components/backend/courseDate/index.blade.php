@@ -21,13 +21,13 @@
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
-                            <a href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->coursedate_id) }}">
                                 <box-icon name='edit'></box-icon>
                             </a>
-                            <a href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->coursedate_id) }}">
                                 <box-icon name='user'></box-icon>
                             </a>
-                            <a href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->coursedate_id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                 <box-icon name='trash'></box-icon>
                             </a>
                         </div>
@@ -40,8 +40,8 @@
                         <label class="form-label">Name des Kurses:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
                         <label class="form-label">Kursleiter:</label>
-                        {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}<br>
-                        <div>
+                           {{ Auth::user()->vorname }} {{ Auth::user()->nachname }}<br>
+                         <div>
                             @if($coursedate->sportgeraetanzahl)
                                 {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             @else

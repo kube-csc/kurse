@@ -15,7 +15,6 @@ return new class extends Migration
         // ToDo: bearbeiten nullable
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('trainer_id');        //idtrainer
             $table->unsignedBigInteger('course_id');        //idkurs
             $table->unsignedBigInteger('organiser_id');     //idveranstalter
             //$table->unsignedBigInteger('sportSection_id');   //idgruppe   // UpdateorgID: Anpassung von sportSection_id auf organiser_id
@@ -39,7 +38,6 @@ return new class extends Migration
             $table->SoftDeletes();
             $table->timestamps();
 
-            $table->foreign('trainer_id')->references('id')->on('users');
             $table->foreign('course_id')->references('id')->on('courses');
         });
     }

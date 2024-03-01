@@ -23,28 +23,28 @@ class CourseSportSectionSeeder extends Seeder
                 [
                     'id' => '1',
                     'course_id' => '1',
-                    'sport_section_id' => '1',
+                    'sport_section_id' => '4',
                     'created_at' => $now,
                     'updated_at' => $now
                 ],
                 [
                     'id' => '2',
                     'course_id' => '2',
-                    'organiser_id' => '1',
+                    'sport_section_id' => '4',
                     'created_at' => $now,
                     'updated_at' => $now
                 ],
                 [
                     'id' => '3',
                     'course_id' => '3',
-                    'organiser_id' => '2',
+                    'sport_section_id' => '1',
                     'created_at' => $now,
                     'updated_at' => $now
                 ],
                 [
                     'id' => '4',
                     'course_id' => '4',
-                    'organiser_id' => '2',
+                    'sport_section_id' => '1',
                     'created_at' => $now,
                     'updated_at' => $now
                 ],

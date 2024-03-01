@@ -20,7 +20,7 @@ class OrganiserSeeder extends Seeder
             [
               array('id' => '1',
                 'veranstalter' => 'SUP Kurse',
-                'veranstalterBild' => 'organiser-1.jpg',
+                'veranstalterHeader' => 'organiser-1.jpg',
                 'veranstalterBeschreibungLang' => 'Dies ist ein Beispiel Organisator für die Langen Beschreibung',
                 'veranstalterBeschreibungKurz' => 'Dies ist ein Beispiel Organisator für die Kurzen Beschreibung',
                 'sportartBeschreibungLang'     => 'Dies ist ein Beispiel für die Sportart Beschreibung Lang',
@@ -32,7 +32,7 @@ class OrganiserSeeder extends Seeder
               ),
                 array('id' => '2',
                     'veranstalter' => 'Ferienspass',
-                    'veranstalterBild' => 'organiser-1.jpg',
+                    'veranstalterHeader' => 'organiser-1.jpg',
                     'veranstalterBeschreibungLang' => 'Dies ist ein Beispiel Organisator für die Langen Beschreibung',
                     'veranstalterBeschreibungKurz' => 'Dies ist ein Beispiel Organisator für die Kurzen Beschreibung',
                     'sportartBeschreibungLang'     => 'Dies ist ein Beispiel für die Sportart Beschreibung Lang',

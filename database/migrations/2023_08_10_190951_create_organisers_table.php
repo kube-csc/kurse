@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->string('veranstalter');
-            $table->string('veranstalterBild', 100);
+            $table->string('veranstalterHeader')->nullable();
             $table->text('veranstalterBeschreibungLang')->nullable();
             $table->text('veranstalterBeschreibungKurz')->nullable();
             $table->text('sportartBeschreibungLang')->nullable();
             $table->text('sportartBeschreibungKurz')->nullable();
+            $table->text('materialBeschreibungLang')->nullable();
+            $table->text('materialBeschreibungKurz')->nullable();
             $table->text('keineKurse')->nullable();
             $table->string('veranstalterDomain')->nullable();
 

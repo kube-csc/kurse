@@ -23,8 +23,7 @@ return new class extends Migration
             $table->SoftDeletes();
             $table->timestamps();
 
-            //ToDO: Wir das foreign-Key noch benötigt?
-            //$table->foreign('trainer_id')->references('id')->on('users');
+            $table->foreign('kurs_id')->references('id')->on('coursedates')->onDelete('cascade');
         });
     }
 
@@ -33,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table->dropForeign(['trainer_id']);
+        $table->dropForeign(['kurs_id']);
         Schema::dropIfExists('sport_equipment_bookeds');
     }
 };

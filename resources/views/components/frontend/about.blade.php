@@ -5,7 +5,7 @@
         <div class="row no-gutters">
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                 <div class="content">
-                    @if($countCoursdates==0)
+                    @if($countCoursedates==0)
                         {!! $organiser->keineKurse !!}
                         <br>
                     @endif

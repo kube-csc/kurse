@@ -17,14 +17,14 @@
                 <div class="form-group">
                     <div class="form-card">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Start Datum</label>
+                            <label for="kursstarttermin" class="form-label">Start Datum:</label>
                             <div class="form-field flex text">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }} Uhr
                             </div>
                         </div>
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">End Datum</label>
+                            <label for="kursstarttermin" class="form-label">End Datum:</label>
                             <div class="form-field flex text">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }} Uhr
@@ -32,14 +32,16 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="trainer_id" class="form-label">Trainer</label>
-                            <div class="form-field flex text">
-                                {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}
+                            <label for="trainer_id" class="form-label">Trainer:</label>
+                            <div class="form-input-text">
+                                @foreach($trainers as $trainer)
+                                    {{ $trainer->vorname }} {{ $trainer->nachname }}<br>
+                                @endforeach
                             </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">Kursname</label>
+                            <label for="course_id" class="form-label">Kursname:</label>
                             <div class="form-field flex text">
                                {{ $course->kursName }}
                             </div>
@@ -74,7 +76,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipments->count() }} freie Sportgeräte</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipments->count() }} freie(s) Sportgerät(e):</label>
                                 <div class="form-box">
                                    @foreach($sportEquipments as $sportEquipment)
                                     <a href="{{ route('backend.courseDate.equipmentBooked' ,
@@ -93,7 +95,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegte Sportgeräte im Kurs</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegt(e) Sportgerät(e) im Kurs:</label>
                             <div class="form-box">
                                 @foreach($sportEquipmentKursBookeds as $sportEquipmentKursBooked)
                                     <a href="{{ route('backend.courseDate.equipmentBookedDestroy' ,
@@ -113,13 +115,12 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegte Sportgeräte in anderen Kursen</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegt(e) Sportgerät(e) in anderen Kursen:</label>
                             <div class="form-box">
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
                                     <span>
                                         {{ $sportEquipmentBooked->sportgeraet}} /
                                         {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
-
                                     </span><br>
                                 @endforeach
                             </div>

@@ -25,10 +25,10 @@ class HomeController extends Controller
             $organiser = Organiser::find(1);
         }
 
-        $coursdates = Coursedate::where('organiser_id', $organiser->id)
-                                ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-                                ->orderBy('kursendtermin')
-                                ->get();
+        $coursedates = Coursedate::where('organiser_id', $organiser->id)
+                                 ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+                                 ->orderBy('kursendtermin')
+                                 ->get();
 
         $courses = Course::where('organiser_id', $organiser->id)->get();
 
@@ -65,8 +65,8 @@ class HomeController extends Controller
         return view('pages.home' , [
                     'trainers'                  => $trainers,
                     'countTrainers'             => $trainers->count(),
-                    'coursdates'                => $coursdates,
-                    'countCoursdates'           => $coursdates->count(),
+                    'coursedates'               => $coursedates,
+                    'countCoursedates'          => $coursedates->count(),
                     'courses'                   => $courses,
                     'sportEquipments'           => $sportEquipments,
                     'courseDateCountAll'        => $courseDateCountAll,

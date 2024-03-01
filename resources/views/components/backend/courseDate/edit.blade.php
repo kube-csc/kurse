@@ -72,12 +72,16 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="trainer_id" class="form-label">Trainer</label>
-                            <div class="form-text">{{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}</div>
+                            <label for="trainer_id" class="form-label">Trainer:</label>
+                            <div class="form-input-text">
+                                @foreach($coursedate->users as $user)
+                                    {{ $user->vorname }} {{ $user->nachname }}<br>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">Kursname</label>
+                            <label for="course_id" class="form-label">Kursname:</label>
                             <select name="course_id">
                                 <!-- Fixme: Kursname bei Edit Aufruf kein alter Wert -->
                                 @foreach ($courses as $course)

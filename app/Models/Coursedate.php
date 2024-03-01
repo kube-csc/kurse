@@ -32,9 +32,8 @@ class Coursedate extends Model
         return $this->belongsTo(Course::class, 'course_id');
     }
 
-    public function getTrainerName()
+    public function users()
     {
-        return $this->belongsTo(User::class, 'trainer_id');
+        return $this->belongsToMany(User::class, 'coursedate_user');
     }
-
 }

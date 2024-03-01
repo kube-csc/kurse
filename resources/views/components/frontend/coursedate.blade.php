@@ -24,7 +24,11 @@
                 {{ date("d.m.Y", strtotime($coursedate->kursstarttermin)) }} {{ date("H:i", strtotime($coursedate->kursstarttermin)) }} Uhr<br>
                 {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
                 Kurslänge: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
-                Trainer: {{ $coursedate->getTrainerName->vorname }} {{ $coursedate->getTrainerName->nachname }}
+                Trainer:
+                @foreach($coursedate->users as $user)
+                    <br>
+                    {{ $user->vorname }} {{ $user->nachname }}
+                @endforeach
             </div>
 
             <div class="section-title" data-aos="fade-in" data-aos-delay="100">

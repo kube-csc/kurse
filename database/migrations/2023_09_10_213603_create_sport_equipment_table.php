@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        //ToDo: sport_equipment muss  sport_equipments heißen
         Schema::create('sport_equipment', function (Blueprint $table) {
             $table->id();
 
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->integer('pixy')->default(0);
             $table->date('anschafdatum');
             $table->date('verschrottdatum')->nullable();
-            $table->integer('sportleranzahl')->default(0);
+            $table->integer('sportleranzahl')->default(1);
             $table->float('laenge');
             $table->float('breite');
             $table->float('hoehe');
@@ -33,7 +34,7 @@ return new class extends Migration
             $table->unsignedBigInteger('mitgliedprivat_id')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
 
             $table->SoftDeletes();

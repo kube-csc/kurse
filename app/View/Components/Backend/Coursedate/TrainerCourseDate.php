@@ -31,9 +31,10 @@ class TrainerCourseDate extends Component
             $organiser = Organiser::find(1);
         }
 
-        $courseDateCountYou = CourseDate::where('trainer_id', auth()->user()->id)
-                ->where('organiser_id', $organiser->id)
-                ->where('kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
+        $courseDateCountYou = CourseDate::join('coursedate_user', 'coursedates.id', '=', 'coursedate_user.coursedate_id')
+                ->where('coursedate_user.user_id', auth()->user()->id)
+                ->where('coursedates.organiser_id', $organiser->id)
+                ->where('coursedates.kursendtermin', '>=' , date('Y-m-d', strtotime('now')))
                 ->withoutTrashed()
                 ->count();
 
@@ -42,7 +43,8 @@ class TrainerCourseDate extends Component
             ->withoutTrashed()
             ->count();
 
-        $courseDateCountYouAll = CourseDate::where('trainer_id', auth()->user()->id)
+        $courseDateCountYouAll = CourseDate::join('coursedate_user', 'coursedates.id', '=', 'coursedate_user.coursedate_id')
+            ->where('coursedate_user.user_id', auth()->user()->id)
             ->where('organiser_id', $organiser->id)
             ->where('kursendtermin', '>=' , $Yearnow)
             ->withoutTrashed()
