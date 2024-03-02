@@ -28,5 +28,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OrganiserSportSectionSeeder::class);
         $this->call(CourseSportSectionSeeder::class);
         $this->call(CoursedateUserSeeder::class);
+        $this->call(CourseParticipantBookedSeeder::class);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Coursedate;
 use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
+use App\Models\CourseParticipantBooked;
 use App\Models\Organiser;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
@@ -22,11 +23,12 @@ class CoursedateController extends Controller
      */
     public function index()
     {
-        $coursedates = Coursedate::
-          join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->where('coursedates.organiser_id', $this->organiserDomainId())
-            ->where('coursedate_user.user_id', Auth::user()->id)
+        $coursedates = Coursedate::where('coursedates.organiser_id', $this->organiserDomainId())
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            // ToDo:Vorher Filter das nur noch Ergebnisse vorhanden sind die der Angemeldenten Trainer zugeordnet sind
+            // Aktuel wird das in der blade mit einer if Abfrage gemacht
+            //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            //->where('coursedate_user.user_id', Auth::user()->id)
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
@@ -319,16 +321,14 @@ class CoursedateController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $couseBookes = SportEquipmentBooked::where('kurs_id', $id)
-            ->where('trainer_id', '<>', 0)
-            ->get();
+        $couseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
 
-        $teilnehmerKursBookeds = SportEquipmentBooked::where('kurs_id', '<>' , $id)
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+        $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
+            ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
             ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
-            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('course_participant_bookeds.trainer_id', '<>', 0)
+            ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
             ->get();
@@ -392,7 +392,7 @@ class CoursedateController extends Controller
 
     public function Book($coursedateId)
     {
-        $sportEquipmentBooked = new SportEquipmentBooked(
+        $sportEquipmentBooked = new CourseParticipantBooked(
             [
                 'trainer_id'        => Auth::user()->id,
                 'kurs_id'           => $coursedateId,
@@ -432,7 +432,7 @@ class CoursedateController extends Controller
 
     public function destroyBooked($coursedateId , $couseBookId)
     {
-        $sportEquipmentBooked = SportEquipmentBooked::find($couseBookId);
+        $sportEquipmentBooked = CourseParticipantBooked::find($couseBookId);
 
         $sportEquipmentBooked->delete();
 

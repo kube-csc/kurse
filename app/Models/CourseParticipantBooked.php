@@ -2,19 +2,27 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SportEquipmentBooked extends Model
+class CourseParticipantBooked extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'sportgeraet_id',
+        'trainer_id',
+        'mitglied_id',
+        'participant_id',
         'kurs_id'
     ];
 
     protected $dates = [
         'deleted_at'
     ];
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

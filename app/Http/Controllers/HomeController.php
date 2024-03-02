@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseParticipantBooked;
 use App\Models\Organiser;
 use App\Models\SportEquipmentBooked;
 use App\Models\Trainertable;
@@ -42,17 +43,15 @@ class HomeController extends Controller
             ->withoutTrashed()
             ->count();
 
-        $teilnehmerKursBookeds = SportEquipmentBooked::join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+        $teilnehmerKursBookeds = CourseParticipantBooked::join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
             ->where('coursedates.organiser_id', $organiser->id)
-            ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
-            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '>=', $yearnow)
             ->where('coursedates.kursendtermin', '=<' , date('Y-m-d', strtotime('now')))
             ->get()->count();
 
-        $teilnehmerKursBookedNows = SportEquipmentBooked::join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->where('sport_equipment_bookeds.trainer_id', '<>', 0)
-            ->where('sport_equipment_bookeds.deleted_at', null)
+        $teilnehmerKursBookedNows = CourseParticipantBooked::join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
+            ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursendtermin', '>=', $yearnow)
             ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->get()->count();

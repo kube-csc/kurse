@@ -18,13 +18,6 @@
     <div class="main-box">
         <div class="dashboard-flexbox">
             @foreach($coursedates as $coursedate)
-                @php($userIsInCourse = false)
-                @foreach($coursedate->users as $user)
-                    @if($user->id == Auth::user()->id)
-                        @php($userIsInCourse = true)
-                    @endif
-                @endforeach
-                @if($userIsInCourse == true)
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
@@ -37,12 +30,24 @@
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                 <box-icon name='trash'></box-icon>
                             </a>
-                        @if($coursedate->users->count() > 1)
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
-                                <box-icon name='minus'></box-icon>
-                            </a>
-                        @endif
-                        {{ $coursedate->coursedate_id }}
+                            @php($userIsInCourse = false)
+                            @foreach($coursedate->users as $user)
+                                @if($user->id == Auth::user()->id)
+                                    @php($userIsInCourse = true)
+                                @endif
+                            @endforeach
+                            @if($userIsInCourse == false)
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerRegister', $coursedate->id) }}">
+                                    <box-icon name='plus'></box-icon>
+                                </a>
+                            @else
+                                @if($coursedate->users->count() > 1)
+                                    <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
+                                        <box-icon name='minus'></box-icon>
+                                    </a>
+                                @endif
+                            @endif
+                            {{ $coursedate->coursedate_id }}
                         </div>
                         <label class="form-label">Start Datum:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
@@ -53,21 +58,18 @@
                         <label class="form-label">Name des Kurses:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
                         <label class="form-label">Kursleiter:</label>
-                           {{ Auth::user()->vorname }} {{ Auth::user()->nachname }}<br>
-                        <label class="form-label">Kursleiter:</label>
-                        @foreach($coursedate->users as $user)
+                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
-                         <div>
+                        <div>
                             @if($coursedate->sportgeraetanzahl)
                                 {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             @else
                                 alle verfügbaren Plätze
                             @endif
-                         </div>
+                        </div>
                     </div>
                 </div>
-                @endif
             @endforeach
         </div>
     </div>

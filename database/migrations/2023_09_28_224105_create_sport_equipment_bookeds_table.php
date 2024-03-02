@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('sport_equipment_bookeds', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('trainer_id')->nullable();
-            $table->unsignedBigInteger('mitglied_id')->nullable();
-            $table->unsignedBigInteger('teilnehmer_id')->nullable();
             $table->unsignedBigInteger('sportgeraet_id')->nullable();
             $table->unsignedBigInteger('kurs_id');
 
@@ -32,7 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table->dropForeign(['kurs_id']);
+        Schema::table('sport_equipment_bookeds', function (Blueprint $table) {
+            $table->dropForeign(['kurs_id']);
+        });
         Schema::dropIfExists('sport_equipment_bookeds');
     }
 };
