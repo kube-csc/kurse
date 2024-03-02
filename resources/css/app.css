@@ -94,6 +94,10 @@
     @apply text-xs text-red-800 mt-2;
 }
 
+.dashboard-menu-box {
+    @apply bg-white dark:bg-gray-800 shadow-xl sm:rounded-l;
+}
+
 .dashboard-flexbox {
     @apply flex flex-row flex-wrap m-2;
 }

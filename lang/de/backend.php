@@ -36,6 +36,7 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     'Course Edit Help' => 'Kursname: Hier gibst du den Namen des Kurses ein.',
     'Sport Equipment' => 'Sportgeräte',
     'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
+    'Sport Equipment Edit Help' => 'Sportgeräte bearbeiten Hilfe',
     'Organiser' => 'Veranstalter',
     'Organiser Edit' => 'Veranstalter bearbeiten',
     'Organiser Edit Help' => 'Veranstalter: Hier gibst du den Namen des Veranstalters ein.',
