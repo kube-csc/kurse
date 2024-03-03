@@ -58,7 +58,7 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -128,8 +128,7 @@ class CoursedateController extends Controller
          {
              // FixMe: Self::danger('... funktioniert nicht $dangeer = wurde als alternative verwendet
              //self::danger('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
-             $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
-             Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
+             $danger = 'Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.';
 
              if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
              {
@@ -141,13 +140,12 @@ class CoursedateController extends Controller
                  $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
              }
 
-             self::warning('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
-             Der Kurs Endtermin wurde automatisch berechnet wurde erfolgreich angelegt');
+             self::warning('Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.');
          }
         else
          {
             $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
-            self::success('Kurstermin wurde erfolgreich angelegt.');
+            self::success('Der Termin wurde erfolgreich angelegt.');
          }
 
         $coursedate = new coursedate(
@@ -187,7 +185,7 @@ class CoursedateController extends Controller
     {
         $coursedate = Coursedate::find($id);
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -248,8 +246,7 @@ class CoursedateController extends Controller
         {
             // FixMe: Self::danger('... funktioniert nicht $dangeer = wurde als alternative verwendet
             //self::danger('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
-            $danger = 'Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.
-             Der Kurs Endtermin wurde automatisch berechnet. Bitte überprüfe die Daten nochmal.';
+            $danger = 'Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.';
 
             if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
             {
@@ -261,12 +258,12 @@ class CoursedateController extends Controller
                 $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
             }
 
-            self::warning('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
+            self::warning('Der Endtermin wurde neu berechnet und erfolgreich gespeichert bearbeitet.');
          }
         else
         {
             $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
-            self::success('Kurstermin wurde erfolgreich bearbeitet.');
+            self::success('Der Termin wurde erfolgreich bearbeitet.');
         }
 
         $coursedate->update(
@@ -309,7 +306,7 @@ class CoursedateController extends Controller
               ->where('coursedate_user.coursedate_id', $coursedate->id)
               ->get();
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -483,7 +480,7 @@ class CoursedateController extends Controller
 
     public function organiserDomainId()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -506,7 +503,6 @@ class CoursedateController extends Controller
 
     public function sportgeraetanzahlMax($id)
     {
-
         //ToDo: Aud Potzplätze umstellen ->sum('sportleranzahl');
         $sportgeraetanzahlMax = SportEquipment::
         join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')

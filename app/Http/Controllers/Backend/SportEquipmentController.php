@@ -17,15 +17,15 @@ class SportEquipmentController extends Controller
      */
     public function index()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
         }
 
-        $sportEquipments = SportEquipment::join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
-            ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
-            ->where('organisers.id', $organiser->id)
+        $sportEquipments = Organiser::where('organisers.id', $organiser->id)
+            ->join('organiser_sport_section', 'organisers.id', '=', 'organiser_sport_section.organiser_id')
+            ->join('sport_equipment', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
             ->orderBy('anschafdatum',)
             ->orderBy('sportgeraet')
             ->get();

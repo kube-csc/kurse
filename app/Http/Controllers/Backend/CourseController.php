@@ -20,7 +20,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -69,7 +69,7 @@ class CourseController extends Controller
             ->orderBy('abteilung')
             ->get();
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);

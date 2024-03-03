@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('course_id');        //idkurs
-            $table->unsignedBigInteger('organiser_id');     //idveranstalter
+            $table->unsignedBigInteger('organiser_id');     //idVeranstaltung
             //$table->unsignedBigInteger('sportSection_id');   //idgruppe   // UpdateorgID: Anpassung von sportSection_id auf organiser_id
             $table->date('kurstermin')->nullable();
             $table->time('startzeit')->nullable();

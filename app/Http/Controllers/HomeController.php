@@ -20,7 +20,7 @@ class HomeController extends Controller
     {
         $yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -77,7 +77,7 @@ class HomeController extends Controller
 
     public function offer()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
@@ -96,7 +96,7 @@ class HomeController extends Controller
 
     public function sportType()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             $organiser = Organiser::find(1);
         }
@@ -106,7 +106,7 @@ class HomeController extends Controller
     public function trainer()
     {
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             $organiser = Organiser::find(1);
         }
@@ -125,7 +125,7 @@ class HomeController extends Controller
 
     public function sportUnit()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             $organiser = Organiser::find(1);
         }
@@ -163,7 +163,7 @@ class HomeController extends Controller
 
     public function organiserDomainId()
     {
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);

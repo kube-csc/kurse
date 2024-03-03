@@ -17,14 +17,14 @@
                 <div class="form-group">
                     <div class="form-card">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Start Datum:</label>
+                            <label for="kursstarttermin" class="form-label">Startdatum:</label>
                             <div class="form-field flex text">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }} Uhr
                             </div>
                         </div>
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">End Datum:</label>
+                            <label for="kursstarttermin" class="form-label">Enddatum:</label>
                             <div class="form-field flex text">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }} Uhr
@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">Kursname:</label>
+                            <label for="course_id" class="form-label">Name des Termins:</label>
                             <div class="form-field flex text">
                                {{ $course->kursName }}
                             </div>
@@ -95,7 +95,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegt(e) Sportgerät(e) im Kurs:</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegt(e) Sportgerät(e) im Termin:</label>
                             <div class="form-box">
                                 @foreach($sportEquipmentKursBookeds as $sportEquipmentKursBooked)
                                     <a href="{{ route('backend.courseDate.equipmentBookedDestroy' ,
@@ -115,7 +115,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegt(e) Sportgerät(e) in anderen Kursen:</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegt(e) Sportgerät(e) in anderen Terminen:</label>
                             <div class="form-box">
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
                                     <span>
@@ -127,7 +127,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Kursen</label>
+                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Terminen</label>
                             <div class="form-box">
                                 @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
                                     <span>

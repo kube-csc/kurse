@@ -16,12 +16,12 @@
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Sportgeraet:</label>
+                        <label class="form-label">Sportgerät:</label>
                         {{ $sportEquipment->sportgeraet }}<br>
                         <label class="form-label">Datum der Anschaffung:</label>
                         {{ date('d.m.Y', strtotime($sportEquipment->anschafdatum)) }}
                         @if($sportEquipment->verschrottdatum != null)
-                             <label class="form-label">Verschrootungsdatum</label>
+                             <label class="form-label">Datum der Verschrottung:</label>
                              {{ date('d.m.Y', strtotime($sportEquipment->verschrottdatum)) }}
                         @endif
                         @if($sportEquipment->bild != Null)

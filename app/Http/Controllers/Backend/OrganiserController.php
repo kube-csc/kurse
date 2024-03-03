@@ -17,7 +17,7 @@ class OrganiserController extends Controller
      */
     public function index()
     {
-        $organisers = Organiser::orderBy('veranstalter')
+        $organisers = Organiser::orderBy('veranstaltung')
             ->get();
 
         return view('components.backend.organiser.index', compact('organisers'));
@@ -76,12 +76,12 @@ class OrganiserController extends Controller
         //$data = $request->validated();
 
         $data = $request->validate([
-            'veranstalter' => 'required',
-            'veranstalterBeschreibungLang' => 'nullable',
-            'veranstalterBeschreibungKurz' => 'nullable',
+            'veranstaltung' => 'required',
+            'veranstaltungBeschreibungLang' => 'nullable',
+            'veranstaltungBeschreibungKurz' => 'nullable',
             'sportartBeschreibungLang' => 'nullable',
             'sportartBeschreibungKurz' => 'nullable',
-            'veranstalterDomain' => 'nullable',
+            'veranstaltungDomain' => 'nullable',
             'keineKurse' => 'nullable',
              's'
         ]);
@@ -91,7 +91,7 @@ class OrganiserController extends Controller
 
         $organiser->update($data);
 
-        self::success('Veranstalterdaten erfolgreich geändert');
+        self::success('Daten der Veranstaltung erfolgreich geändert');
 
         return redirect()->route('backend.organiser.index');
     }

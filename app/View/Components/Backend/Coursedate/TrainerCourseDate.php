@@ -25,7 +25,7 @@ class TrainerCourseDate extends Component
     {
         $Yearnow = date('Y', strtotime('now')).'-01-01 00:00:00';
 
-        $organiser = Organiser::where('veranstalterDomain', $_SERVER['HTTP_HOST'])->first();
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);

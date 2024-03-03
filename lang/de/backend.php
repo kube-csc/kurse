@@ -37,9 +37,9 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     'Sport Equipment' => 'Sportgeräte',
     'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
     'Sport Equipment Edit Help' => 'Sportgeräte bearbeiten Hilfe',
-    'Organiser' => 'Veranstalter',
-    'Organiser Edit' => 'Veranstalter bearbeiten',
-    'Organiser Edit Help' => 'Veranstalter: Hier gibst du den Namen des Veranstalters ein.',
+    'Organiser' => 'Veranstaltung',
+    'Organiser Edit' => 'Veranstaltung bearbeiten',
+    'Organiser Edit Help' => 'Veranstaltung: Hier gibst du den Namen des Veranstaltung ein.',
     'Edit help HTML button' => 'Hilfe zum Editieren',
     'Edit help HTML' => '<p>[p]Dies ist ein Absatz.[/p]</p>
 <p>

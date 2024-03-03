@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
+use App\Models\Organiser;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,10 +43,18 @@ Route::middleware([
     'verified'
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+
+        if (!$organiser) {
+            $organiser = new Organiser;
+            // Setzen Sie hier die Standardwerte für das Organiser-Objekt
+        }
+
+        return view('dashboard', ['organiser' => $organiser]);
     })->name('dashboard');
+
     /*  ToDo: Auf Resource umstellen
-        Route::resource('/post', CoursedateController::clas;
+        Route::resource('/post', CoursedateController::class;
     */
     Route::get('/backend/CourseDate', [CoursedateController::class, 'index'])->name('backend.courseDate.index');
     Route::get('/backend/CourseDateAll', [CoursedateController::class, 'indexAll'])->name('backend.courseDate.indexAll');

@@ -9,7 +9,7 @@
                         {!! $organiser->keineKurse !!}
                         <br>
                     @endif
-                    <p>{!! $organiser->veranstalterBeschreibungKurz !!}</p>
+                    <p>{!! $organiser->veranstaltungBeschreibungKurz !!}</p>
                     <a href="{{ route('frontend.offer') }}" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
                 </div>
             </div>

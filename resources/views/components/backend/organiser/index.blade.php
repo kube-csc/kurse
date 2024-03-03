@@ -16,11 +16,11 @@
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Veranstalter:</label>
-                        {{ $organiser->veranstalter }}<br>
-                        @if($organiser->veranstalterDomain != null)
-                            <label class="form-label">Veranstalter Domain:</label>
-                            {!! $organiser->veranstalterDomain!!}<br>
+                        <label class="form-label">Veranstaltung:</label>
+                        {{ $organiser->veranstaltung }}<br>
+                        @if($organiser->veranstaltungDomain != null)
+                            <label class="form-label">Domain der Veranstaltung:</label>
+                            {!! $organiser->veranstaltungDomain!!}<br>
                         @endif
                     </div>
                 </div>

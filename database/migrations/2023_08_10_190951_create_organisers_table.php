@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('organisers', function (Blueprint $table) {
             $table->id();
 
-            $table->string('veranstalter');
-            $table->string('veranstalterHeader')->nullable();
-            $table->text('veranstalterBeschreibungLang')->nullable();
-            $table->text('veranstalterBeschreibungKurz')->nullable();
+            $table->string('veranstaltung');
+            $table->string('veranstaltungHeader')->nullable();
+            $table->text('veranstaltungBeschreibungLang')->nullable();
+            $table->text('veranstaltungBeschreibungKurz')->nullable();
             $table->text('sportartBeschreibungLang')->nullable();
             $table->text('sportartBeschreibungKurz')->nullable();
             $table->text('materialBeschreibungLang')->nullable();
             $table->text('materialBeschreibungKurz')->nullable();
             $table->text('keineKurse')->nullable();
-            $table->string('veranstalterDomain')->nullable();
+            $table->string('veranstaltungDomain')->nullable();
 
             $table->unsignedBigInteger('bearbeiter_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('autor_id');
 
             $table->SoftDeletes();
             $table->timestamps();

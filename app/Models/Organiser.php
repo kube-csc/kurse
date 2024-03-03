@@ -10,14 +10,14 @@ class Organiser extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'veranstalter',
-        'veranstalterBild',
-        'veranstalterBeschreibungLang',
-        'veranstalterBeschreibungKurz',
+        'veranstaltung',
+        'veranstaltungBild',
+        'veranstaltungBeschreibungLang',
+        'veranstaltungBeschreibungKurz',
         'sportartBeschreibungLang',
         'sportartBeschreibungKurz',
         'keineKurse',
-        'veranstalterDomain',
+        'veranstaltungDomain',
         'user_id',
         'bearbeiter_id'
     ];

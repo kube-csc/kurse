@@ -68,9 +68,9 @@
                 <div class="form-group">
                     <div class="form-card">
                         <div class="form-field">
-                            <label class="form-label">Veranstalter:</label>
-                            <input type="text" name="veranstalter" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstalter', $organiser->veranstalter) }}">
-                            @error('veranstalter')
+                            <label class="form-label">Veranstaltung:</label>
+                            <input type="text" name="veranstaltung" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstaltung', $organiser->veranstaltung) }}">
+                            @error('veranstaltung')
                             <div class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </div>
@@ -80,9 +80,9 @@
                         <div class="form-field">
                             <label class="form-label">Aktuelle Domain:</label>
                             <p class="text">{{ $_SERVER['HTTP_HOST'] }}</p>
-                            <label class="form-label">Veranstalter Domain:</label>
-                            <input type="text" name="veranstalterDomain" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstalterDomain', $organiser->veranstalterDomain) }}">
-                            @error('veranstalterDomain')
+                            <label class="form-label">Domain der Veranstaltung:</label>
+                            <input type="text" name="veranstaltungDomain" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstaltungDomain', $organiser->veranstaltungDomain) }}">
+                            @error('veranstaltungDomain')
                             <div class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </div>
@@ -90,21 +90,21 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Veranstalter Beschreibung:</label>
-                            <textarea name="veranstalterBeschreibungLang" class="form-input-textarea @if($errors->has('veranstalterBeschreibungLang')) is-invalid @endif">{{ old('veranstalterBeschreibungLang', $organiser->veranstalterBeschreibungLang) }}</textarea>
-                            @if ($errors->has('veranstalterBeschreibungLang'))
+                            <label class="form-label">Veranstaltung Beschreibung:</label>
+                            <textarea name="veranstaltungBeschreibungLang" class="form-input-textarea @if($errors->has('veranstaltungBeschreibungLang')) is-invalid @endif">{{ old('veranstaltungBeschreibungLang', $organiser->veranstaltungBeschreibungLang) }}</textarea>
+                            @if ($errors->has('veranstaltungBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('veranstalterBeschreibungLang') }}</strong>
+                                    <strong>{{ $errors->first('veranstaltungBeschreibungLang') }}</strong>
                                 </span>
                             @endif
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Veranstalterbeschreibung kurz:</label>
-                            <textarea name="veranstalterBeschreibungKurz" class="form-input-textarea @if($errors->has('veranstalterBeschreibungKurz')) is-invalid @endif">{{ old('veranstalterBeschreibungKurz', $organiser->veranstalterBeschreibungKurz) }}</textarea>
-                            @if ($errors->has('veranstalterBeschreibungKurz'))
+                            <label class="form-label">Kurze Beschreibung der Veranstaltung:</label>
+                            <textarea name="veranstaltungBeschreibungKurz" class="form-input-textarea @if($errors->has('veranstaltungBeschreibungKurz')) is-invalid @endif">{{ old('veranstaltungBeschreibungKurz', $organiser->veranstaltungBeschreibungKurz) }}</textarea>
+                            @if ($errors->has('veranstaltungBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('veranstalterBeschreibungKurz') }}</strong>
+                                    <strong>{{ $errors->first('veranstaltungBeschreibungKurz') }}</strong>
                                 </span>
                             @endif
                         </div>

@@ -29,12 +29,12 @@ class UpdateOrganiserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'veranstalter'                 => 'required',
-            'veranstalterBeschreibungLang' => 'nullable',
-            'veranstalterBeschreibungKurz' => 'nullable',
+            'veranstaltung'                 => 'required',
+            'veranstaltungBeschreibungLang' => 'nullable',
+            'veranstaltungBeschreibungKurz' => 'nullable',
             'sportartBeschreibungLang'     => 'nullable',
             'sportartBeschreibungKurz'     => 'nullable',
-            'veranstalterDomain'           => 'nullable',
+            'veranstaltungDomain'           => 'nullable',
             'keineKurse'                   => 'nullable',
             ''
         ];

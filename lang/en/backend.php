@@ -38,6 +38,7 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     'Course Edit Help' => 'Course Name: Here you enter the name of the course.',
     'Sport Equipment' => 'Sport Equipment',
     'Sport Equipment Edit' => 'Sport Equipment Edit',
+    'Sport Equipment Edit Help' => 'Sport Equipment Edit help',
     'Organiser' => 'Organiser',
     'Organiser Edit' => 'Organiser Edit',
     'Organiser Edit Help' => 'Organiser: Here you enter the name of the organiser.',

@@ -4,8 +4,8 @@
             <h2 class="dasboard-iconbox-h2">Deine aktuell eingestellten Kurse</h2>
             <div class="dasboard-iconbox">
                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.index') }}">
-                  <box-icon name='calendar'></box-icon>
-                </a>
+                  <box-icon name='calendar-event'></box-icon>
+                 </a>
                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.create') }}">
                     <box-icon name='calendar-plus'></box-icon>
                 </a>
@@ -19,7 +19,7 @@
             <h2 class="dasboard-iconbox-h2">aktuell eingestellten Kurse</h2>
             <div class="dasboard-iconbox">
                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.indexAll') }}">
-                    <box-icon name='calendar'></box-icon>
+                    <box-icon name='calendar-event'></box-icon>
                 </a>
             </div>
             <br>
@@ -28,13 +28,13 @@
     </div>
     <div class="dashboard-flexbox-b1-2">
         <div class="dashboard-flexbox-text">
-            <h2 class="dasboard-iconbox-h2">Alle deine Kurse</h2>
+            <h2 class="dasboard-iconbox-h2">Alle deine eingestellten Kurse</h2>
             Du hast {{ $courseDateCountYouAll }} Kurs(e) insgesamt im laufenden Jahr eingestellt.
         </div>
     </div>
     <div class="dashboard-flexbox-b1-2">
         <div class="dashboard-flexbox-text">
-            <h2 class="dasboard-iconbox-h2">Alle Kurse</h2>
+            <h2 class="dasboard-iconbox-h2">Alle eingestellten Kurse</h2>
             Es {{ $courseDateCountAll }} Kurs(e) insgesamt im laufenden Jahr eingestellt.
         </div>
     </div>
