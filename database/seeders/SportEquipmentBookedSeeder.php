@@ -18,7 +18,7 @@ class SportEquipmentBookedSeeder extends Seeder
         DB::table('sport_equipment_bookeds')
             ->insert(
                 [
-                  array('id' => '1', 'sportgeraet_id' => '3', 'kurs_id' => '1', 'created_at' => '2019-05-18'),
+                  array('id' => '1', 'sportgeraet_id' => '1', 'kurs_id' => '1', 'created_at' => '2019-05-18'),
                 ]);
     }
 }

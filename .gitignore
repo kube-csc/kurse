@@ -1,7 +1,9 @@
 /.phpunit.cache
 /node_modules
 /public/hot
-/public/storage
+/public/*_*.*
+/public/storage/
+/storage/app/public/**/*_*.*
 /storage/*.key
 /vendor
 /Vorlage
