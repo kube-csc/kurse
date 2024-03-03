@@ -17,7 +17,7 @@
 
       <div class="section-title" data-aos="fade-in" data-aos-delay="100">
           <div style="text-align: justify;">
-              {!! $organiser->sportartBeschreibungLang !!}
+              {!! $organiser->veranstaltungBeschreibungLang !!}
           </div>
       </div>
 

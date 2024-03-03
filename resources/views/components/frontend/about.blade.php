@@ -6,8 +6,7 @@
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                 <div class="content">
                     @if($countCoursedates==0)
-                        {!! $organiser->keineKurse !!}
-                        <br>
+                        <p>{!! $organiser->keineKurse !!}</p>
                     @endif
                     <p>{!! $organiser->veranstaltungBeschreibungKurz !!}</p>
                     <a href="{{ route('frontend.offer') }}" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
@@ -38,12 +37,16 @@
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
                             <a href="/Sportgeräte"><i class="bx bx-info-circle"></i></a>
+                            @if($organiser->materialBeschreibungKurz<>'')
+                                <p>{!! $organiser->materialBeschreibungKurz !!}</p>
+                            @else
                             <h4>Sportgeräte</h4>
                             <ul>
                                 @foreach($sportEquipments as $sportEquipment)
                                     <li>{{ $sportEquipment->sportgeraet }}</li>
                                 @endforeach
                             </ul>
+                            @endif
                             <div class="read-more">
                                 <a href="/Sportgeräte" class="icofont-arrow-right">mehr</a>
                             </div>

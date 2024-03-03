@@ -32,10 +32,12 @@ class UpdateOrganiserRequest extends FormRequest
             'veranstaltung'                 => 'required',
             'veranstaltungBeschreibungLang' => 'nullable',
             'veranstaltungBeschreibungKurz' => 'nullable',
-            'sportartBeschreibungLang'     => 'nullable',
-            'sportartBeschreibungKurz'     => 'nullable',
+            'sportartBeschreibungLang'      => 'nullable',
+            'sportartBeschreibungKurz'      => 'nullable',
+            'materialBeschreibungLang'      => 'nullable',
+            'materialBeschreibungKurz'      => 'nullable',
             'veranstaltungDomain'           => 'nullable',
-            'keineKurse'                   => 'nullable',
+            'keineKurse'                    => 'nullable',
             ''
         ];
     }

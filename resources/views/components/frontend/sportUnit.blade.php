@@ -4,11 +4,14 @@
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Sportgeräte</h2>
+            @if($organiserMaterialBeschreibungLang<>'')
+                <p>{!! $organiserMaterialBeschreibungLang !!}</p>
+                <br>
+            @endif
             <p>Es stehen  {{ $countSportEquipments }} Sportgeräte für die Kurse zur Verfügung.</p>
         </div>
 
         <div class="row">
-
             @foreach($sportEquipments as $sportEquipment)
 
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">

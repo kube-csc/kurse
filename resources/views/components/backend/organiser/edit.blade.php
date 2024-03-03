@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Materialbeschreibung lang für den Kurs:</label>
+                            <label class="form-label">Lange Materialbeschreibung für die Veranstaltung:</label>
                             <textarea name="materialBeschreibungLang" class="form-input-textarea @if($errors->has('materialBeschreibungLang')) is-invalid @endif">{{ old('materialBeschreibungLang', $organiser->materialBeschreibungLang) }}</textarea>
                             @if ($errors->has('materialBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
@@ -140,7 +140,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Materialbeschreibung kurz für den Kurs:</label>
+                            <label class="form-label">Kurze Materialbeschreibung für die Veranstaltung:</label>
                             <textarea name="materialBeschreibungKurz" class="form-input-textarea @if($errors->has('materialBeschreibungKurz')) is-invalid @endif">{{ old('materialBeschreibungKurz', $organiser->materialBeschreibungKurz) }}</textarea>
                             @if ($errors->has('materialBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">

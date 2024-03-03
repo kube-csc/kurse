@@ -81,6 +81,8 @@ class OrganiserController extends Controller
             'veranstaltungBeschreibungKurz' => 'nullable',
             'sportartBeschreibungLang' => 'nullable',
             'sportartBeschreibungKurz' => 'nullable',
+            'materialBeschreibungLang' => 'nullable',
+            'materialBeschreibungKurz' => 'nullable',
             'veranstaltungDomain' => 'nullable',
             'keineKurse' => 'nullable',
              's'

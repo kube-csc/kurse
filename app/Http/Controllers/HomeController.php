@@ -138,8 +138,9 @@ class HomeController extends Controller
                 ->get();
 
         return view('pages.sportUnit' , [
-            'countSportEquipments' => $sportEquipments->count(),
-            'sportEquipments'      => $sportEquipments,
+            'countSportEquipments'               => $sportEquipments->count(),
+            'sportEquipments'                    => $sportEquipments,
+            'organiserMaterialBeschreibungLang'  => $organiser->materialBeschreibungLang,
         ]);
     }
 
