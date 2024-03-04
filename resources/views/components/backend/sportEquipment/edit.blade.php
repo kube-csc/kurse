@@ -112,7 +112,7 @@
 
                         <div class="form-field">
                             <label class="form-label">Tragkraft in kg:</label>
-                            <input type="text" name="tragkraft" class="form-input-text @if($errors->has('tragkraft')) is-invalid @endif" value="{{ old('tragkraft', $sportEquipment->tragkraft) }}"> kg
+                            <input type="text" name="tragkraft" class="form-input-text @if($errors->has('tragkraft')) is-invalid @endif" value="{{ old('tragkraft', $sportEquipment->tragkraft) }}">
                             @if ($errors->has('tragkraft'))
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $errors->first('tragkraft') }}</strong>
