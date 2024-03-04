@@ -15,25 +15,22 @@ return new class extends Migration
         // ToDo: bearbeiten nullable
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id');        //idkurs
-            $table->unsignedBigInteger('organiser_id');     //idVeranstaltung
-            //$table->unsignedBigInteger('sportSection_id');   //idgruppe   // UpdateorgID: Anpassung von sportSection_id auf organiser_id
-            $table->date('kurstermin')->nullable();
-            $table->time('startzeit')->nullable();
-            $table->time('startzeitmax')->nullable();
+            $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('organiser_id');
+
             $table->time('kurslaenge');
 
             $table->dateTime('kursstarttermin');
             $table->dateTime('kursendtermin');
             $table->dateTime('kursstartvorschlag');
             $table->dateTime('kursendvorschlag');
-            $table->dateTime('kursstartvorschlagkunde')->nullable();
-            $table->dateTime('kursendvorschlagkunde')->nullable();
+            $table->dateTime('kursstartvorschlagkunde');
+            $table->dateTime('kursendvorschlagkunde');
 
             $table->integer('sportgeraetanzahl');
 
             $table->unsignedBigInteger('bearbeiter_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('autor_id');
 
             $table->SoftDeletes();
             $table->timestamps();
@@ -49,7 +46,6 @@ return new class extends Migration
     {
         // Entferne die Foren-Keys
         Schema::table('coursedates', function (Blueprint $table) {
-            $table->dropForeign(['trainer_id']);
             $table->dropForeign(['course_id']);
         });
         Schema::dropIfExists('coursedates');
