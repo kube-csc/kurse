@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('materialBeschreibungLang')->nullable();
             $table->text('materialBeschreibungKurz')->nullable();
             $table->text('keineKurse')->nullable();
+            $table->text('terminInformation')->nullable();
             $table->string('veranstaltungDomain')->nullable();
 
             $table->unsignedBigInteger('bearbeiter_id');

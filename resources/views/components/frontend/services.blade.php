@@ -6,7 +6,9 @@
             <h2>Termine</h2>
             <p>Es können aktuell {{ $countCoursedates }} Kurse gebucht werden.</p>
             <br>
-            <p> @include('textimport.kurse') </p>
+            @if($organiser->terminInformation <> '')
+              <p> {!! $organiser->terminInformation !!}</p>
+            @endif
         </div>
 
         <div class="row">

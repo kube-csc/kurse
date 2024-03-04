@@ -47,7 +47,7 @@ class HomeController extends Controller
             ->where('coursedates.organiser_id', $organiser->id)
             ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '>=', $yearnow)
-            ->where('coursedates.kursendtermin', '=<' , date('Y-m-d', strtotime('now')))
+            ->where('coursedates.kursendtermin', '<=' , date('Y-m-d', strtotime('now')))
             ->get()->count();
 
         $teilnehmerKursBookedNows = CourseParticipantBooked::join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')

@@ -84,6 +84,7 @@ class OrganiserController extends Controller
             'materialBeschreibungLang' => 'nullable',
             'materialBeschreibungKurz' => 'nullable',
             'veranstaltungDomain' => 'nullable',
+            'terminInformation' => 'nullable',
             'keineKurse' => 'nullable',
              's'
         ]);

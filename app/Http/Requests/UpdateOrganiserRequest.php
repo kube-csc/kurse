@@ -38,6 +38,7 @@ class UpdateOrganiserRequest extends FormRequest
             'materialBeschreibungKurz'      => 'nullable',
             'veranstaltungDomain'           => 'nullable',
             'keineKurse'                    => 'nullable',
+            'terminInformation'             => 'nullable',
             ''
         ];
     }

@@ -159,6 +159,16 @@
                             @endif
                         </div>
 
+                        <div class="form-field">
+                            <label class="form-label">Information für Termine:</label>
+                            <textarea name="terminInformation" class="form-input-textarea @if($errors->has('terminInformation')) is-invalid @endif">{{ old('terminInformation', $organiser->terminInformation) }}</textarea>
+                            @if ($errors->has('terminInformation'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('terminInformation') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
                     </div>
                 </div>
 

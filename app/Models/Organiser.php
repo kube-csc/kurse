@@ -18,6 +18,7 @@ class Organiser extends Model
         'sportartBeschreibungKurz',
         'materialBeschreibungLang',
         'materialBeschreibungKurz',
+        'terminInformation',
         'keineKurse',
         'veranstaltungDomain',
         'user_id',
