@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('participant_id')->nullable();
             $table->unsignedBigInteger('kurs_id');
 
+            $table->float('teilnehmerFahrtenlaenge')->default(0);
+            $table->text('teilnehmerInformation')->nullable();
+
             $table->foreign('participant_id')->references('id')->on('course_participants');
             $table->foreign('kurs_id')->references('id')->on('coursedates')->onDelete('cascade');
 

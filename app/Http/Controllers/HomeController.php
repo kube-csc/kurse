@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseParticipantBooked;
 use App\Models\Organiser;
-use App\Models\SportEquipmentBooked;
 use App\Models\Trainertable;
 use App\Models\Coursedate;
 use App\Models\Course;
 use App\Models\SportEquipment;
-use Illuminate\Http\Request;
+// ToDo: Wird es noch benötigt?
+// use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -58,6 +58,8 @@ class HomeController extends Controller
 
         $trainers = Trainertable::join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
             ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->join('trainertyps', 'trainertables.trainertyp_id', '=', 'trainertyps.id')
+            ->where('trainertyps.status', 1)
             ->where('organisers.id', $organiser->id)
             ->get();
 
@@ -100,20 +102,21 @@ class HomeController extends Controller
         if ($organiser === null) {
             $organiser = Organiser::find(1);
         }
+
         return view('pages.sportType')->with('organiser', $organiser);
     }
 
     public function trainer()
     {
-
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
             $organiser = Organiser::find(1);
         }
 
-        $trainers = Trainertable::
-              join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
+        $trainers = Trainertable::join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
             ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
+            ->join('trainertyps', 'trainertables.trainertyp_id', '=', 'trainertyps.id')
+            ->where('trainertyps.status', 1)
             ->where('organisers.id', $organiser->id)
             ->get();
 
@@ -172,5 +175,4 @@ class HomeController extends Controller
 
         return $organiser->id;
     }
-
 }

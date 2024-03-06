@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        // ToDo: bearbeiten nullable
         Schema::create('coursedates', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('organiser_id');
 
             $table->time('kurslaenge');
-
             $table->dateTime('kursstarttermin');
             $table->dateTime('kursendtermin');
             $table->dateTime('kursstartvorschlag');
@@ -28,6 +25,8 @@ return new class extends Migration
             $table->dateTime('kursendvorschlagkunde');
 
             $table->integer('sportgeraetanzahl');
+            $table->float('kursFahrtenlaenge')->default(0);
+            $table->text('kursInformation')->nullable();
 
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('autor_id');
@@ -44,7 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Entferne die Foren-Keys
         Schema::table('coursedates', function (Blueprint $table) {
             $table->dropForeign(['course_id']);
         });
