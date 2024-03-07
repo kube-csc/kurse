@@ -39,6 +39,8 @@ class UpdateOrganiserRequest extends FormRequest
             'veranstaltungDomain'           => 'nullable',
             'keineKurse'                    => 'nullable',
             'terminInformation'             => 'nullable',
+            'trainerUeberschrift'           => 'required',
+            'sportartUeberschrift'          => 'required',
             ''
         ];
     }

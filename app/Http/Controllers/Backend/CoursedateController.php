@@ -150,18 +150,20 @@ class CoursedateController extends Controller
 
         $coursedate = new coursedate(
             [
-                'course_id'          => $request->course_id,
-                'organiser_id'       => $this->organiserDomainId(),
-                'kurslaenge'         => $request->kurslaenge,
-                'kursstarttermin'    => $date,
-                'kursendtermin'      => $kursendtermin,
-                'kursstartvorschlag' => $date,
-                'kursendvorschlag'   => $kursendtermin,
-                'sportgeraetanzahl'  => $request->sportgeraetanzahl,
-                'bearbeiter_id'      => Auth::user()->id,
-                'user_id'            => Auth::user()->id,
-                'updated_at'         => Carbon::now(),
-                'created_at'         => Carbon::now()
+                'course_id'               => $request->course_id,
+                'organiser_id'            => $this->organiserDomainId(),
+                'kurslaenge'              => $request->kurslaenge,
+                'kursstarttermin'         => $date,
+                'kursendtermin'           => $kursendtermin,
+                'kursstartvorschlag'      => $date,
+                'kursendvorschlag'        => $kursendtermin,
+                'kursstartvorschlagkunde' => $date,
+                'kursendvorschlagkunde'   => $kursendtermin,
+                'sportgeraetanzahl'       => $request->sportgeraetanzahl,
+                'bearbeiter_id'           => Auth::user()->id,
+                'autor_id'                => Auth::user()->id,
+                'updated_at'              => Carbon::now(),
+                'created_at'              => Carbon::now()
             ]
         );
         $coursedate->save();
@@ -268,15 +270,17 @@ class CoursedateController extends Controller
 
         $coursedate->update(
             [
-                'course_id'          => $request->course_id,
-                'kurslaenge'         => $request->kurslaenge,
-                'kursstarttermin'    => $date,
-                'kursendtermin'      => $kursendtermin,
-                'kursstartvorschlag' => $date,
-                'kursendvorschlag'   => $kursendtermin,
-                'sportgeraetanzahl'  => $request->sportgeraetanzahl,
-                'bearbeiter_id'      => Auth::user()->id,
-                'updated_at'         => Carbon::now()
+                'course_id'               => $request->course_id,
+                'kurslaenge'              => $request->kurslaenge,
+                'kursstarttermin'         => $date,
+                'kursendtermin'           => $kursendtermin,
+                'kursstartvorschlag'      => $date,
+                'kursendvorschlag'        => $kursendtermin,
+                'kursstartvorschlagkunde' => $date,
+                'kursendvorschlagkunde'   => $kursendtermin,
+                'sportgeraetanzahl'       => $request->sportgeraetanzahl,
+                'bearbeiter_id'           => Auth::user()->id,
+                'updated_at'              => Carbon::now()
             ]
         );
 

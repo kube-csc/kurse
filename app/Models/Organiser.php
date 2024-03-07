@@ -21,6 +21,8 @@ class Organiser extends Model
         'terminInformation',
         'keineKurse',
         'veranstaltungDomain',
+        'sportartUeberschrift',
+        'trainerUeberschrift',
         'user_id',
         'bearbeiter_id'
     ];

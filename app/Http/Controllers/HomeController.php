@@ -61,6 +61,9 @@ class HomeController extends Controller
             ->join('trainertyps', 'trainertables.trainertyp_id', '=', 'trainertyps.id')
             ->where('trainertyps.status', 1)
             ->where('organisers.id', $organiser->id)
+            ->where('trainertables.organiser_id', $organiser->id)
+            ->where('trainertables.sichtbar', 1)
+            ->where('trainertables.status', 1)
             ->get();
 
         return view('pages.home' , [
@@ -118,6 +121,9 @@ class HomeController extends Controller
             ->join('trainertyps', 'trainertables.trainertyp_id', '=', 'trainertyps.id')
             ->where('trainertyps.status', 1)
             ->where('organisers.id', $organiser->id)
+            ->where('trainertables.organiser_id', $organiser->id)
+            ->where('trainertables.sichtbar', 1)
+            ->where('trainertables.status', 1)
             ->get();
 
         return view('pages.trainer'  , [
