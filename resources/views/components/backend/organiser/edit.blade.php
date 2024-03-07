@@ -67,6 +67,7 @@
                 @method('PUT')
                 <div class="form-group">
                     <div class="form-card">
+
                         <div class="form-field">
                             <label class="form-label">Veranstaltung:</label>
                             <input type="text" name="veranstaltung" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'veranstaltung', $organiser->veranstaltung) }}">
@@ -104,29 +105,46 @@
                             <textarea name="veranstaltungBeschreibungKurz" class="form-input-textarea @if($errors->has('veranstaltungBeschreibungKurz')) is-invalid @endif">{{ old('veranstaltungBeschreibungKurz', $organiser->veranstaltungBeschreibungKurz) }}</textarea>
                             @if ($errors->has('veranstaltungBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">
+                                 {{-- Test: Wie wird der Validate ausgeben --}}
                                     <strong>{{ $errors->first('veranstaltungBeschreibungKurz') }}</strong>
                                 </span>
                             @endif
                         </div>
 
-                        <div class="form-field">
-                            <label class="form-label">Sportartbeschreibung langer Text:</label>
+                        <div class="form-field" x-data="{ sportartUeberschrift: '{{ old('sportartUeberschrift', $organiser->sportartUeberschrift) }}' }">
+                            <label class="form-label">Überschrift Beschreibungstext:</label>
+                            <input type="text" name="sportartUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" x-model="sportartUeberschrift">
+                            @error('sportartUeberschrift')
+                            <div class="invalid-feedback" role="alert">
+                                {{-- Test: Wie wird der Validate ausgeben --}}
+                                <strong>{{ $message }}</strong>
+                            </div>
+                            @enderror
+                            <label class="form-label"><span x-text="sportartUeberschrift"></span> Beschreibung langer Text:</label>
                             <textarea name="sportartBeschreibungLang" class="form-input-textarea @if($errors->has('sportartBeschreibungLang')) is-invalid @endif">{{ old('sportartBeschreibungLang', $organiser->sportartBeschreibungLang) }}</textarea>
                             @if ($errors->has('sportartBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $errors->first('sportartBeschreibungLang') }}</strong>
                                 </span>
                             @endif
-                        </div>
 
-                        <div class="form-field">
-                            <label class="form-label">Sportartbeschreibung kurzer Text:</label>
+                            <label class="form-label"><span x-text="sportartUeberschrift"></span> Beschreibung kurz Text:</label>
                             <textarea name="sportartBeschreibungKurz" class="form-input-textarea @if($errors->has('sportartBeschreibungKurz')) is-invalid @endif">{{ old('sportartBeschreibungKurz', $organiser->sportartBeschreibungKurz) }}</textarea>
                             @if ($errors->has('sportartBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $errors->first('sportartBeschreibungKurz') }}</strong>
                                 </span>
                             @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Trainer Bezeichnung:</label>
+                            <input type="text" name="trainerUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'trainerUeberschrift', $organiser->trainerUeberschrift) }}">
+                            @error('trainerUeberschrift')
+                            <div class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </div>
+                            @enderror
                         </div>
 
                         <div class="form-field">

@@ -17,7 +17,7 @@
                     <div class="row">
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
                             <a href="/Sportart"><i class="bx bx-info-circle"></i></a>
-                            <!-- Was ist -->
+                            <h4>{{ $organiser->sportartUeberschrift }}</h4>
                             {!! $organiser->sportartBeschreibungKurz !!}
                             <div class="read-more">
                                 <a href="/Sportart" class="icofont-arrow-right">mehr</a>
@@ -25,7 +25,7 @@
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="200">
                             <a href="/Trainer"><i class="bx bx-info-circle"></i></a>
-                            <h4>Trainer</h4>
+                            <h4>{{ $organiser->trainerUeberschrift }}</h4>
                             @foreach($trainers as $trainer)
                                 <ul>
                                     <li>{{ $trainer->getKursTrainer->vorname }} {{ $trainer->getKursTrainer->nachname }}</li>

@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('veranstaltungHeader')->nullable();
             $table->text('veranstaltungBeschreibungLang')->nullable();
             $table->text('veranstaltungBeschreibungKurz')->nullable();
+            $table->string('sportartUeberschrift');
             $table->text('sportartBeschreibungLang')->nullable();
             $table->text('sportartBeschreibungKurz')->nullable();
             $table->text('materialBeschreibungLang')->nullable();
             $table->text('materialBeschreibungKurz')->nullable();
+            $table->string('trainerUeberschrift');
             $table->text('keineKurse')->nullable();
             $table->text('terminInformation')->nullable();
             $table->string('veranstaltungDomain')->nullable();

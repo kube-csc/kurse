@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('trainertables', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('user_id');     //idmitglied
-            $table->unsignedBigInteger('trainertyp_id');      //idtrainer
-            $table->unsignedBigInteger('sportSection_id');    //idabteilung
-            $table->integer('status');         //status
-            $table->integer('sichtbar');       //sichtbar
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('trainertyp_id');
+            $table->unsignedBigInteger('sportSection_id');
+            $table->unsignedBigInteger('organiser_id');
+            $table->integer('status');         //status = 1 aktiv, 0 inaktiv
+            $table->integer('sichtbar');       //sichtbar = 1 sichtbar, 0 unsichtbar
 
             $table->unsignedSmallInteger('autor_id');
             $table->unsignedSmallInteger('bearbeiter_id');
