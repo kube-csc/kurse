@@ -29,19 +29,20 @@ class UpdateOrganiserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'veranstaltung'                 => 'required',
-            'veranstaltungBeschreibungLang' => 'nullable',
-            'veranstaltungBeschreibungKurz' => 'nullable',
-            'sportartBeschreibungLang'      => 'nullable',
-            'sportartBeschreibungKurz'      => 'nullable',
-            'materialBeschreibungLang'      => 'nullable',
-            'materialBeschreibungKurz'      => 'nullable',
-            'veranstaltungDomain'           => 'nullable',
-            'keineKurse'                    => 'nullable',
-            'terminInformation'             => 'nullable',
-            'trainerUeberschrift'           => 'required',
-            'sportartUeberschrift'          => 'required',
-            ''
+            'veranstaltungHeader'            => 'nullable',
+            'veranstaltungBeschreibungLang'  => 'nullable',
+            'veranstaltungBeschreibungKurz'  => 'nullable',
+            'sportartBeschreibungLang'       => 'nullable',
+            'sportartBeschreibungKurz'       => 'nullable',
+            'materialBeschreibungLang'       => 'nullable',
+            'materialBeschreibungKurz'       => 'nullable',
+            'keineKurse'                     => 'nullable',
+            'terminInformation'              => 'nullable',
+            'mitgliedschaftKurz'             => 'nullable',
+            'mitgliedschaftLang'             => 'nullable',
+            'trainerUeberschrift'            => 'required',
+            'sportartUeberschrift'           => 'required',
+            'materialUeberschrift'           => 'required',
         ];
     }
 }

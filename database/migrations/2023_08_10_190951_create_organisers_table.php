@@ -15,18 +15,21 @@ return new class extends Migration
             $table->id();
 
             $table->string('veranstaltung');
-            $table->string('veranstaltungHeader')->nullable();
-            $table->text('veranstaltungBeschreibungLang')->nullable();
-            $table->text('veranstaltungBeschreibungKurz')->nullable();
-            $table->string('sportartUeberschrift');
-            $table->text('sportartBeschreibungLang')->nullable();
-            $table->text('sportartBeschreibungKurz')->nullable();
-            $table->text('materialBeschreibungLang')->nullable();
-            $table->text('materialBeschreibungKurz')->nullable();
-            $table->string('trainerUeberschrift');
-            $table->text('keineKurse')->nullable();
-            $table->text('terminInformation')->nullable();
             $table->string('veranstaltungDomain')->nullable();
+            $table->string('veranstaltungHeader')->nullable();
+
+            //ToDo: Die Daten werden n der Tabelle "Organiserinformations" gespeichert
+            //$table->text('veranstaltungBeschreibungLang')->nullable();
+            //$table->text('veranstaltungBeschreibungKurz')->nullable();
+            $table->string('sportartUeberschrift')->nullable();;
+            //$table->text('sportartBeschreibungLang')->nullable();
+            //$table->text('sportartBeschreibungKurz')->nullable();
+            $table->string('materialUeberschrift')->nullable();;
+            //$table->text('materialBeschreibungLang')->nullable();
+            //$table->text('materialBeschreibungKurz')->nullable();
+            $table->string('trainerUeberschrift')->nullable();;
+            //$table->text('keineKurse')->nullable();
+            //$table->text('terminInformation')->nullable();
 
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('autor_id');

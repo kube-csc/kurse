@@ -15,7 +15,6 @@ return new class extends Migration
         Schema::create('sport_equipment', function (Blueprint $table) {
             $table->id();
 
-            //$table->integer('idsportgeraet', true);
             $table->string('sportgeraet');
             $table->unsignedBigInteger('sportSection_id');
             $table->string('bild', 100);
@@ -24,11 +23,11 @@ return new class extends Migration
             $table->date('anschafdatum');
             $table->date('verschrottdatum')->nullable();
             $table->integer('sportleranzahl')->default(1);
-            $table->float('laenge');
-            $table->float('breite');
-            $table->float('hoehe');
-            $table->float('gewicht');
-            $table->float('tragkraft');
+            $table->float('laenge')->default(0);
+            $table->float('breite')->default(0);
+            $table->float('hoehe')->default(0);
+            $table->float('gewicht')->default(0);
+            $table->float('tragkraft')->default(0);
             $table->text('typ')->nullable();
             $table->string('privat', 1);
             $table->unsignedBigInteger('mitgliedprivat_id')->nullable();

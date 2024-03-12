@@ -13,13 +13,17 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('organiser_id');
+
             $table->string('kursName');
             $table->text('kursBeschreibung')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
 
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
+            $table->unsignedBigInteger('freigeber_id')->nullable();
+            $table->timestamp('letzteFreigabe')->nullable();
 
             $table->SoftDeletes();
             $table->timestamps();

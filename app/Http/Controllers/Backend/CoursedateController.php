@@ -32,7 +32,13 @@ class CoursedateController extends Controller
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
-        return view('components.backend.courseDate.index', compact('coursedates'));
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return view('components.backend.courseDate.index', compact('coursedates', 'organiser'));
     }
 
     public function indexAll()
@@ -42,7 +48,13 @@ class CoursedateController extends Controller
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
-        return view('components.backend.courseDate.indexAll', compact('coursedates'));
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return view('components.backend.courseDate.indexAll', compact('coursedates', 'organiser'));
     }
 
     /**
@@ -65,7 +77,7 @@ class CoursedateController extends Controller
         }
 
         $courses = Course::where('organiser_id' , $this->organiserDomainId())
-            ->orderByDesc('kursName')
+            ->orderBy('kursName')
             ->get();
 
         $course_id = 0;
@@ -81,7 +93,8 @@ class CoursedateController extends Controller
             'sportgeraetanzahlMax',
             'sportgeraetanzahl',
             'courses',
-            'course_id'
+            'course_id',
+            'organiser'
         ]));
     }
 
@@ -160,6 +173,7 @@ class CoursedateController extends Controller
                 'kursstartvorschlagkunde' => $date,
                 'kursendvorschlagkunde'   => $kursendtermin,
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
+                'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
                 'autor_id'                => Auth::user()->id,
                 'updated_at'              => Carbon::now(),
@@ -194,7 +208,7 @@ class CoursedateController extends Controller
         }
 
         $courses = Course::where('organiser_id' , $organiser->id)
-            ->orderByDesc('kursName')
+            ->orderBy('kursName')
             ->get();
 
         $sportgeraetanzahlMax = $this->sportgeraetanzahlMaxCourse($coursedate->id);
@@ -202,7 +216,8 @@ class CoursedateController extends Controller
         return view('components.backend.courseDate.edit', compact([
             'coursedate',
             'sportgeraetanzahlMax',
-            'courses'
+            'courses',
+            'organiser'
         ]));
     }
 
@@ -279,6 +294,7 @@ class CoursedateController extends Controller
                 'kursstartvorschlagkunde' => $date,
                 'kursendvorschlagkunde'   => $kursendtermin,
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
+                'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
                 'updated_at'              => Carbon::now()
             ]

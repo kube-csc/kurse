@@ -57,7 +57,7 @@
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
                         <label class="form-label">Name des Kurses:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
-                        <label class="form-label">Kursleiter:</label>
+                        <label class="form-label">{{ $organiser->trainerUeberschrift }}:</label>
                          @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
@@ -65,7 +65,7 @@
                             @if($coursedate->sportgeraetanzahl)
                                 {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             @else
-                                alle verfügbaren Plätze
+                                alle verfügbaren Teilnehmer
                             @endif
                         </div>
                     </div>

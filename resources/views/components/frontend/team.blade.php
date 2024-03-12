@@ -3,8 +3,8 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
-            <h2>Trainer</h2>
-            <p>Wir haben {{ $countTrainers }} Trainer für die Kurse zur Verfügung.</p>
+            <h2>{{ $organiser->trainerUeberschrift }}</h2>
+            <p>Wir haben {{ $countTrainers }} {{ $organiser->trainerUeberschrift }} für unsere {{ $organiser->veranstaltung }} zur Verfügung.</p>
         </div>
 
         <div class="row">

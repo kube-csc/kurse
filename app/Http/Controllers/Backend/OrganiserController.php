@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrganiserRequest;
 use App\Http\Requests\UpdateOrganiserRequest;
 use App\Models\Organiser;
+use App\Models\Organiserinformation;
 use App\Models\SportSection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -75,31 +76,44 @@ class OrganiserController extends Controller
         //ToDo: Verbessern der Validierung
         //$data = $request->validated();
 
-        $data = $request->validate([
-            'veranstaltung'                 => 'required',
+        $organiserinformationData = $request->validate([
             'veranstaltungBeschreibungLang' => 'nullable',
             'veranstaltungBeschreibungKurz' => 'nullable',
             'sportartBeschreibungLang'      => 'nullable',
             'sportartBeschreibungKurz'      => 'nullable',
             'materialBeschreibungLang'      => 'nullable',
             'materialBeschreibungKurz'      => 'nullable',
+            'mitgliedschaftKurz'            => 'nullable',
+            'mitgliedschaftLang'            => 'nullable',
             'veranstaltungDomain'           => 'nullable',
             'terminInformation'             => 'nullable',
-            'keineKurse'                    => 'nullable',
-            'trainerUeberschrift'           => 'required',
-            'sportartUeberschrift'          => 'required',
+            'keineKurse'                    => 'nullable'
         ]);
 
-        $data['bearbeiter_id'] = Auth::user()->id;
-        $data['updated_at'] = Carbon::now();
+        $organiserinformationData['bearbeiter_id'] = Auth::user()->id;
+        $organiserinformationData['updated_at'] = Carbon::now();
 
-        $organiser->update($data);
+        $organiserinformation = Organiserinformation::find($organiser->id);
+
+        $organiserinformation->update($organiserinformationData);
+
+        $organiserData = $request->validate([
+            'veranstaltung'         => 'required',
+            'veranstaltungDomain'   => 'nullable',
+            'sportartUeberschrift'  => 'nullable',
+            'materialUeberschrift'  => 'nullable',
+            'trainerUeberschrift'   => 'nullable'
+        ]);
+
+        $organiserData['bearbeiter_id'] = Auth::user()->id;
+        $organiserData['updated_at'] = Carbon::now();
+
+        $organiser->update($organiserData);
 
         self::success('Daten der Veranstaltung erfolgreich geändert');
 
         return redirect()->route('backend.organiser.index');
     }
-
 
     /**
      * Remove the specified resource from storage.

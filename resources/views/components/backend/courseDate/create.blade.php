@@ -18,12 +18,20 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group">
-                        <div class="form-card">
+                        <div class="form-card" x-data="{ kursstatterminDatum: '{{ $kursstartterminDatum }}', kursendterminDatum: '{{ $kursstartterminDatum }}' }">
                             <div class="form-field">
                                 <label for="kursstarttermin" class="form-label">Start Datum</label>
                                 <div class="form-field flex">
-                                    <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date" value="{{ $kursstartterminDatum }}">
+                                    <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date" value="{{ $kursstartterminDatum }}" x-model="kursstatterminDatum" @change="kursendterminDatum = kursstatterminDatum">
                                     <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date" value="{{ $kursstartterminTime }}">
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="kursendtermin" class="form-label">End Datum</label>
+                                <div class="form-field flex">
+                                    <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminDatum }}" x-model="kursendterminDatum">
+                                    <input type="time" name="kursendterminTime" id="kursendterminTime" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminTime }}">
                                 </div>
                             </div>
 
@@ -33,16 +41,8 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="kursendtermin" class="form-label">End Datum</label>
-                                <div class="form-field flex">
-                                    <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminDatum }}">
-                                    <input type="time" name="kursendterminTime" id="kursendterminTime" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminTime }}">
-                                </div>
-                            </div>
-
-                            <div class="form-field">
-                                <label for="trainer_id" class="form-label">Trainer</label>
-                                <div class="form-text">{{ Auth::user()->vorname }} {{ Auth::user()->vorname }}</div>
+                                <label for="trainer_id" class="form-label">{{ $organiser->trainerUeberschrift }}:</label>
+                                <div class="form-input-text">{{ Auth::user()->vorname }} {{ Auth::user()->vorname }}</div>
                             </div>
 
                             <div class="form-field">
@@ -68,8 +68,18 @@
                                         </option>
                                     @endfor
                                 </select>
-
                             </div>
+
+                            <div class="form-field">
+                                <label class="form-label">Information zum Kurs:</label>
+                                <textarea name="kursInformation" class="form-input-textarea @if($errors->has('kursInformation')) is-invalid @endif">{{ old('kursInformation', '')}}</textarea>
+                                @if ($errors->has('kursInformation'))
+                                    <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('kursInformation') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+
                         </div>
                     </div>
                     <div class="form-footer">

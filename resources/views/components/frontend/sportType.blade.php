@@ -6,7 +6,7 @@
       <h2></h2>
       <ol>
         <li><a href="/">Home</a></li>
-        <li>Sportart</li>
+        <li>{{ $organiser->sportartUeberschrift }}</li>
       </ol>
     </div>
   </div>
@@ -17,7 +17,7 @@
 
       <div class="section-title" data-aos="fade-in" data-aos-delay="100">
           <div style="text-align: left;">
-              {!! $organiser->sportartBeschreibungLang !!}
+              {!! $organiser->getOrganiserInformation->sportartBeschreibungLang !!}
           </div>
       </div>
 

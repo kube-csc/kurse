@@ -32,7 +32,7 @@ Route::get('/Information/Datenschutzerklaerung', 'App\Http\Controllers\Datenschu
 Route::get('/Angebot', 'App\Http\Controllers\HomeController@offer')->name('frontend.offer');
 Route::get('/Sportart', 'App\Http\Controllers\HomeController@sportType');
 Route::get('/Trainer', 'App\Http\Controllers\HomeController@trainer');
-Route::get('/Sportgeräte', 'App\Http\Controllers\HomeController@sportUnit');
+Route::get('/Sportgeraete', 'App\Http\Controllers\HomeController@sportUnit');
 Route::get('/Kurse', 'App\Http\Controllers\HomeController@coursetype');
 Route::get('/Kurseangebot/{id}', 'App\Http\Controllers\HomeController@courseDate')->name('frontend.course');
 

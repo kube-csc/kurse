@@ -21,6 +21,7 @@ class Coursedate extends Model
         'kursstartvorschlagkunde',
         'kursendvorschlagkunde',
         'sportgeraetanzahl',
+        'kursInformation',
         'autor_id',
         'bearbeiter_id'
     ];

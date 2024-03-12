@@ -8,6 +8,8 @@ use App\Models\Trainertable;
 use App\Models\Coursedate;
 use App\Models\Course;
 use App\Models\SportEquipment;
+use Illuminate\Support\Carbon;
+
 // ToDo: Wird es noch benötigt?
 // use Illuminate\Http\Request;
 
@@ -31,7 +33,13 @@ class HomeController extends Controller
                                  ->orderBy('kursendtermin')
                                  ->get();
 
-        $courses = Course::where('organiser_id', $organiser->id)->get();
+        $yearAgo = Carbon::now()->subDays(365);
+        $courses = Course::select('courses.kursName')
+            ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
+            ->where('coursedates.kursendtermin', '>=' , $yearAgo)
+            ->where('courses.organiser_id', $organiser->id)
+            ->groupBy('courses.kursName')
+            ->get();
 
         $sportEquipments = SportEquipment::join('organiser_sport_section', 'sport_equipment.sportSection_id', '=', 'organiser_sport_section.sport_section_id')
             ->join ('organisers', 'organiser_sport_section.organiser_id', '=', 'organisers.id')
@@ -129,6 +137,7 @@ class HomeController extends Controller
         return view('pages.trainer'  , [
             'trainers'        => $trainers,
             'countTrainers'   => $trainers->count(),
+            'organiser'       => $organiser
         ]);
     }
 
@@ -149,13 +158,23 @@ class HomeController extends Controller
         return view('pages.sportUnit' , [
             'countSportEquipments'               => $sportEquipments->count(),
             'sportEquipments'                    => $sportEquipments,
-            'organiserMaterialBeschreibungLang'  => $organiser->materialBeschreibungLang,
+            'organiser'                           => $organiser,
         ]);
     }
 
     public function courseType()
     {
-        $courses  = Course::where('organiser_id', $this->organiserDomainId())->get();
+        $organiserDomainId=$this->organiserDomainId();
+
+        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->get();
+        $yearAgo = Carbon::now()->subDays(365);
+        $coursesYearago = Course::select('courses.id')
+            ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
+            ->where('coursedates.kursendtermin', '>=' , $yearAgo)
+            ->where('courses.organiser_id', $organiserDomainId)
+            ->groupBy('courses.id')
+            ->get();
+        $courses = $courseAlls->intersect($coursesYearago)->unique('id');
 
         return view('pages.course' , [
             'courses' => $courses

@@ -4,10 +4,10 @@
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Termine</h2>
-            <p>Es können aktuell {{ $countCoursedates }} Kurse gebucht werden.</p>
+            <p>Folgende Anzahl der {{ $organiser->veranstaltung }} stehen zur Zeit zur Verfügung: {{ $countCoursedates }}.</p>
             <br>
-            @if($organiser->terminInformation <> '')
-              <p> {!! $organiser->terminInformation !!}</p>
+            @if($organiser->getOrganiserInformation->terminInformation <> '')
+              <p> {!! $organiser->getOrganiserInformation->terminInformation !!}</p>
             @endif
         </div>
 
@@ -17,7 +17,7 @@
 
             <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                 <div class="icon-box" data-aos="fade-up">
-                    <a href="{{ route('frontend.course' , $coursedate->id)  }}"> <div class="icon"><i class="bx bx-calendar"></i></div></a>
+                    <a href="{{ route('frontend.course' , $coursedate->id)  }}"> <div class="icon"><i class="bx bx-calendar-event"></i></div></a>
                     <h4 class="title"><a href="{{ route('frontend.course' , $coursedate->id)  }}">{{ $coursedate->getCousename->kursName }} </a></h4>
                     <p class="description">
                         Kurs im Zeitfenster<br>

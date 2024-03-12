@@ -31,6 +31,7 @@ class StoreCoursedateRequest extends FormRequest
         // ToDo - Add more validation rules
         return [
             'kurslaenge'          => 'required',
+            'kursInformation'     => 'nullable',
         ];
     }
 }

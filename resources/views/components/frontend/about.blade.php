@@ -6,9 +6,9 @@
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                 <div class="content">
                     @if($countCoursedates==0)
-                        <p>{!! $organiser->keineKurse !!}</p>
+                        <p>{!! $organiser->getOrganiserInformation->keineKurse !!}</p>
                     @endif
-                    <p>{!! $organiser->veranstaltungBeschreibungKurz !!}</p>
+                    <p>{!! $organiser->getOrganiserInformation->veranstaltungBeschreibungKurz !!}</p>
                     <a href="{{ route('frontend.offer') }}" class="about-btn">mehr Informationen <i class="bx bx-chevron-right"></i></a>
                 </div>
             </div>
@@ -18,7 +18,7 @@
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
                             <a href="/Sportart"><i class="bx bx-info-circle"></i></a>
                             <h4>{{ $organiser->sportartUeberschrift }}</h4>
-                            {!! $organiser->sportartBeschreibungKurz !!}
+                            {!! $organiser->getOrganiserInformation->sportartBeschreibungKurz !!}
                             <div class="read-more">
                                 <a href="/Sportart" class="icofont-arrow-right">mehr</a>
                             </div>
@@ -36,19 +36,19 @@
                             </div>
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
-                            <a href="/Sportgeräte"><i class="bx bx-info-circle"></i></a>
-                            @if($organiser->materialBeschreibungKurz<>'')
-                                <p>{!! $organiser->materialBeschreibungKurz !!}</p>
+                            <a href="/Sportgeraete"><i class="bx bx-info-circle"></i></a>
+                            <h4>{{ $organiser->materialUeberschrift }}</h4>
+                            @if($organiser->getOrganiserInformation->materialBeschreibungKurz<>'')
+                                <p>{!! $organiser->getOrganiserInformation->materialBeschreibungKurz !!}</p>
                             @else
-                            <h4>Sportgeräte</h4>
-                            <ul>
+                             <ul>
                                 @foreach($sportEquipments as $sportEquipment)
                                     <li>{{ $sportEquipment->sportgeraet }}</li>
                                 @endforeach
                             </ul>
                             @endif
                             <div class="read-more">
-                                <a href="/Sportgeräte" class="icofont-arrow-right">mehr</a>
+                                <a href="/Sportgeraete" class="icofont-arrow-right">mehr</a>
                             </div>
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">

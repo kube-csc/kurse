@@ -3,12 +3,12 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
-            <h2>Sportgeräte</h2>
-            @if($organiserMaterialBeschreibungLang<>'')
-                <p>{!! $organiserMaterialBeschreibungLang !!}</p>
+            <h2>{{ $organiser->materialUeberschrift }}</h2>
+            @if($organiser->getOrganiserInformation->materialBeschreibungLang<>'')
+                <p>{!! $organiser->getOrganiserInformation->materialBeschreibungLang !!}</p>
                 <br>
             @endif
-            <p>Es stehen  {{ $countSportEquipments }} Sportgeräte für die Kurse zur Verfügung.</p>
+            <p>Es stehen  {{ $countSportEquipments }} {{ $organiser->materialUeberschrift }} für die Kurse zur Verfügung.</p>
         </div>
 
         <div class="row">
@@ -36,13 +36,13 @@
                             <p class="description">
                                 Masse:
                                 @if($sportEquipment->laenge > 0)
-                                    L: {{ $sportEquipment->laenge }} m <br>
+                                    L: {{ $sportEquipment->laenge }} m<br>
                                 @endif
                                 @if($sportEquipment->breite > 0)
-                                    B: {{ $sportEquipment->breite }} m <br>
+                                    B: {{ $sportEquipment->breite }} m<br>
                                 @endif
                                 @if($sportEquipment->hoehe > 0)
-                                    H: {{ $sportEquipment->hoehe }} m <br>
+                                    H: {{ $sportEquipment->hoehe }} m<br>
                                 @endif
                             </p>
                         @endif

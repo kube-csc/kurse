@@ -11,23 +11,16 @@ class Organiser extends Model
 
     protected $fillable = [
         'veranstaltung',
-        'veranstaltungBild',
-        'veranstaltungBeschreibungLang',
-        'veranstaltungBeschreibungKurz',
-        'sportartBeschreibungLang',
-        'sportartBeschreibungKurz',
-        'materialBeschreibungLang',
-        'materialBeschreibungKurz',
-        'terminInformation',
-        'keineKurse',
         'veranstaltungDomain',
         'sportartUeberschrift',
+        'materialUeberschrift',
         'trainerUeberschrift',
         'user_id',
         'bearbeiter_id'
     ];
 
-    //ToDo: Wird dieses Benötigt?
+    //ToDo: Wird dieses benötigt?
+    /*
     public function sportSections()
     {
         return $this->belongsToMany('App\SportSection', 'organiser_sport_section', 'organiser_id', 'sport_section_id');
@@ -36,5 +29,11 @@ class Organiser extends Model
     public function sportSection()
     {
         return $this->belongsToMany(SportSection::class);
+    }
+    */
+
+    public function getOrganiserInformation()
+    {
+        return $this->hasOne(OrganiserInformation::class);
     }
 }
