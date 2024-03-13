@@ -183,10 +183,26 @@ class HomeController extends Controller
 
     public function courseDate($id)
     {
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            $organiser = Organiser::find(1);
+        }
+
         $coursedate = Coursedate::find($id);
 
+        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->get();
+
         return view('pages.coursedate' , [
-            'coursedate' => $coursedate
+            'coursedate'            => $coursedate,
+            'organiser'             => $organiser,
+            'sportEquipments'       => $sportEquipmentBookeds
         ]);
     }
 

@@ -34,6 +34,6 @@ class Organiser extends Model
 
     public function getOrganiserInformation()
     {
-        return $this->hasOne(OrganiserInformation::class);
+        return $this->hasOne(Organiserinformation::class);
     }
 }
