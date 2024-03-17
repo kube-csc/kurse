@@ -42,7 +42,7 @@
 
                             <div class="form-field">
                                 <label for="trainer_id" class="form-label">{{ $organiser->trainerUeberschrift }}:</label>
-                                <div class="form-input-text">{{ Auth::user()->vorname }} {{ Auth::user()->vorname }}</div>
+                                <div class="form-input-text">{{ Auth::user()->vorname }} {{ Auth::user()->nachname }}</div>
                             </div>
 
                             <div class="form-field">

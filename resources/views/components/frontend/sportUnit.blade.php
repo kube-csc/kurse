@@ -47,10 +47,10 @@
                             </p>
                         @endif
                         <p class="description">
-                          @if($sportEquipment->tragkraft != Null && $sportEquipment->tragkraft != 0)
+                          @if($sportEquipment->tragkraft > 0)
                                 Tragkraft: {{ $sportEquipment->tragkraft }} kg<br>
                           @endif
-                          @if($sportEquipment->gewicht != Null && $sportEquipment->gewicht != 0)
+                          @if($sportEquipment->gewicht > 0)
                                 Gewicht: {{ $sportEquipment->volumen }} kg<br>
                           @endif
                         </p>

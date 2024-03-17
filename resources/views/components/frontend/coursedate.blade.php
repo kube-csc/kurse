@@ -24,7 +24,13 @@
                 {{ date("d.m.Y", strtotime($coursedate->kursstarttermin)) }} {{ date("H:i", strtotime($coursedate->kursstarttermin)) }} Uhr<br>
                 {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
                 Kurslänge: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
-                <br>
+                Mögliche Teilnehmer:
+                @if($coursedate->sportgeraetanzahl > 0)
+                    {{ $coursedate->sportgeraetanzahl }}
+                @else
+                    {{ $sportgeraetanzahlMaxCourse }}
+                @endif
+                <br><br>
                 <h3>{{ $organiser->trainerUeberschrift }}:</h3>
                 @foreach($coursedate->users as $user)
                     {{ $user->vorname }} {{ $user->nachname }}<br>

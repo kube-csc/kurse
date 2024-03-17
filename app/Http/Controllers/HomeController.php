@@ -200,9 +200,10 @@ class HomeController extends Controller
             ->get();
 
         return view('pages.coursedate' , [
-            'coursedate'            => $coursedate,
-            'organiser'             => $organiser,
-            'sportEquipments'       => $sportEquipmentBookeds
+            'coursedate'                 => $coursedate,
+            'organiser'                  => $organiser,
+            'sportEquipments'            => $sportEquipmentBookeds,
+            'sportgeraetanzahlMaxCourse' => $this->sportgeraetanzahlMaxCourse($id)
         ]);
     }
 
@@ -215,5 +216,17 @@ class HomeController extends Controller
         }
 
         return $organiser->id;
+    }
+
+    public function sportgeraetanzahlMaxCourse($id)
+    {
+        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl');
+        $sportgeraetanzahlMax=Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
+            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
+            ->where('coursedates.id', $id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->count();
+
+        return $sportgeraetanzahlMax;
     }
 }

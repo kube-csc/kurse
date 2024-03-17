@@ -121,6 +121,16 @@
                         </div>
 
                         <div class="form-field">
+                            <label class="form-label">Sportleranzahl:</label>
+                            <input type="text" name="sportleranzahl" class="form-input-text @if($errors->has('sportleranzahl')) is-invalid @endif" value="{{ old('sportleranzahl', $sportEquipment->sportleranzahl) }}">
+                            @if ($errors->has('sportleranzahl'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportleranzahl') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
                             <label class="form-label">Typ:</label>
                             <textarea name="typ" class="form-input-textarea @if($errors->has('typ')) is-invalid @endif">{{ old('typ', $sportEquipment->typ) }}</textarea>
                             @if ($errors->has('typ'))

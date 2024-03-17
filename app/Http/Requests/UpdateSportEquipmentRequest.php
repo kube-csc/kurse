@@ -28,11 +28,12 @@ class UpdateSportEquipmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        //ToDo: Validierung überarbeiten
+        //ToDo: ValidationRule überarbeiten
         return [
-               'required'        => 'sportgeraet',
+               'sportgeraet'     => 'required',
                'anschafdatum'    => 'required|date',
                'verschrottdatum' => 'nullable|date',
+               'sportleranzahl'  => 'min:1',
         ];
     }
 }

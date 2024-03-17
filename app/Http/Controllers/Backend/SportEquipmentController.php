@@ -84,17 +84,18 @@ class SportEquipmentController extends Controller
      */
     public function update(UpdateSportEquipmentRequest $request, SportEquipment $sportEquipment)
     {
-        //ToDO: Verbessern der Valentierung
+        //ToDO: Verbessern der ValidationRule
         $data = $request->validate([
-            'sportgeraet' => 'required|string|max:255',
-            'anschafdatum' => 'required|date',
+            'sportgeraet'     => 'required|string|max:255',
+            'anschafdatum'    => 'required|date',
             'verschrottdatum' => 'nullable|date',
-            'laenge' => 'nullable',
-            'breite' => 'nullable',
-            'hoehe' => 'nullable',
-            'gewicht' => 'nullable',
-            'tragkraft' => 'nullable',
-            'typ' => 'nullable',
+            'laenge'          => 'required',
+            'breite'          => 'required',
+            'hoehe'           => 'required',
+            'gewicht'         => 'required',
+            'tragkraft'       => 'required',
+            'typ'             => 'nullable',
+            'sportleranzahl'  => 'min:1',
         ]);
 
         $data['bearbeiter_id'] = Auth::user()->id;

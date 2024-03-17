@@ -57,7 +57,7 @@
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
                          <div>
-                            @if($coursedate->sportgeraetanzahl)
+                            @if($coursedate->sportgeraetanzahl > 0)
                                 {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             @else
                                 alle möglichen Teilnehmer
