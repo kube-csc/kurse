@@ -20,16 +20,17 @@ class CourseParticipantSeeder extends Seeder
                 [
                   array(
                       'id' => '1',
-                      'nachname' => 'Nachname Kursteilnehmer SUP',
-                      'vorname' => 'Vorname Kursteilnehmer',
-                      'created_at' => '2020-08-16',
-                      'sportSection_id' => '4',
-                      'passwort' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
-                      'email' => 'kurs1@test.de',
-                      'telefon' => '123456789',
-                      'loginname' => 'KursteilnehmerSup',
-                      'nachricht' => '0',
-                      'status' => '1'),
+                      'nachname'     => 'Nachname Kursteilnehmer SUP',
+                      'vorname'      => 'Vorname Kursteilnehmer',
+                      'name'         => 'Nachname Kursteilnehmer SUP, Vorname Kursteilnehmer',
+                      'organiser_id' => '1',
+                      'password'     => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
+                      'email'        => 'kurs1@test.de',
+                      'telefon'      => '123456789',
+                      'nachricht'    => '0',
+                      'status'       => '1',
+                      'created_at'   => '2020-08-16'
+                  )
                 ]);
     }
 }

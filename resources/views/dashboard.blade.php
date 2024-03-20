@@ -8,31 +8,7 @@
     <div class="main-box">
         <div class="box">
             <div class="dashboard-menu-box">
-                <x-backend.coursedate.trainer-course-date />
-            </div>
-        </div>
-    </div>
-
-    <div class="main-box">
-        <div class="box">
-            <div class="dashboard-menu-box">
-                <x-backend.sportEquipment.dashboard :organiser="$organiser" />
-            </div>
-        </div>
-    </div>
-
-    <div class="main-box">
-        <div class="box">
-            <div class="dashboard-menu-box">
-                <x-backend.course.dashboard />
-            </div>
-        </div>
-    </div>
-
-    <div class="main-box">
-        <div class="box">
-            <div class="dashboard-menu-box">
-                <x-backend.organiser.dashboard />
+             Kursteilnehmer
             </div>
         </div>
     </div>

@@ -5,22 +5,34 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
+                    @if(request()->is('admin*') || request()->is('backend*'))
+                    <a href="{{ route('admin.dashboard') }}">
+                        <x-application-mark class="block h-9 w-auto" />
+                    </a>
+                    @else
                     <a href="{{ route('dashboard') }}">
                         <x-application-mark class="block h-9 w-auto" />
                     </a>
+                    @endif
                 </div>
-
+ab
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('backend.courseDate.index') }}" :active="request()->routeIs('backend.courseDate.index')">
-                        {{ __('backend.Course Dates') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('backend.courseDate.indexAll') }}" :active="request()->routeIs('backend.courseDate.indexAll')">
-                        {{ __('backend.Course Dates All') }}
-                    </x-nav-link>
+                    @if(request()->is('admin*') || request()->is('backend*'))
+                        <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('backend.courseDate.index') }}" :active="request()->routeIs('backend.courseDate.index')">
+                            {{ __('backend.Course Dates') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('backend.courseDate.indexAll') }}" :active="request()->routeIs('backend.courseDate.indexAll')">
+                            {{ __('backend.Course Dates All') }}
+                        </x-nav-link>
+                    @else
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -104,9 +116,11 @@
                                 {{ __('Manage Account') }}
                             </div>
 
+                            @if(!request()->is('admin*') && !request()->is('backend*'))
                             <x-dropdown-link href="{{ route('profile.show') }}">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
+                            @endif
 
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
@@ -145,9 +159,15 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            @if(request()->is('admin*') || request()->is('backend*'))
+            <x-responsive-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            @else
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -166,10 +186,12 @@
             </div>
 
             <div class="mt-3 space-y-1">
+                @if(!request()->is('admin*') && !request()->is('backend*'))
                 <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+                @endif
 
                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                     <x-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')">

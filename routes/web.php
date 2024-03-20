@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
+use App\Http\Controllers\AdminController;
 use App\Models\Organiser;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,27 @@ Route::get('/Sportgeraete', 'App\Http\Controllers\HomeController@sportUnit');
 Route::get('/Kurse', 'App\Http\Controllers\HomeController@coursetype');
 Route::get('/Kurseangebot/{id}', 'App\Http\Controllers\HomeController@courseDate')->name('frontend.course');
 
+Route::middleware('admin:admin')->group(function () {
+    Route::get('admin/login', [AdminController::Class, 'loginForm']);
+    Route::post('admin/login', [AdminController::Class, 'store'])->name('admin.login');
+});
+
+Route::middleware([
+    'auth:sanctum,admin',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+
+        if (!$organiser) {
+            $organiser = new Organiser;
+            // Setzen Sie hier die Standardwerte für das Organiser-Objekt
+        }
+
+        return view('admin/dashboard', ['organiser' => $organiser]);
+    })->name('admin.dashboard')->middleware('auth:admin');
+
 
 Route::middleware([
     'auth:sanctum',
@@ -52,6 +74,7 @@ Route::middleware([
 
         return view('dashboard', ['organiser' => $organiser]);
     })->name('dashboard');
+});
 
     /*  ToDo: Auf Resource umstellen
         Route::resource('/post', CoursedateController::class;

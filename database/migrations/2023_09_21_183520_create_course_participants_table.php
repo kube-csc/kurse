@@ -13,18 +13,25 @@ return new class extends Migration
     {
         Schema::create('course_participants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sportSection_id');
+            $table->unsignedBigInteger('organiser_id');
             $table->string('nachname', 60);
             $table->string('vorname', 60);
-            $table->string('passwort');
-            $table->string('email', 60);
+
+            $table->string('email')->unique();
             $table->string('telefon', 60);
-            $table->string('loginname', 60);
             $table->integer('nachricht');
             $table->integer('status');
 
+            $table->string('name')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->foreignId('current_team_id')->nullable();
+            $table->text('profile_photo_path')->nullable();
+
             $table->SoftDeletes();
             $table->timestamps();
+
         });
     }
 
