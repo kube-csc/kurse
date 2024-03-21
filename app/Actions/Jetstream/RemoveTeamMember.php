@@ -3,7 +3,7 @@
 namespace App\Actions\Jetstream;
 
 use App\Models\Team;
-use App\Models\User;
+use App\Models\CourseParticipant as User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;

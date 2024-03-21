@@ -2,7 +2,7 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\User;
+use App\Models\CourseParticipant as User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -21,6 +21,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'nachname' => ['required', 'string', 'max:255'],
+            'vorname' => ['required', 'string', 'max:255'],
+            'telefon' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10'
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {

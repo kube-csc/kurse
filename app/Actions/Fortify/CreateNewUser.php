@@ -2,7 +2,8 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\User;
+use App\Models\CourseParticipant as User;
+use App\Models\Organiser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -24,12 +25,28 @@ class CreateNewUser implements CreatesNewUsers
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
+            'vorname' => 'required|string|max:255',
+            'nachname' => 'required|string|max:255',
+            'telefon' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'pruefsumme' => ['required', 'integer', 'size:99'],
         ])->validate();
 
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
         return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
+            'name'         => $input['name'],
+            'email'        => $input['email'],
+            'password'     => Hash::make($input['password']),
+            'organiser_id' => $organiser->id,
+            'nachname'     => $input['nachname'],
+            'vorname'      => $input['vorname'],
+            'telefon'      => $input['telefon'],
+            'nachricht'    => 0,
+            'status'       => 0,
         ]);
     }
 }

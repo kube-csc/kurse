@@ -19,6 +19,7 @@
                     <li><a href="/logout">Abmelden</a></li>
                 @else
                     <li><a href="/login">Anmelden</a></li>
+                    <li><a href="/register">Registrieren</a></li>
                 @endif
                 <?php /*
                 <li><a href="#portfolio">Portfolio</a></li>

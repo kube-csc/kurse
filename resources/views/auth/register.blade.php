@@ -10,8 +10,23 @@
             @csrf
 
             <div>
-                <x-label for="name" value="{{ __('Name') }}" />
+                <x-label for="name" value="{{ __('Alias Name') }}" />
                 <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            </div>
+
+            <div>
+                <x-label for="name" value="{{ __('Vorname') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="vorname" :value="old('vorname')" required autofocus autocomplete="vorname" />
+            </div>
+
+            <div>
+                <x-label for="name" value="{{ __('Nachname') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="nachname" :value="old('nachname')" required autofocus autocomplete="nachname" />
+            </div>
+
+            <div>
+                <x-label for="name" value="{{ __('Telefon') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="telefon" :value="old('telefon')" required autofocus autocomplete="telefon" />
             </div>
 
             <div class="mt-4">
@@ -27,6 +42,11 @@
             <div class="mt-4">
                 <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
                 <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="pruefsumme" value="{{ __('Bitte Prüfsumme eingeben') }} 44+55" />
+                <x-input id="pruefsumme" class="block mt-1 w-full" type="number" name="pruefsumme" required autocomplete="pruefsumme" />
             </div>
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())

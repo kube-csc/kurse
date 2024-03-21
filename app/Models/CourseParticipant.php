@@ -25,6 +25,12 @@ class CourseParticipant extends Authenticatable
         'name',
         'email',
         'password',
+        'organiser_id',
+        'nachname',
+        'vorname',
+        'telefon',
+        'nachricht',
+        'status',
     ];
 
     /**
