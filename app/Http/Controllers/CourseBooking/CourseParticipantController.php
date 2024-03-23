@@ -52,7 +52,6 @@ class CourseParticipantController extends Controller
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
-
             ->distinct('coursedates.id')
             ->orderBy('kursstarttermin')
             ->get();

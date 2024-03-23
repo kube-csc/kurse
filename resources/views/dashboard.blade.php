@@ -8,7 +8,7 @@
     <div class="main-box">
         <div class="box">
             <div class="dashboard-menu-box">
-                <x-courseBooking.course.participant-course-date/>
+                <x-courseBooking.dashboard/>
             </div>
         </div>
     </div>

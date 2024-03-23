@@ -46,7 +46,7 @@
                                @else
                                     <div class="form-input-text">
                                         {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }}
-                                    </div>>
+                                    </div>
                                 @endif
                             </div>
                         </div>

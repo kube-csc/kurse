@@ -45,12 +45,13 @@ class CoursedateController extends Controller
         $organiser = $this->organiser();
 
         $coursedates = Coursedate::where('organiser_id', $organiser->id)
-            ->join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
+            ->leftJoin('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->whereNull('course_participant_bookeds.deleted_at')
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
+            ->distinct('coursedates.id')
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
@@ -62,6 +63,8 @@ class CoursedateController extends Controller
      */
     public function create()
     {
+        $organiser = $this->organiser();
+
         $kursstartterminDatum = Carbon::now()->format('Y-m-d');
         $kursstartterminTime = Carbon::now()->format('H:i');
         $kurslaengeStunde = '01';
@@ -70,13 +73,7 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
-
-        $courses = Course::where('organiser_id' , $this->organiserDomainId())
+        $courses = Course::where('organiser_id' , $organiser->id)
             ->orderBy('kursName')
             ->get();
 

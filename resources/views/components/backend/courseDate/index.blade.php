@@ -2,11 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                @if(Route::currentRouteNamed('backend.courseDate.index'))
-                    {{ __('backend.Course Dates') }}
-                @else
-                    {{ __('backend.Course Dates All') }}
-                @endif
+                {{ __('backend.Course Dates') }}
             </h2>
             <div class="dasboard-iconbox w-12 ml-4">
                 <a href="{{ route('backend.courseDate.create') }}">
