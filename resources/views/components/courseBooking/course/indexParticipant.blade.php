@@ -40,6 +40,10 @@
                                 {{ $coursedate->booked_count }} Teilnehmer
                             </div>
                         @endif
+                        <div>
+                            <label class="form-label">Deine Buchungen:</label>
+                            {{ $coursedate->bookedSelf_count }} von dir gebuchter Teilnehmer
+                        </div>
                     </div>
                 </div>
             @endforeach

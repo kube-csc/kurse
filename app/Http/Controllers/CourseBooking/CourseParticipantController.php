@@ -30,6 +30,9 @@ class CourseParticipantController extends Controller
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
+            ->withCount(['courseParticipantBookeds as bookedSelf_count' => function ($query) {
+                $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', Auth::user()->id);
+            }])
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
@@ -51,6 +54,9 @@ class CourseParticipantController extends Controller
             ->whereNull('course_participant_bookeds.deleted_at')
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
+            }])
+            ->withCount(['courseParticipantBookeds as bookedSelf_count' => function ($query) {
+                $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', Auth::user()->id);
             }])
             ->distinct('coursedates.id')
             ->orderBy('kursstarttermin')

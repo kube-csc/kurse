@@ -13,7 +13,7 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             <a class="dasboard-iconbox-a" href="{{ route('courseBooking.course.edit', $coursedate->id) }}">
-                                 @if($coursedate->booked_count > 0)
+                                 @if($coursedate->bookedSelf_count > 0)
                                     <box-icon name='bookmark'></box-icon>
                                  @else
                                     <box-icon name='bookmark-plus'></box-icon>
@@ -44,6 +44,10 @@
                                 {{ $coursedate->booked_count }} Teilnehmer
                             </div>
                         @endif
+                        <div>
+                            <label class="form-label">Deine Buchungen:</label>
+                             {{ $coursedate->bookedSelf_count }} von dir gebuchter Teilnehmer
+                        </div>
                     </div>
                 </div>
             @endforeach
