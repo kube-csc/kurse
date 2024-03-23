@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $couseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e)</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e)</label>
                             <div class="form-box">
                                 @if($sportgeraetanzahlMax>0)
                                     <a href="{{ route('backend.courseDate.Book' ,
@@ -59,16 +59,21 @@
                                         <box-icon name='user-plus'></box-icon>
                                     </a>
                                 @endif
-                                @foreach($couseBookes as $couseBook)
+                                @foreach($courseBookes as $courseBook)
                                     <a href="{{ route('backend.courseDate.destroyBooked' ,
                                         [
-                                            'couseBookId'   => $couseBook->id,
+                                            'courseBookId'  => $courseBook->id,
                                             'coursedateId'  => $coursedate->id
                                         ]
                                         ) }}"
                                     >
                                       <button class="form-button"><box-icon name='user-minus'></box-icon>
-                                            {{ $loop->iteration }} Teilnehmer
+                                          {{ $loop->iteration }}
+                                          @if($courseBook->participant_id > 0)
+                                              {{ $courseBook->participant->name}}
+                                          @else
+                                             Teilnehmer
+                                          @endif
                                       </button>
                                     </a>
                                 @endforeach

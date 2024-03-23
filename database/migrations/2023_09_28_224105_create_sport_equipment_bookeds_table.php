@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('sportgeraet_id')->nullable();
+            $table->unsignedBigInteger('sportgeraetPrivat_id')->nullable();
             $table->unsignedBigInteger('kurs_id');
 
             $table->SoftDeletes();

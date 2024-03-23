@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CourseBooking\CourseParticipantController;
 use App\Models\Organiser;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,30 @@ Route::get('/Sportgeraete', 'App\Http\Controllers\HomeController@sportUnit');
 Route::get('/Kurse', 'App\Http\Controllers\HomeController@coursetype');
 Route::get('/Kurseangebot/{id}', 'App\Http\Controllers\HomeController@courseDate')->name('frontend.course');
 
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/dashboard', function () {
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+
+        if (!$organiser) {
+            $organiser = new Organiser;
+            // Setzen Sie hier die Standardwerte für das Organiser-Objekt
+        }
+
+        return view('dashboard', ['organiser' => $organiser]);
+    })->name('dashboard');
+});
+
+Route::get('/Kursbuchung', [CourseParticipantController::class, 'index'])->name('courseBooking.course.index');
+Route::get('/Kursbuchung/Participant', [CourseParticipantController::class, 'indexParticipant'])->name('courseBooking.course.indexParticipant');
+Route::get('/Kursbuchung/edit/{coursedateId}', [CourseParticipantController::class, 'edit'])->name('courseBooking.course.edit');
+Route::put('/Kursbuchung/update/{coursedate}', [CourseParticipantController::class, 'update'])->name('courseBooking.course.update');
+Route::get('/Kursbuchung/buchen/{coursedateId}', [CourseParticipantController::class, 'book'])->name('courseBooking.course.book');
+Route::get('/Kursbuchung/stornieren/{coursedateId}/{courseBookId}', [CourseParticipantController::class, 'destroyBooked'])->name('courseBooking.course.destroyBooked');
+
 Route::middleware('admin:admin')->group(function () {
     Route::get('admin/login', [AdminController::Class, 'loginForm']);
     Route::post('admin/login', [AdminController::Class, 'store'])->name('admin.login');
@@ -59,23 +84,6 @@ Route::middleware([
     })->name('admin.dashboard')->middleware('auth:admin');
 
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-
-        if (!$organiser) {
-            $organiser = new Organiser;
-            // Setzen Sie hier die Standardwerte für das Organiser-Objekt
-        }
-
-        return view('dashboard', ['organiser' => $organiser]);
-    })->name('dashboard');
-});
-
     /*  ToDo: Auf Resource umstellen
         Route::resource('/post', CoursedateController::class;
     */
@@ -88,7 +96,7 @@ Route::middleware([
     Route::get('/backend/CourseDateDestroy/{coursedate}', [CoursedateController::class, 'destroy'])->name('backend.courseDate.destroy');
     Route::get('/backend/CourseDatesportingEquipment/{coursedate}', [CoursedateController::class, 'sportingEquipment'])->name('backend.courseDate.sportingEquipment');
     Route::get('/backend/Book/{coursedateId}', [CoursedateController::class, 'Book'])->name('backend.courseDate.Book');
-    Route::get('/backend/destroyBooked/{coursedateId}/{couseBookId}', [CoursedateController::class, 'destroyBooked'])->name('backend.courseDate.destroyBooked');
+    Route::get('/backend/destroyBooked/{coursedateId}/{courseBookId}', [CoursedateController::class, 'destroyBooked'])->name('backend.courseDate.destroyBooked');
     Route::get('/backend/CourseDateEquipmentBooked/{coursedateId}/{sportequipmentId}', [CoursedateController::class, 'equipmentBooked'])->name('backend.courseDate.equipmentBooked');
     Route::get('/backend/CourseDateEquipmentBookedDestroy/{coursedateId}/{kursId}/{sportgeraet}', [CoursedateController::class, 'equipmentBookedDestroy'])->name('backend.courseDate.equipmentBookedDestroy');
     Route::get('/backend/CourseDateTrainerPick{coursedateId}', [CoursedateController::class, 'trainerRegister'])->name('backend.courseDate.trainerRegister');

@@ -23,36 +23,36 @@ class CoursedateController extends Controller
      */
     public function index()
     {
-        $coursedates = Coursedate::where('coursedates.organiser_id', $this->organiserDomainId())
+        $organiser = $this->organiser();
+
+        $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             // ToDo:Vorher Filter das nur noch Ergebnisse vorhanden sind die der Angemeldenten Trainer zugeordnet sind
             // Aktuel wird das in der blade mit einer if Abfrage gemacht
             //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             //->where('coursedate_user.user_id', Auth::user()->id)
+            ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
+                $query->whereColumn('kurs_id', 'coursedates.id');
+            }])
             ->orderBy('kursstarttermin')
             ->paginate(10);
-
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
 
         return view('components.backend.courseDate.index', compact('coursedates', 'organiser'));
     }
 
     public function indexAll()
     {
-        $coursedates = Coursedate::where('organiser_id', $this->organiserDomainId())
+        $organiser = $this->organiser();
+
+        $coursedates = Coursedate::where('organiser_id', $organiser->id)
+            ->join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->whereNull('course_participant_bookeds.deleted_at')
+            ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
+                $query->whereColumn('kurs_id', 'coursedates.id');
+            }])
             ->orderBy('kursstarttermin')
             ->paginate(10);
-
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
 
         return view('components.backend.courseDate.indexAll', compact('coursedates', 'organiser'));
     }
@@ -338,13 +338,13 @@ class CoursedateController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $couseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
+        $courseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
 
         $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
             ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
             ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            ->where('course_participant_bookeds.trainer_id', '<>', 0)
+            //->where('course_participant_bookeds.trainer_id', '<>', 0)
             ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
@@ -383,11 +383,11 @@ class CoursedateController extends Controller
         }
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$couseBookes->count()+$freeSportEquipment;
+            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count()+$freeSportEquipment;
         }
         else {
             if($sportEquipments->count()+$sportEquipmentKursBookeds->count()>$coursedate->sportgeraetanzahl) {
-                $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$couseBookes->count();
+                $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
             }
             else {
                   $sportgeraetanzahlMax = $sportEquipments->count();
@@ -400,7 +400,7 @@ class CoursedateController extends Controller
             'sportEquipments',
             'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
-            'couseBookes',
+            'courseBookes',
             'teilnehmerKursBookeds',
             'sportgeraetanzahlMax',
             'trainers'
@@ -447,9 +447,9 @@ class CoursedateController extends Controller
             return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
     }
 
-    public function destroyBooked($coursedateId , $couseBookId)
+    public function destroyBooked($coursedateId , $courseBookId)
     {
-        $sportEquipmentBooked = CourseParticipantBooked::find($couseBookId);
+        $sportEquipmentBooked = CourseParticipantBooked::find($courseBookId);
 
         $sportEquipmentBooked->delete();
 
@@ -523,12 +523,23 @@ class CoursedateController extends Controller
 
     public function sportgeraetanzahlMax($id)
     {
-        //ToDo: Aud Potzplätze umstellen ->sum('sportleranzahl');
+        //ToDo: Auf Spotzplätze umstellen ->sum('sportleranzahl');
         $sportgeraetanzahlMax = SportEquipment::
         join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
             ->where('organiser_sport_section.organiser_id' , $id)
             ->count();
 
         return $sportgeraetanzahlMax;
+    }
+
+    public function organiser()
+    {
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return $organiser;
     }
 }

@@ -28,21 +28,24 @@
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
+                            @if($coursedate->booked_count==0)
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
                                 <box-icon name='calendar-edit'></box-icon>
                             </a>
+                            @endif
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
                                 <box-icon name='user'></box-icon>
                             </a>
+                            @if($coursedate->booked_count==0)
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                 <box-icon name='trash'></box-icon>
                             </a>
-                        @if($coursedate->users->count() > 1)
+                            @endif
+                           @if($coursedate->users->count() > 1)
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
                                 <box-icon name='minus'></box-icon>
                             </a>
-                        @endif
-                        {{ $coursedate->coursedate_id }}
+                           @endif
                         </div>
                         <label class="form-label">Start Datum:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
@@ -56,13 +59,17 @@
                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
-                         <div>
-                            @if($coursedate->sportgeraetanzahl > 0)
-                                {{ $coursedate->sportgeraetanzahl }} Teilnehmer
-                            @else
-                                alle möglichen Teilnehmer
-                            @endif
-                         </div>
+                        @if($coursedate->sportgeraetanzahl > 0)
+                            <div>
+                                <label class="form-label">Teilnehmer:</label>
+                                {{ $coursedate->booked_count }} von {{ $coursedate->sportgeraetanzahl }} Teilnehmer
+                            </div>
+                        @else
+                            <div>
+                                <label class="form-label">Teilnehmer:</label>
+                                {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
+                            </div>
+                        @endif
                     </div>
                 </div>
                 @endif

@@ -22,7 +22,7 @@ class OrganiserinformationSeeder extends Seeder
             [
                 array('id' => '1',
                     'organiser_id'                  => 1,
-                    'veranstaltungHeader'           => 'sportgeraet-1.jpg',
+                    'veranstaltungHeader'           => 'organsisator-1.jpg',
                     'veranstaltungBeschreibungLang' => 'Dies ist ein Beispiel Organisator für die Langen Beschreibung.',
                     'veranstaltungBeschreibungKurz' => 'Dies ist ein Beispiel Organisator für die Kurzen Beschreibung.',
                     'sportartBeschreibungLang'      => 'Dies ist ein Beispiel für die Sportart Beschreibung Lang.',
@@ -38,7 +38,7 @@ class OrganiserinformationSeeder extends Seeder
                 ),
                 array('id' => '2',
                     'organiser_id'                  => 2,
-                    'veranstaltungHeader'           => 'sportgeraet-2.jpg',
+                    'veranstaltungHeader'           => 'organsisator-1.jpg',
                     'veranstaltungBeschreibungLang' => 'Dies ist ein Beispiel Organisator für die Langen Beschreibung.',
                     'veranstaltungBeschreibungKurz' => 'Dies ist ein Beispiel Organisator für die Kurzen Beschreibung.',
                     'veranstaltungBeschreibungLang' => 'Dies ist ein Beispiel Organisator für die Langen Beschreibung.',

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('trainer_id')->nullable();
             $table->unsignedBigInteger('mitglied_id')->nullable();
             $table->unsignedBigInteger('participant_id')->nullable();
+            $table->unsignedBigInteger('regattaTeam_id')->nullable();
             $table->unsignedBigInteger('kurs_id');
 
             $table->float('teilnehmerFahrtenlaenge')->default(0);

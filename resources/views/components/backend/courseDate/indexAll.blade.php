@@ -21,15 +21,19 @@
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
-                                <box-icon name='calendar-edit'></box-icon>
-                            </a>
+                            @if($coursedate->booked_count==0)
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
+                                    <box-icon name='calendar-edit'></box-icon>
+                                </a>
+                            @endif
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
                                 <box-icon name='user'></box-icon>
                             </a>
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
-                                <box-icon name='trash'></box-icon>
-                            </a>
+                            @if($coursedate->booked_count==0)
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
+                                    <box-icon name='trash'></box-icon>
+                                </a>
+                            @endif
                             @php($userIsInCourse = false)
                             @foreach($coursedate->users as $user)
                                 @if($user->id == Auth::user()->id)
@@ -61,13 +65,17 @@
                          @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
-                        <div>
-                            @if($coursedate->sportgeraetanzahl)
-                                {{ $coursedate->sportgeraetanzahl }} Teilnehmer
-                            @else
-                                alle verfügbaren Teilnehmer
-                            @endif
-                        </div>
+                        @if($coursedate->sportgeraetanzahl > 0)
+                            <div>
+                                <label class="form-label">Teilnehmer:</label>
+                                {{ $coursedate->booked_count }} von {{ $coursedate->sportgeraetanzahl }} Teilnehmer
+                            </div>
+                        @else
+                            <div>
+                                <label class="form-label">Teilnehmer:</label>
+                                {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endforeach

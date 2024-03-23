@@ -14,6 +14,7 @@ class CourseParticipantBooked extends Model
         'trainer_id',
         'mitglied_id',
         'participant_id',
+        'regattaTeam_id',
         'kurs_id'
     ];
 
@@ -24,5 +25,10 @@ class CourseParticipantBooked extends Model
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function participant()
+    {
+        return $this->belongsTo(CourseParticipant::class);
     }
 }

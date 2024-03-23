@@ -8,7 +8,7 @@
     <div class="main-box">
         <div class="box">
             <div class="dashboard-menu-box">
-             Kursteilnehmer
+                <x-courseBooking.course.participant-course-date/>
             </div>
         </div>
     </div>

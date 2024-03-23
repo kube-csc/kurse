@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
                 'nachname' => 'Nachname 1',
                 'vorname' => 'Vorname 1',
                 'geschlecht' => 'm',
-                'name' => 'Admin',
+                'name' => 'Alias Name',
                 'email' => 'info@info.de',
                 'email_verified_at' => NULL,
                 'telefon' => '0123456789',

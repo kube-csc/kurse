@@ -39,4 +39,9 @@ class Coursedate extends Model
     {
         return $this->belongsToMany(User::class, 'coursedate_user');
     }
+
+    public function courseParticipantBookeds()
+    {
+        return $this->hasMany(CourseParticipantBooked::class, 'kurs_id');
+    }
 }
