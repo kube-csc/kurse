@@ -11,7 +11,6 @@ class Organiserinformation extends Model
 
     protected $fillable = [
         'organiser_id',
-        'veranstaltungHeader',
         'veranstaltungBeschreibungLang',
         'veranstaltungBeschreibungKurz',
         'sportartBeschreibungLang',

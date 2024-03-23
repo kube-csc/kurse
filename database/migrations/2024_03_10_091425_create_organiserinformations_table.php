@@ -16,7 +16,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('organiser_id');
 
-            $table->string('veranstaltungHeader')->nullable();
             $table->text('veranstaltungBeschreibungLang')->nullable();
             $table->text('veranstaltungBeschreibungKurz')->nullable();
             $table->text('sportartBeschreibungLang')->nullable();

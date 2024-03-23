@@ -100,6 +100,7 @@ class OrganiserController extends Controller
         $organiserData = $request->validate([
             'veranstaltung'         => 'required',
             'veranstaltungDomain'   => 'nullable',
+            'veranstaltungHeader'   => 'nullable',
             'sportartUeberschrift'  => 'nullable',
             'materialUeberschrift'  => 'nullable',
             'trainerUeberschrift'   => 'nullable'

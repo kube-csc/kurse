@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->string('veranstaltung');
             $table->string('veranstaltungDomain')->nullable();
+            $table->string('veranstaltungHeader')->nullable();
             $table->string('sportartUeberschrift')->nullable();;
             $table->string('materialUeberschrift')->nullable();;
             $table->string('trainerUeberschrift')->nullable();;

@@ -12,6 +12,7 @@ class Organiser extends Model
     protected $fillable = [
         'veranstaltung',
         'veranstaltungDomain',
+        'veranstaltungHeader',
         'sportartUeberschrift',
         'materialUeberschrift',
         'trainerUeberschrift',
