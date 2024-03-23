@@ -84,6 +84,14 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                             @enderror
+
+                            <label class="form-label">Kurs Bezeichnung:</label>
+                            <input type="text" name="kurseUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'kurseUeberschrift', $organiser->kurseUeberschrift) }}">
+                            @error('kurseUeberschrift')
+                            <div class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </div>
+                            @enderror
                         </div>
 
                         <div class="form-field">

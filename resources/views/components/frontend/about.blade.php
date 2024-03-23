@@ -53,7 +53,7 @@
                         </div>
                         <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">
                             <a href="/Kurse"><i class="bx bx-info-circle"></i></a>
-                            <h4>Welche Kurse gibt es?</h4>
+                            <h4>{{ $organiser->kurseUeberschrift }}</h4>
                             <ul>
                                 @foreach($courses as $course)
                                     <li>{{ $course->kursName }}</li>

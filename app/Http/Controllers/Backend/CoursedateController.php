@@ -122,7 +122,7 @@ class CoursedateController extends Controller
         $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
         $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
 
-        if($kursendterminBerechnungDatum <= $kursstartterminDatum)
+        if($kursendterminBerechnungDatum < $kursstartterminDatum)
         {
             if ($kurslaeneminuten > $kurslaeneminutenStart)
             {
@@ -244,7 +244,7 @@ class CoursedateController extends Controller
         $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
         $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
 
-        if($kursendterminBerechnungDatum <= $kursstartterminDatum)
+        if($kursendterminBerechnungDatum < $kursstartterminDatum)
         {
             if ($kurslaeneminuten > $kurslaeneminutenStart)
             {

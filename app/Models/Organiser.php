@@ -16,6 +16,7 @@ class Organiser extends Model
         'sportartUeberschrift',
         'materialUeberschrift',
         'trainerUeberschrift',
+        'kurseUeberschrift',
         'user_id',
         'bearbeiter_id'
     ];

@@ -103,16 +103,14 @@ class CourseParticipantController extends Controller
             ->get();
 
         $courseBookeAlls = CourseParticipantBooked::where('kurs_id', $id)
-            // ->where('participant_id', null)
-            ->where('participant_id' , '<>' , Auth::user()->id)
-            ->orwhere('participant_id', null)
             ->get();
+
+        $courseBookeAlls = $courseBookeAlls->diff($courseBookes);
 
         $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
             ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
             ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            //->where('course_participant_bookeds.trainer_id', '<>', 0)
             ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)

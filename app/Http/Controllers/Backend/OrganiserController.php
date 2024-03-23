@@ -103,7 +103,8 @@ class OrganiserController extends Controller
             'veranstaltungHeader'   => 'nullable',
             'sportartUeberschrift'  => 'nullable',
             'materialUeberschrift'  => 'nullable',
-            'trainerUeberschrift'   => 'nullable'
+            'trainerUeberschrift'   => 'nullable',
+            'kurseUeberschrift'     => 'nullable'
         ]);
 
         $organiserData['bearbeiter_id'] = Auth::user()->id;

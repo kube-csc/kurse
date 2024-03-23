@@ -19,22 +19,24 @@ class OrganiserSeeder extends Seeder
         DB::table('organisers')->insert(
             [
               array('id' => '1',
-                'veranstaltung' => 'SUP Kurse',
+                'veranstaltung'                 => 'SUP Kurse',
                 'veranstaltungDomain'           => '127.0.0.1:8000',
                 'veranstaltungHeader'           => 'organsisator-1.jpg',
                 'sportartueberschrift'          => 'Sportart',
                 'materialUeberschrift'          => 'Sportgeräte',
                 'trainerUeberschrift'           => 'Trainer',
+                'kurseUeberschrift'             => 'Welche Kurse gibt es?',
                 'autor_id'                      => 1,
                 'bearbeiter_id'                 => 1
               ),
             array('id' => '2',
-                'veranstaltung' => 'Ferienspass',
+                'veranstaltung'                 => 'Ferienspass',
                 'veranstaltungDomain'           => '127.0.0.1:9000',
                 'veranstaltungHeader'           => 'organsisator-1.jpg',
                 'sportartueberschrift'          => 'Sportart',
                 'materialUeberschrift'          => 'Sportgeräte',
                 'trainerUeberschrift'           => 'Kursleiter',
+                'kurseUeberschrift'             => 'Welche Kurse gibt es?',
                 'autor_id'                      => 1,
                 'bearbeiter_id'                 => 1
             )
