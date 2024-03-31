@@ -9,7 +9,7 @@
                 <h2>Kursdaten</h2>
                 <ol>
                     <li><a href="/">Home</a></li>
-                    <li>Kursdaten</li>
+                    <li>Termine</li>
                 </ol>
             </div>
         </div>
@@ -20,17 +20,22 @@
 
             <div class="section-title" data-aos="fade-in" data-aos-delay="100">
                 <h2>{{ $coursedate->getCousename->kursName }}</h2>
-                Kurs im Zeitfenster<br>
+                Termin im Zeitfenster<br>
                 {{ date("d.m.Y", strtotime($coursedate->kursstarttermin)) }} {{ date("H:i", strtotime($coursedate->kursstarttermin)) }} Uhr<br>
                 {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
-                Kurslänge: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
-                Mögliche Teilnehmer:
-                @if($coursedate->sportgeraetanzahl > 0)
-                    {{ $coursedate->sportgeraetanzahl }}
-                @else
-                    {{ $sportgeraetanzahlMaxCourse }}
-                @endif
+                Dauer: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
+                Teilnehmer:
+                {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}
                 <br><br>
+
+                {{-- ToDo: Direktes Buchen verbessern--}}
+                @auth
+                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax)
+                      <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}" class="about-btn">Termin buchen <i class="bx bx-chevron-right"></i></a>
+                      <br><br>
+                  @endif
+                @endauth
+
                 <h3>{{ $organiser->trainerUeberschrift }}:</h3>
                 @foreach($coursedate->users as $user)
                     {{ $user->vorname }} {{ $user->nachname }}<br>
@@ -104,6 +109,7 @@
                     </div>
                 </div>
             @endif
+
         </div>
 
     </section><!-- End About Section -->
