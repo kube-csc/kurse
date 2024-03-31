@@ -33,7 +33,7 @@
 
                         <div class="form-field">
                             <label for="trainer_id" class="form-label">Trainer:</label>
-                            <div class="form-input-text">
+                            <div class="text">
                                 @foreach($trainers as $trainer)
                                     {{ $trainer->vorname }} {{ $trainer->nachname }}<br>
                                 @endforeach
@@ -81,18 +81,18 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipments->count() }} freie(s) Sportgerät(e):</label>
+                            <label for="course_id" class="form-label">{{ $sportEquipmentFrees->count() }} freie(s) Sportgerät(e):</label>
                                 <div class="form-box">
-                                   @foreach($sportEquipments as $sportEquipment)
+                                   @foreach($sportEquipmentFrees as $sportEquipmentFree)
                                     <a href="{{ route('backend.courseDate.equipmentBooked' ,
                                     [
                                         'coursedateId'     => $coursedate->id,
-                                        'sportequipmentId' => $sportEquipment->id
+                                        'sportequipmentId' => $sportEquipmentFree->id
                                     ] ) }}"
                                     >
                                         <button class="form-button">
                                             <box-icon name='plus-circle'></box-icon>
-                                            {{ $sportEquipment->sportgeraet }}
+                                            {{ $sportEquipmentFree->sportgeraet }}
                                         </button>
                                     </a>
                                    @endforeach
@@ -132,7 +132,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Termin</label>
+                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Termin:</label>
                             <div class="form-box">
                                 @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
                                     <span>

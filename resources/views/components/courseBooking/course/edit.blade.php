@@ -67,7 +67,7 @@
                                            'coursedateId'     => $coursedate->id
                                         ] ) }}"
                                     >
-                                        <box-icon name='user-plus'></box-icon>
+                                        <box-icon name='user-plus'></box-icon> neuer Teilnehmer
                                     </a>
                                 @endif
                                 @foreach($courseBookes as $courseBook)
@@ -78,9 +78,7 @@
                                         ]
                                         ) }}"
                                     >
-                                        <span class="form-button"><box-icon name='user-minus'></box-icon>
-                                            {{ $loop->iteration }} {{ $courseBook->participant->name}}
-                                        </span>
+                                        <span class="form-button"><box-icon name='user-minus'></box-icon> {{ $loop->iteration }} {{ $courseBook->participant->name}}</span>
                                     </a>
                                 @endforeach
                             </div>

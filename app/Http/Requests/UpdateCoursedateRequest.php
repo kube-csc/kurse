@@ -29,7 +29,7 @@ class UpdateCoursedateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kurslaenge'         => 'required',
+            'kursInformation'    => 'nullable',
        ];
     }
 }

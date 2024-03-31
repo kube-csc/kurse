@@ -25,9 +25,13 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             @if($coursedate->booked_count==0)
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
-                                <box-icon name='calendar-edit'></box-icon>
-                            </a>
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
+                                    <box-icon name='calendar-edit'></box-icon>
+                                </a>
+                            @else
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.editBooked', $coursedate->id) }}">
+                                    <box-icon name='calendar-edit'></box-icon>
+                                </a>
                             @endif
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
                                 <box-icon name='user'></box-icon>

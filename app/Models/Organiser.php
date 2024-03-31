@@ -27,12 +27,11 @@ class Organiser extends Model
     {
         return $this->belongsToMany('App\SportSection', 'organiser_sport_section', 'organiser_id', 'sport_section_id');
     }
-
+    */
     public function sportSection()
     {
         return $this->belongsToMany(SportSection::class);
     }
-    */
 
     public function getOrganiserInformation()
     {

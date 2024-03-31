@@ -16,7 +16,7 @@
                                  @if($coursedate->bookedSelf_count > 0)
                                     <box-icon name='bookmark'></box-icon>
                                  @else
-                                    <box-icon name='bookmark-plus'></box-icon>
+                                    <box-icon name='bookmark-plus'></box-icon> {{ $organiser->veranstaltung }} Termine buchen
                                  @endif
                             </a>
                         </div>
@@ -46,7 +46,7 @@
                         @endif
                         <div>
                             <label class="form-label">Deine Buchungen:</label>
-                             {{ $coursedate->bookedSelf_count }} von dir gebuchter Teilnehmer
+                             {{ $coursedate->bookedSelf_count }} von dir gebuchte Teilnehmer
                         </div>
                     </div>
                 </div>

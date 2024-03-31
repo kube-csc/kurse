@@ -106,7 +106,7 @@
                                 <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
                                     maximale Teilnehmer
                                 </option>
-                                @for($i = 1; $i < $sportgeraetanzahlMax; $i++)
+                                @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
                                     <option value="{{ $i }}"
                                             @if(isset($kursendtermin))
                                                 @selected(old('sportgeraetanzahl') ?? $i == $sportgeraetanzahl)

@@ -15,7 +15,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 
-
 class CoursedateController extends Controller
 {
      /**
@@ -27,7 +26,7 @@ class CoursedateController extends Controller
 
         $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            // ToDo:Vorher Filter das nur noch Ergebnisse vorhanden sind die der Angemeldenten Trainer zugeordnet sind
+            // ToDo:Vorher Filter das nur noch Ergebnisse vorhanden sind die den angemeldeten Trainer zugeordnet sind
             // Aktuel wird das in der blade mit einer if Abfrage gemacht
             //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             //->where('coursedate_user.user_id', Auth::user()->id)
@@ -51,7 +50,7 @@ class CoursedateController extends Controller
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
-            ->distinct('coursedates.id')
+            ->distinct()
             ->orderBy('kursstarttermin')
             ->paginate(10);
 
@@ -101,74 +100,26 @@ class CoursedateController extends Controller
     public function store(StoreCoursedateRequest $request)
     {
         //$data = $request->validated();
+        // ToDo: Valedierung anpassen
 
-        // Parse the date and time to Carbon instances
-        $date = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
-        $time = Carbon::parse($request->kurslaenge);
-        // Extract the hours and minutes from the time
-        $hours = $time->hour;
-        $minutes = $time->minute;
-        $kurslaeneminuten =  $hours*60 + $minutes;
-        $hoursStart = Carbon::parse($request->kursstartterminTime)->hour;
-        $minutesStart = Carbon::parse($request->kursstartterminTime)->minute;
-        $kurslaeneminutenStart =  $hoursStart*60 + $minutesStart;
-
-        // Parse the dates to Carbon instances
-        $kursendterminBerechnung = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
-        $kursstarttermin = Carbon::parse($request->kursstarttermin.' '.$request->kursstartterminTime);
-        // Calculate the difference in minutes
-        // $diffDay = $kursendterminBerechnung->diffInDays($kursstarttermin);
-        $kursendterminBerechnungDatum = Carbon::parse($request->kursendtermin)->format('Y-m-d');
-        $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
-        $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
-
-        if($kursendterminBerechnungDatum < $kursstartterminDatum)
-        {
-            if ($kurslaeneminuten > $kurslaeneminutenStart)
-            {
-                $diffMinute = $diffMinute * 1;
-            }
-            else
-            {
-                $diffMinute = $diffMinute * -1;
-            }
-        }
-
-        if($diffMinute< $kurslaeneminuten)
-         {
-             // FixMe: Self::danger('... funktioniert nicht $dangeer = wurde als alternative verwendet
-             //self::danger('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
-             $danger = 'Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.';
-
-             if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
-             {
-                 $hoursAdd = $hours+0;
-                 $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hoursAdd)->addMinutes($minutes);
-             }
-             else
-             {
-                 $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
-             }
-
-             self::warning('Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.');
-         }
-        else
-         {
-            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
-            self::success('Der Termin wurde erfolgreich angelegt.');
-         }
+        $message=[
+            '1' => 'Der Termin wurde erfolgreich angelegt.',
+            '2' => 'Der Endtermin wurde neu berechnet und der Termin wurde erfolgreich angelegt.'
+        ];
+        $daten=$this->kursendtermin($request, $message);
+        self::success($daten['message']);
 
         $coursedate = new coursedate(
             [
                 'course_id'               => $request->course_id,
                 'organiser_id'            => $this->organiserDomainId(),
                 'kurslaenge'              => $request->kurslaenge,
-                'kursstarttermin'         => $date,
-                'kursendtermin'           => $kursendtermin,
-                'kursstartvorschlag'      => $date,
-                'kursendvorschlag'        => $kursendtermin,
-                'kursstartvorschlagkunde' => $date,
-                'kursendvorschlagkunde'   => $kursendtermin,
+                'kursstarttermin'         => $daten['kursstarttermin'],
+                'kursendtermin'           => $daten['kursendtermin'],
+                'kursstartvorschlag'      => $daten['kursstarttermin'],
+                'kursendvorschlag'        => $daten['kursendtermin'],
+                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
+                'kursendvorschlagkunde'   => $daten['kursendtermin'],
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
                 'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
@@ -198,17 +149,13 @@ class CoursedateController extends Controller
     {
         $coursedate = Coursedate::find($id);
 
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
+        $organiser = $this->organiser();
 
         $courses = Course::where('organiser_id' , $organiser->id)
             ->orderBy('kursName')
             ->get();
 
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMaxCourse($coursedate->id);
+        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
 
         return view('components.backend.courseDate.edit', compact([
             'coursedate',
@@ -218,78 +165,71 @@ class CoursedateController extends Controller
         ]));
     }
 
+    public function editBooked($id)
+    {
+        $coursedate = Coursedate::find($id);
+
+        $organiser = $this->organiser();
+
+        $courses = Course::where('organiser_id' , $organiser->id)
+            ->orderBy('kursName')
+            ->get();
+
+        $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
+
+        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
+
+        return view('components.backend.courseDate.editBooked', compact([
+            'coursedate',
+            'sportgeraetanzahlMax',
+            'courses',
+            'organiser',
+            'courseParticipantBookedCount'
+        ]));
+    }
+
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateCoursedateRequest $request, Coursedate $coursedate)
     {
         //$coursedate->update($request->validated());
+        // ToDo: Valedierung anpassen
 
-        // Parse the date and time to Carbon instances
-        $date = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
-        $time = Carbon::parse($request->kurslaenge);
-        // Extract the hours and minutes from the time
-        $hours = $time->hour;
-        $minutes = $time->minute;
-        $kurslaeneminuten =  $hours*60 + $minutes;
-        $hoursStart = Carbon::parse($request->kursstartterminTime)->hour;
-        $minutesStart = Carbon::parse($request->kursstartterminTime)->minute;
-        $kurslaeneminutenStart =  $hoursStart*60 + $minutesStart;
-
-        // Parse the dates to Carbon instances
-        $kursendterminBerechnung = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
-        $kursstarttermin = Carbon::parse($request->kursstarttermin.' '.$request->kursstartterminTime);
-        // Calculate the difference in minutes
-        $kursendterminBerechnungDatum = Carbon::parse($request->kursendtermin)->format('Y-m-d');
-        $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
-        $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
-
-        if($kursendterminBerechnungDatum < $kursstartterminDatum)
-        {
-            if ($kurslaeneminuten > $kurslaeneminutenStart)
-            {
-                $diffMinute = $diffMinute * 1;
-            }
-            else
-            {
-                $diffMinute = $diffMinute * -1;
-            }
-        }
-
-        if($diffMinute < $kurslaeneminuten)
-        {
-            // FixMe: Self::danger('... funktioniert nicht $dangeer = wurde als alternative verwendet
-            //self::danger('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
-            $danger = 'Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.';
-
-            if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
-            {
-                $hoursAdd = $hours+0;
-                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hoursAdd)->addMinutes($minutes);
-            }
-            else
-            {
-                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
-            }
-
-            self::warning('Der Endtermin wurde neu berechnet und erfolgreich gespeichert bearbeitet.');
-         }
-        else
-        {
-            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
-            self::success('Der Termin wurde erfolgreich bearbeitet.');
-        }
+        $message=[
+            '1' => 'Der Termin wurde erfolgreich bearbeitet.',
+            '2' => 'Der Endtermin wurde neu berechnet und der Termin erfolgreich gespeichert.'
+        ];
+        $daten=$this->kursendtermin($request, $message);
+        self::success($daten['message']);
 
         $coursedate->update(
             [
                 'course_id'               => $request->course_id,
                 'kurslaenge'              => $request->kurslaenge,
-                'kursstarttermin'         => $date,
-                'kursendtermin'           => $kursendtermin,
-                'kursstartvorschlag'      => $date,
-                'kursendvorschlag'        => $kursendtermin,
-                'kursstartvorschlagkunde' => $date,
-                'kursendvorschlagkunde'   => $kursendtermin,
+                'kursstarttermin'         => $daten['kursstarttermin'],
+                'kursendtermin'           => $daten['kursendtermin'],
+                'kursstartvorschlag'      => $daten['kursstarttermin'],
+                'kursendvorschlag'        => $daten['kursendtermin'],
+                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
+                'kursendvorschlagkunde'   => $daten['kursendtermin'],
+                'sportgeraetanzahl'       => $request->sportgeraetanzahl,
+                'kursInformation'         => $request->kursInformation,
+                'bearbeiter_id'           => Auth::user()->id,
+                'updated_at'              => Carbon::now()
+            ]
+        );
+
+        return redirect()->route('backend.courseDate.index');
+    }
+
+    public function updateBooked(UpdateCoursedateRequest $request, Coursedate $coursedate)
+    {
+        // ToDo: Valedierung anpassen
+        self::success('Der Termin wurde erfolgreich bearbeitet.');
+
+        $coursedate->update(
+            [
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
                 'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
@@ -323,18 +263,6 @@ class CoursedateController extends Controller
               ->where('coursedate_user.coursedate_id', $coursedate->id)
               ->get();
 
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
-
-        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
-            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
-            ->where('coursedates.id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
-
         $courseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
 
         $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
@@ -345,6 +273,13 @@ class CoursedateController extends Controller
             ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+            ->get();
+
+        // Alle Sportgeräte
+        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
+            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
+            ->where('coursedates.id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
         // Belegte Boote andere Kurse
@@ -369,32 +304,25 @@ class CoursedateController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBbookeIds =  $sportEquipmentKursBookeds->pluck('sportgeraet_id');
-        $sportEquipments= $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipments= $sportEquipments->whereNotIn('id', $kursBbookeIds);
-
-        $freeSportEquipment =$sportEquipmentBookeds->count()-$teilnehmerKursBookeds->count();
-        if($freeSportEquipment>0){
-            $freeSportEquipment=0;
-        }
+        $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBbookeIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count()+$freeSportEquipment;
+            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count();
         }
         else {
-            if($sportEquipments->count()+$sportEquipmentKursBookeds->count()>$coursedate->sportgeraetanzahl) {
-                $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            }
-            else {
-                  $sportgeraetanzahlMax = $sportEquipments->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
+            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
+                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
             }
         }
 
         return view('components.backend.courseDate.sportingSequipment', compact([
             'coursedate',
             'course',
-            'sportEquipments',
+            'sportEquipmentFrees',
             'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
             'courseBookes',
@@ -439,6 +367,20 @@ class CoursedateController extends Controller
 
             $sportEquipmentBooked->save();
 
+            $coursedate = Coursedate::find($coursedateId);
+            if($coursedate->sportgeraetanzahl != 0) {
+                $sportEquipmentKursBookedCount = SportEquipmentBooked::where('kurs_id', $coursedateId)->count();
+                if ($coursedate->sportgeraetanzahl < $sportEquipmentKursBookedCount) {
+                    $coursedate->update(
+                        [
+                            'sportgeraetanzahl' => $sportEquipmentKursBookedCount,
+                            'bearbeiter_id'     => Auth::user()->id,
+                            'updated_at'        => Carbon::now()
+                        ]
+                    );
+                    self::success('Anzahl der möglichen Teilnehmer erhöht.');
+                }
+            }
             self::success('Sportgerät wurde erfolgreich gebucht.');
 
             return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
@@ -495,6 +437,17 @@ class CoursedateController extends Controller
         return redirect()->route('backend.courseDate.indexAll');
     }
 
+    public function organiser()
+    {
+        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
+        if ($organiser === null) {
+            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
+            $organiser = Organiser::find(1);
+        }
+
+        return $organiser;
+    }
+
     public function organiserDomainId()
     {
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
@@ -521,22 +474,41 @@ class CoursedateController extends Controller
     public function sportgeraetanzahlMax($id)
     {
         //ToDo: Auf Spotzplätze umstellen ->sum('sportleranzahl');
-        $sportgeraetanzahlMax = SportEquipment::
-        join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
             ->where('organiser_sport_section.organiser_id' , $id)
             ->count();
 
         return $sportgeraetanzahlMax;
     }
 
-    public function organiser()
+    public function kursendtermin($request, $message)
     {
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
+        $date                  = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
+        $time                  = Carbon::parse($request->kurslaenge);
+
+        $hours                 = $time->hour;
+        $minutes               = $time->minute;
+        $kurslaeneminuten      = $hours*60 + $minutes;
+        $kursenddatum          = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
+        $diffMinute            = $date->diffInMinutes($kursenddatum);
+
+        if($kursenddatum < $date) {
+            $diffMinute = $diffMinute * -1;
         }
 
-        return $organiser;
-    }
+        if($diffMinute < $kurslaeneminuten) {
+            $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
+            $message=$message[2];
+        }
+        else {
+            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
+            $message=$message[1];
+        }
+
+        return [
+            'kursstarttermin' => $date,
+            'kursendtermin'   => $kursendtermin,
+            'message'         => $message,
+        ];
+   }
 }

@@ -42,7 +42,7 @@
                         @endif
                         <div>
                             <label class="form-label">Deine Buchungen:</label>
-                            {{ $coursedate->bookedSelf_count }} von dir gebuchter Teilnehmer
+                            {{ $coursedate->bookedSelf_count }} von dir gebuchte Teilnehmer
                         </div>
                     </div>
                 </div>

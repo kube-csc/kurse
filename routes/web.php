@@ -91,7 +91,9 @@ Route::middleware([
     Route::get('/backend/CourseDateAll', [CoursedateController::class, 'indexAll'])->name('backend.courseDate.indexAll');
     Route::get('/backend/CourseDateCreate', [CoursedateController::class, 'create'])->name('backend.courseDate.create');
     Route::get('/backend/CourseDateEdit/{coursedate}', [CoursedateController::class, 'edit'])->name('backend.courseDate.edit');
+    Route::get('/backend/CourseDateEditGebucht/{coursedate}', [CoursedateController::class, 'editBooked'])->name('backend.courseDate.editBooked');
     Route::put('/backend/CourseDateUpdate/{coursedate}', [CoursedateController::class, 'update'])->name('backend.courseDate.update');
+    Route::put('/backend/CourseDateUpdateGebucht/{coursedate}', [CoursedateController::class, 'updateBooked'])->name('backend.courseDate.updateBooked');
     Route::put('/backend/CourseDateStore', [CoursedateController::class, 'store'])->name('backend.courseDate.store');
     Route::get('/backend/CourseDateDestroy/{coursedate}', [CoursedateController::class, 'destroy'])->name('backend.courseDate.destroy');
     Route::get('/backend/CourseDatesportingEquipment/{coursedate}', [CoursedateController::class, 'sportingEquipment'])->name('backend.courseDate.sportingEquipment');
