@@ -8,7 +8,7 @@
                 <div class="count-box">
                     <i class="icofont-calendar"></i>
                     <span data-toggle="counter-up">{{ $courseDateCountAll }}</span>
-                    <p><strong>Kurse</strong><br>des laufenden Jahr</p>
+                    <p><strong>Termine</strong><br>des laufenden Jahr</p>
                 </div>
             </div>
 
@@ -16,7 +16,7 @@
                 <div class="count-box">
                     <i class="icofont-calendar"></i>
                     <span data-toggle="counter-up">{{ $countCoursedates }}</span>
-                    <p><strong>Kurse</strong><br>die angeboten werden</p>
+                    <p><strong>Termine</strong><br>die angeboten werden</p>
                 </div>
             </div>
 

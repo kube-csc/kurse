@@ -28,7 +28,7 @@
                 Deine gebuchten Teilnehmer: {{ $courseBookedCount }}
                 <br><br>
                 @if(Auth::check())
-                    @if (Auth::user()->getTable()=='course_participants') {
+                    @if (Auth::user()->getTable()=='course_participants')
                       @if($teilnehmerKursBookeds < $sportgeraetanzahlMax and ($coursedate->kursstarttermin <> $coursedate->kursstartvorschlag or $coursedate->kursendtermin <> $coursedate->kursendvorschlag))
                           <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}"><i class="bx bx-user-plus"></i> Teilnehmer buchen</a>
                           <br><br>

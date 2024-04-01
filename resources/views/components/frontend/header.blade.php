@@ -11,38 +11,13 @@
         <nav class="nav-menu d-none d-lg-block">
             <ul>
                 <li class="active"><a href="/">Home</a></li>
-                <?php /*
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#services">Events</a></li>
-                */ ?>
-                @if(isset($_COOKIE['log_remember']))
-                    <li><a href="/logout">Abmelden</a></li>
+                @if(Auth::check())
+                    <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
+                    <li><a href="{{ route('frontend.logout') }}">{{ __('de.Log Out') }}</a></li>
                 @else
-                    <li><a href="/login">Anmelden</a></li>
-                    <li><a href="/register">Registrieren</a></li>
+                    <li><a href="/login">{{ __('de.Log In') }}</a></li>
+                    <li><a href="/register">{{ __('de.Register') }}</a></li>
                 @endif
-                <?php /*
-                <li><a href="#portfolio">Portfolio</a></li>
-                <li><a href="#team">Team</a></li>
-                <li class="drop-down"><a href="">Drop Down</a>
-                    <ul>
-                        <li><a href="#">Drop Down 1</a></li>
-                        <li class="drop-down"><a href="#">Drop Down 2</a>
-                            <ul>
-                                <li><a href="#">Deep Drop Down 1</a></li>
-                                <li><a href="#">Deep Drop Down 2</a></li>
-                                <li><a href="#">Deep Drop Down 3</a></li>
-                                <li><a href="#">Deep Drop Down 4</a></li>
-                                <li><a href="#">Deep Drop Down 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Drop Down 3</a></li>
-                        <li><a href="#">Drop Down 4</a></li>
-                        <li><a href="#">Drop Down 5</a></li>
-                    </ul>
-                </li>
-                <li><a href="#contact">Contact Us</a></li>
-                 */ ?>
             </ul>
         </nav><!-- .nav-menu -->
 

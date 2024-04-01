@@ -19,7 +19,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @if(request()->is('admin*') || request()->is('backend*'))
-                        <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('dashboard')">
+                        <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
                         <x-nav-link href="{{ route('backend.courseDate.index') }}" :active="request()->routeIs('backend.courseDate.index')">
@@ -33,6 +33,9 @@
                             {{ __('Dashboard') }}
                         </x-nav-link>
                     @endif
+                        <x-nav-link href="{{ env('APP_URL') }}">
+                            {{ __('Homepage') }}
+                        </x-nav-link>
                 </div>
             </div>
 

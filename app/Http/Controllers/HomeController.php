@@ -285,4 +285,10 @@ class HomeController extends Controller
             'courseBookesCount'    => $courseBookes->count(),
         ];
     }
+
+    public function logout(){
+        Auth::logout();
+
+        return redirect('/');
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CourseBooking\CourseParticipantController;
+use App\Http\Controllers\HomeController;
 use App\Models\Organiser;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,7 @@ Route::get('/Trainer', 'App\Http\Controllers\HomeController@trainer');
 Route::get('/Sportgeraete', 'App\Http\Controllers\HomeController@sportUnit');
 Route::get('/Kurse', 'App\Http\Controllers\HomeController@coursetype');
 Route::get('/Kurseangebot/{id}', 'App\Http\Controllers\HomeController@courseDate')->name('frontend.course');
+Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
 Route::middleware([
     'auth:sanctum',

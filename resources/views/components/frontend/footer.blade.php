@@ -58,9 +58,12 @@
                 <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
                     <h4>Intern</h4>
                     <ul>
-                        <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i>Kursleiter Login</a></li>
+                        @if(Auth::check())
+                            <li><a href="{{ route('frontend.logout') }}">{{ __('de.Log Out') }}</a></li>
+                        @else
+                            <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> {{ $organiser->trainerUeberschrift }} Login</a></li>
+                        @endif
                     </ul>
-
                 </div>
             </div>
         </div>
