@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'Course Dates' => 'Deine Kurs Termine',
-    'Course Dates All' => 'Alle Kurs Termine',
+    'Course Dates' => 'Deine Termine',
+    'Course Dates All' => 'Alle Termine',
     'Course Date Create' => 'Kurs Termine erstellen',
     'sport quipment help' => 'Dieses Modul ermöglicht es Dir, die Sportgeräteverwaltung für Kurse zu verwalten. Du kannst sehen, wann ein Kurs beginnt und endet, wer der Trainer ist und welcher Kursname zugeordnet ist.
 

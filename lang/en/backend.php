@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'Course Dates' => 'Your Course Date',
-    'Course Dates All' => 'All Course Date',
+    'Course Dates' => 'Your Dates',
+    'Course Dates All' => 'All Dates',
     'Course Date Create' => 'Course Date Create',
     'sport quipment help' => 'This module allows you to manage the sports equipment administration for courses. You can see when a course starts and ends, who the trainer is, and which course name is assigned.
 
