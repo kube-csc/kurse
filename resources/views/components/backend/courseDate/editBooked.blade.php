@@ -7,7 +7,7 @@
             <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
             <div class="help-box" x-show="open" @click.away="open = false">
                 <p class="help-text">
-                    {!!  __('backend.Course Date Create Help') !!}
+                    {!!  __('backend.Course Date Edit Help') !!}
                 </p>
             </div>
        </div>

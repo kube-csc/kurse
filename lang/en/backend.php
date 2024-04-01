@@ -25,14 +25,7 @@ In addition, you can see the number of free sports equipment and book a piece of
 At the end of the module, there is an option to return to the overview page.
 
 Please note that all actions you perform in this module have an impact on the data in the database.',
-    'Course Date Create Help' => 'Start Datum: Hier gibst du das Startdatum und die Startzeit des Kurses ein. Es gibt zwei Eingabefelder, eines für das Datum und eines für die Zeit.
-Kursdauer:<br>
-Hier gibst du die Dauer des Kurses ein. Es gibt ein Eingabefeld für die Zeit.<br>
-End Datum: Hier gibst du das Enddatum und die Endzeit des Kurses ein. Es gibt zwei Eingabefelder, eines für das Datum und eines für die Zeit.<br>
-Trainer: Dieses Feld zeigt deinen Namen an, da du als Trainer für den Kurs eingetragen wirst.<br>
-Kursname: Hier wählst du den Namen des Kurses aus einer Dropdown-Liste aus. Die Liste wird aus der Datenbank gefüllt.<br>
-Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs aus einer Dropdown-Liste aus.<br>
-Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die kursdaten zu speichern.',
+    'Course Date Create Help' => 'Start Date: Here you enter the start date and start time of the course. There are two input fields, one for the date and one for the time.',
     'Course' => 'Courses Description',
     'Course Edit' => 'Course Description Edit',
     'Course Edit Help' => 'Course Name: Here you enter the name of the course.',
@@ -52,4 +45,19 @@ Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um
     <p>
     [p]This is a paragraph with a [br] line break.[/p]</p>
     <p>Replace [ with &lt; and ] with &gt;.</p>',
+    'Course Book Participant Help' => '<ul>
+    <li>On the booking page, you can see the start date and start time of the course. If no participants have booked yet, you can also change the start time. If you have changed the start time, click on the "Enter" button to save the changes. A participant will be added automatically.</li>
+    <li>You can also see the duration of the course and the number of booked and free places. If there are still places available, you can add a new participant by clicking on the link "new participant".</li>
+    <li>You can also see the participants who have already booked for the course. If you want to remove a participant, click on the link next to the participants name.</li>
+    <li>If you want to return to the list of courses, click on the "Back" link.</li>
+</ul>',
+     'sporting equipment help' => '<ol>
+    <li><strong>Course data and sports equipment:</strong> On the main page, you can see the course data and the associated sports equipment. Click on the info icon to get help.</li>
+    <li><strong>Course details:</strong> You can view details such as start date, end date, trainer, and course name. This information is automatically generated from the course data.</li>
+    <li><strong>Occupied and free places:</strong> You can see the number of occupied and free places for each piece of sports equipment. If there are still places available, you can add a new participant by clicking on the plus icon next to the sports equipment.</li>
+    <li><strong>Remove participant:</strong> If you want to remove a participant, click on the minus icon next to the participants name.</li>
+    <li><strong>Free sports equipment:</strong> You can also see which sports equipment is still available. To book a piece of sports equipment, click on the plus icon next to the sports equipment.</li>
+    <li><strong>Occupied sports equipment:</strong> You can also see which sports equipment is already occupied. To release an occupied piece of sports equipment, click on the minus icon next to the sports equipment.</li>
+    <li><strong>Back to overview:</strong> If you want to return to the list of courses, click on the "Back" button at the end of the page.</li>
+</ol>',
 ];
