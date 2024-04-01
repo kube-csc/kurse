@@ -38,7 +38,7 @@
                                </div>
                                <br>
                                 <div class="form-field">
-                                    <label for="kurslaenge" class="form-label">{{ $organiser->veranstaltung }} können im Zeitfenster zu buchen:</label>
+                                    <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster buchen:</label>
                                     <div class="form-input-text">
                                         {{ $timeMin }} - {{ $timeMax }}
                                     </div>

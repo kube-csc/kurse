@@ -4,7 +4,7 @@
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Termine</h2>
-            <p>Folgende Anzahl der {{ $organiser->veranstaltung }} stehen zur Zeit zur Verfügung: {{ $countCoursedates }}.</p>
+            <p>Folgende Anzahl der {{ $organiser->veranstaltung }} stehen zur Zeit zur Verfügung: {{ $countCoursedates }}</p>
             <br>
             @if($organiser->getOrganiserInformation->terminInformation <> '')
               <p> {!! $organiser->getOrganiserInformation->terminInformation !!}</p>
@@ -20,10 +20,10 @@
                     <a href="{{ route('frontend.course' , $coursedate->id)  }}"> <div class="icon"><i class="bx bx-calendar-event"></i></div></a>
                     <h4 class="title"><a href="{{ route('frontend.course' , $coursedate->id)  }}">{{ $coursedate->getCousename->kursName }} </a></h4>
                     <p class="description">
-                        Kurs im Zeitfenster<br>
+                        Termin im Zeitfenster<br>
                         {{ date("d.m.Y", strtotime($coursedate->kursstarttermin)) }} {{ date("H:i", strtotime($coursedate->kursstarttermin)) }} Uhr<br>
                         {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
-                        Kurslänge: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
+                        Dauer: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
                         Trainer:
                         @foreach($coursedate->users as $user)
                             <br>

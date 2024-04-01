@@ -13,7 +13,7 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             <a class="dasboard-iconbox-a" href="{{ route('courseBooking.course.edit', $coursedate->id) }}">
-                                <box-icon name='bookmark'></box-icon>
+                                <box-icon name='bookmark'></box-icon> Buchungen bearbeiten
                             </a>
                         </div>
                         <label class="form-label">{{ $organiser->veranstaltung}} im Zeitfenster:</label>

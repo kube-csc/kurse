@@ -187,72 +187,21 @@ class CourseParticipantController extends Controller
     public function update(UpdateCourseParticipantRequest $request, Coursedate $coursedate)
     {
         //$coursedate->update($request->validated());
-
-        // Parse the date and time to Carbon instances
-        $date = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime);
-        $time = Carbon::parse($request->kurslaenge);
-        // Extract the hours and minutes from the time
-        $hours = $time->hour;
-        $minutes = $time->minute;
-        $kurslaeneminuten =  $hours*60 + $minutes;
-        $hoursStart = Carbon::parse($request->kursstartterminTime)->hour;
-        $minutesStart = Carbon::parse($request->kursstartterminTime)->minute;
-        $kurslaeneminutenStart = $hoursStart*60 + $minutesStart;
-
-        // Parse the dates to Carbon instances
-        $kursendterminBerechnung = Carbon::parse($request->kursendterminDatum.' '.$request->kursendterminTime);
-        $kursstarttermin = Carbon::parse($request->kursstarttermin.' '.$request->kursstartterminTime);
-        // Calculate the difference in minutes
-        $kursendterminBerechnungDatum = Carbon::parse($request->kursendtermin)->format('Y-m-d');
-        $kursstartterminDatum = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
-        $diffMinute = $kursendterminBerechnung->diffInMinutes($kursstarttermin);
-
-        if($kursendterminBerechnungDatum <= $kursstartterminDatum)
-        {
-            if ($kurslaeneminuten > $kurslaeneminutenStart)
-            {
-                $diffMinute = $diffMinute * 1;
-            }
-            else
-            {
-                $diffMinute = $diffMinute * -1;
-            }
-        }
-
-        if($diffMinute < $kurslaeneminuten)
-        {
-            // FixMe: Self::danger('... funktioniert nicht $dangeer = wurde als alternative verwendet
-            //self::danger('Die Kurslänge ist grösser als der Zeitabstand zwischen Kurs Start- und Kurs Endtermin.');
-            $danger = 'Der Endtermin wurde neu berechnet und erfolgreich gespeichert angelegt.';
-
-            if($kurslaeneminutenStart+$kurslaeneminuten >= 1440)
-            {
-                $hoursAdd = $hours+0;
-                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hoursAdd)->addMinutes($minutes);
-            }
-            else
-            {
-                $kursendtermin = Carbon::parse($request->kursstartterminDatum.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
-            }
-        }
-        else
-        {
-            $kursendtermin = $request->kursendterminDatum.' '.$request->kursendterminTime;
-            self::success('Der Startzeit des Termins wurde erfolgreich festgelegt.');
-        }
+        // ToDo: Valedierung verbessern
+        $daten=$this->kursendtermin($request, $coursedate);
 
         $coursedate->update(
             [
-                'kursstarttermin'         => $date,
-                'kursendtermin'           => $kursendtermin,
-                'kursstartvorschlagkunde' => $date,
-                'kursendvorschlagkunde'   => $kursendtermin
+                'kursstarttermin'         => $daten['kursstarttermin'],
+                'kursendtermin'           => $daten['kursendtermin'],
+                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
+                'kursendvorschlagkunde'   => $daten['kursendtermin'],
            ]
         );
 
         $this->book($coursedate->id);
 
-        self::success('Ein Teilnehmer wurde gebucht');
+        self::success('Die Zeit für den Termin wurde angepasst.');
 
         return redirect()->route('courseBooking.course.edit', $coursedate->id);
     }
@@ -391,4 +340,17 @@ class CourseParticipantController extends Controller
         ];
     }
 
+    public function kursendtermin($request, $coursedate)
+    {
+        $kursstarttermin  = Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d');
+        $date             = Carbon::parse($kursstarttermin.' '.$request->kursstartterminTime);
+        $time             = Carbon::parse($coursedate->kurslaenge);
+        $hours            = $time->hour;
+        $minutes          = $time->minute;
+        $kursendtermin    = Carbon::parse($kursstarttermin.' '.$request->kursstartterminTime)->addHours($hours)->addMinutes($minutes);
+        return [
+            'kursstarttermin' => $date,
+            'kursendtermin'   => $kursendtermin,
+       ];
+    }
 }

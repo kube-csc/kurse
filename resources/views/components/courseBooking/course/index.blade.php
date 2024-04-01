@@ -14,9 +14,9 @@
                         <div class="dasboard-iconbox">
                             <a class="dasboard-iconbox-a" href="{{ route('courseBooking.course.edit', $coursedate->id) }}">
                                  @if($coursedate->bookedSelf_count > 0)
-                                    <box-icon name='bookmark'></box-icon>
+                                    <box-icon name='bookmark'></box-icon> Buchungen bearbeiten
                                  @else
-                                    <box-icon name='bookmark-plus'></box-icon> {{ $organiser->veranstaltung }} Termine buchen
+                                    <box-icon name='bookmark-plus'></box-icon> Termin buchen
                                  @endif
                             </a>
                         </div>

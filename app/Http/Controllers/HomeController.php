@@ -8,6 +8,7 @@ use App\Models\Trainertable;
 use App\Models\Coursedate;
 use App\Models\Course;
 use App\Models\SportEquipment;
+use Auth;
 use Illuminate\Support\Carbon;
 
 // ToDo: Wird es noch benötigt?
@@ -179,12 +180,17 @@ class HomeController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
+        $courseBookedCount = CourseParticipantBooked::where('kurs_id', $id)
+            ->where('participant_id' , Auth::user()->id)
+            ->count();
+
         $bookedCount= $this->bookedCount($coursedate);
 
         return view('pages.coursedate' , [
             'coursedate'                    => $coursedate,
             'organiser'                     => $organiser,
             'sportEquipments'               => $sportEquipmentBookeds,
+            'courseBookedCount'             => $courseBookedCount,
             'teilnehmerKursBookeds'         => $bookedCount['courseBookesCount'],
             'sportgeraetanzahlMax'          => $bookedCount['sportgeraetanzahlMax'],
         ]);

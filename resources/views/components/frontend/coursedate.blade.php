@@ -1,4 +1,4 @@
-@section('title' ,'Kursdaten')
+@section('title' ,'Termin')
 
 <main id="main">
     <!-- ======= Breadcrumbs Section ======= -->
@@ -6,10 +6,10 @@
         <div class="container">
 
             <div class="d-flex justify-content-between align-items-center">
-                <h2>Kursdaten</h2>
+                <h2>{{ $organiser->veranstaltung }}</h2>
                 <ol>
                     <li><a href="/">Home</a></li>
-                    <li>Termine</li>
+                    <li>Termin</li>
                 </ol>
             </div>
         </div>
@@ -24,15 +24,25 @@
                 {{ date("d.m.Y", strtotime($coursedate->kursstarttermin)) }} {{ date("H:i", strtotime($coursedate->kursstarttermin)) }} Uhr<br>
                 {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
                 Dauer: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
-                Teilnehmer:
-                {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}
+                Teilnehmer: {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
+                Deine gebuchten Teilnehmer: {{ $courseBookedCount }}
                 <br><br>
-
                 {{-- ToDo: Direktes Buchen verbessern--}}
                 @auth
-                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax)
-                      <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}" class="about-btn">Termin buchen <i class="bx bx-chevron-right"></i></a>
+                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax and ($coursedate->kursstarttermin <> $coursedate->kursstartvorschlag or $coursedate->kursendtermin <> $coursedate->kursendvorschlag))
+                      <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}"><i class="bx bx-user-plus"></i> Teilnehmer buchen</a>
                       <br><br>
+                  @endif
+                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax)
+                       <a href="{{ route('courseBooking.course.edit' , $coursedate->id) }}">
+                         @if($courseBookedCount == 0)
+                           <i class="bx bx-book-add"></i>
+                        @else
+                           <i class="bx bx-book"></i>
+                        @endif
+                           zur Terminbuchung
+                       </a>
+                       <br><br>
                   @endif
                 @endauth
 
