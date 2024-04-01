@@ -180,9 +180,19 @@ class HomeController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $courseBookedCount = CourseParticipantBooked::where('kurs_id', $id)
-            ->where('participant_id' , Auth::user()->id)
-            ->count();
+        if(Auth::check()){
+              if (Auth::user()->getTable()=='course_participants') {
+                  $courseBookedCount = CourseParticipantBooked::where('kurs_id', $id)
+                      ->where('participant_id', Auth::user()->id)
+                      ->count();
+              }
+              else {
+                    $courseBookedCount = 0;
+              }
+        }
+        else {
+            $courseBookedCount = 0;
+        }
 
         $bookedCount= $this->bookedCount($coursedate);
 

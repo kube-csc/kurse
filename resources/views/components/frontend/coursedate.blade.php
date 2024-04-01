@@ -27,24 +27,25 @@
                 Teilnehmer: {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
                 Deine gebuchten Teilnehmer: {{ $courseBookedCount }}
                 <br><br>
-                {{-- ToDo: Direktes Buchen verbessern--}}
-                @auth
-                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax and ($coursedate->kursstarttermin <> $coursedate->kursstartvorschlag or $coursedate->kursendtermin <> $coursedate->kursendvorschlag))
-                      <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}"><i class="bx bx-user-plus"></i> Teilnehmer buchen</a>
-                      <br><br>
-                  @endif
-                  @if($teilnehmerKursBookeds < $sportgeraetanzahlMax)
-                       <a href="{{ route('courseBooking.course.edit' , $coursedate->id) }}">
-                         @if($courseBookedCount == 0)
-                           <i class="bx bx-book-add"></i>
-                        @else
-                           <i class="bx bx-book"></i>
-                        @endif
-                           zur Terminbuchung
-                       </a>
-                       <br><br>
-                  @endif
-                @endauth
+                @if(Auth::check())
+                    @if (Auth::user()->getTable()=='course_participants') {
+                      @if($teilnehmerKursBookeds < $sportgeraetanzahlMax and ($coursedate->kursstarttermin <> $coursedate->kursstartvorschlag or $coursedate->kursendtermin <> $coursedate->kursendvorschlag))
+                          <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}"><i class="bx bx-user-plus"></i> Teilnehmer buchen</a>
+                          <br><br>
+                      @endif
+                      @if($teilnehmerKursBookeds < $sportgeraetanzahlMax)
+                           <a href="{{ route('courseBooking.course.edit' , $coursedate->id) }}">
+                             @if($courseBookedCount == 0)
+                               <i class="bx bx-book-add"></i>
+                            @else
+                               <i class="bx bx-book"></i>
+                            @endif
+                               zur Terminbuchung
+                           </a>
+                           <br><br>
+                      @endif
+                    @endif
+                @endif
 
                 <h3>{{ $organiser->trainerUeberschrift }}:</h3>
                 @foreach($coursedate->users as $user)
@@ -61,7 +62,7 @@
 
             @if($coursedate->getCousename->kursBeschreibung != null)
             <div class="section-title" data-aos="fade-in" data-aos-delay="200">
-                <h3>Kurs Information:</h3>
+                <h3>Information:</h3>
                 {!! $coursedate->getCousename->kursBeschreibung !!}
             </div>
             @endif
