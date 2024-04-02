@@ -6,6 +6,7 @@ use App\Models\CourseParticipant as User;
 use App\Models\Organiser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
 
@@ -20,9 +21,11 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        $input['name'] = $input['vorname'];
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:course_participants'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
             'vorname' => 'required|string|max:255',
@@ -33,7 +36,6 @@ class CreateNewUser implements CreatesNewUsers
 
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
         if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
             $organiser = Organiser::find(1);
         }
 

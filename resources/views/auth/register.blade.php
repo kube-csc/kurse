@@ -8,12 +8,12 @@
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
-
+            {{--
             <div>
                 <x-label for="name" value="{{ __('Alias Name') }}" />
                 <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             </div>
-
+            --}}
             <div>
                 <x-label for="name" value="{{ __('Vorname') }}" />
                 <x-input id="name" class="block mt-1 w-full" type="text" name="vorname" :value="old('vorname')" required autofocus autocomplete="vorname" />
