@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="header-h2">
             {{ __('backend.Course Dates') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="form-field">
-                                <label class="form-label">Information zum Kurs:</label>
+                                <label class="form-label">Information zum Termin:</label>
                                 <textarea name="kursInformation" class="form-input-textarea @if($errors->has('kursInformation')) is-invalid @endif">{{ old('kursInformation', $coursedate->kursInformation)}}</textarea>
                                 @if ($errors->has('kursInformation'))
                                     <span class="invalid-feedback" role="alert">
@@ -54,10 +54,10 @@
                 </div>
                 <div class="form-footer">
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                     <button type="submit" class="form-button">
-                        Eintragen
+                        {{ __('main.save') }}
                     </button>
                 </div>
             </form>

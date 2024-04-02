@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="header-h2">
             {{ __('backend.Course Date Create') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
@@ -20,7 +20,7 @@
                     <div class="form-group">
                         <div class="form-card" x-data="{ kursstatterminDatum: '{{ $kursstartterminDatum }}', kursendterminDatum: '{{ $kursstartterminDatum }}' }">
                             <div class="form-field">
-                                <label for="kursstarttermin" class="form-label">Start Datum</label>
+                                <label for="kursstarttermin" class="form-label">Start Datum:</label>
                                 <div class="form-field flex">
                                     <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date" value="{{ $kursstartterminDatum }}" x-model="kursstatterminDatum" @change="kursendterminDatum = kursstatterminDatum">
                                     <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date" value="{{ $kursstartterminTime }}">
@@ -28,7 +28,7 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="kursendtermin" class="form-label">End Datum</label>
+                                <label for="kursendtermin" class="form-label">letztmögliches Ende::</label>
                                 <div class="form-field flex">
                                     <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminDatum }}" x-model="kursendterminDatum">
                                     <input type="time" name="kursendterminTime" id="kursendterminTime" class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kursendterminTime }}">
@@ -36,7 +36,7 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="kurslaenge" class="form-label">Kursdauer</label>
+                                <label for="kurslaenge" class="form-label">Dauer:</label>
                                 <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif" value="{{ $kurslaenge }}">
                             </div>
 
@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="course_id" class="form-label">Kursname</label>
+                                <label for="course_id" class="form-label">Name:</label>
                                 <select name="course_id">
                                     @foreach ($courses as $course)
                                         <option value="{{ $course->id }}"  @selected(old('couse_id') ?? $course->id  == $course_id)>
@@ -57,7 +57,7 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte</label>
+                                <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte:</label>
                                 <select name="sportgeraetanzahl">
                                     <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $sportgeraetanzahl)>
                                         alle Sportgeräte
@@ -71,7 +71,7 @@
                             </div>
 
                             <div class="form-field">
-                                <label class="form-label">Information zum Kurs:</label>
+                                <label class="form-label">Information zum Termin:</label>
                                 <textarea name="kursInformation" class="form-input-textarea @if($errors->has('kursInformation')) is-invalid @endif">{{ old('kursInformation', '')}}</textarea>
                                 @if ($errors->has('kursInformation'))
                                     <span class="invalid-feedback" role="alert">
@@ -84,10 +84,10 @@
                     </div>
                     <div class="form-footer">
                         <a href="{{ route('backend.courseDate.index') }}" class="form-button">
-                            Zurück
+                            {{ __('main.back') }}
                         </a>
                         <button type="submit" class="form-button ">
-                            Eintragen
+                            {{ __('main.save') }}
                         </button>
                     </div>
                 </form>

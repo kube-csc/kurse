@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="header-h2">
                     {{ __('backend.Organiser') }}
             </h2>
         </div>
@@ -16,10 +16,10 @@
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Veranstaltung:</label>
+                        <label class="label">Veranstaltung:</label>
                         {{ $organiser->veranstaltung }}<br>
                         @if($organiser->veranstaltungDomain != null)
-                            <label class="form-label">Domain der Veranstaltung:</label>
+                            <label class="label">Domain der Veranstaltung:</label>
                             {!! $organiser->veranstaltungDomain!!}<br>
                         @endif
                     </div>

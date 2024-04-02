@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('backend.Course Dates') }}
+        <h2 class="header-h2">
+            {{ __('backend.Date') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
             <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
@@ -38,7 +38,7 @@
                                </div>
                                <br>
                                 <div class="form-field">
-                                    <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster buchen:</label>
+                                    <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster geändert werden:</label>
                                     <div class="form-input-text">
                                         {{ $timeMin }} - {{ $timeMax }}
                                     </div>
@@ -52,14 +52,14 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="kurslaenge" class="form-label">Kursdauer:</label>
+                            <label for="kurslaenge" class="form-label">Dauer:</label>
                             <div class="form-input-text">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kurslaenge)->format('H:i') }}
                             </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookeAlls->count() }} belegt(e) Plätz(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e)</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookeAlls->count() }} belegt(e) Plätz(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
                             <div class="form-box">
                                 @if($sportgeraetanzahlMax>0)
                                     <a href="{{ route('courseBooking.course.book' ,
@@ -78,18 +78,23 @@
                                         ]
                                         ) }}"
                                     >
-                                        <span class="form-button"><box-icon name='user-minus'></box-icon> {{ $loop->iteration }} {{ $courseBook->participant->name}}</span>
+                                        <span class="form-button"><box-icon name='user-minus'></box-icon> {{ $loop->iteration }}. {{ $courseBook->participant->name}}</span>
                                     </a>
                                 @endforeach
                             </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookeAlls->count() }}  anderer Teilnehmer</label>
+                            <label for="course_id" class="form-label">{{ $courseBookeAlls->count() }} andere Teilnehmer:</label>
                             <div class="form-box">
                                 @foreach($courseBookeAlls as $courseBookAll)
                                        <span class="form-button-fix">
-                                            {{ $loop->iteration+$courseBookes->count() }} Teilnehmer
+                                            {{ $loop->iteration+$courseBookes->count() }}.
+                                           @if($courseBookAll->participant_id<>null)
+                                                {{ $courseBookAll->participant->name }}
+                                           @else
+                                                Teilnehmer
+                                           @endif
                                         </span>
                                 @endforeach
                             </div>
@@ -108,11 +113,11 @@
                 </div>
                 <div class="form-footer">
                     <a href="{{ route('courseBooking.course.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                   @if($courseBookes->count()+$courseBookeAlls->count()==0)
                     <button type="submit" class="form-button">
-                        Eintragen
+                        {{ __('main.save') }}
                     </button>
                   @endif
                 </div>

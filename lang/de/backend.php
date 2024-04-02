@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'Date' => 'Termin',
+    'Date Management' => 'Terminverwaltung',
     'Course Dates' => 'Deine Termine',
     'Course Dates All' => 'Alle Termine',
     'Course Date Create' => 'Kurs Termine erstellen',
@@ -31,9 +33,9 @@ Trainer: Dieses Feld zeigt deinen Namen an, da du als Trainer für den Kurs eing
 Kursname: Hier wählst du den Namen des Kurses aus einer Dropdown-Liste aus.<br>
 Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs aus einer Dropdown-Liste aus.<br>
 Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die Daten zu speichern.',
-    'Course' => 'Beschreibung der Kurse',
-    'Course Edit' => 'Beschreibung Kurs bearbeiten',
-    'Course Edit Help' => 'Kursname: Hier gibst du den Namen des Kurses ein.',
+    'Course' => 'Beschreibung der Kurse / Fahrt',
+    'Course Edit' => 'Beschreibung Kurs / Termin bearbeiten',
+    'Course Edit Help' => 'Kursname: Hier gibst du den Namen und Beschreibung des Kurses / Fahrt ein.',
     'Sport Equipment' => 'Sportgeräte',
     'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
     'Sport Equipment Edit Help' => 'Sportgeräte bearbeiten Hilfe',
@@ -61,18 +63,18 @@ Die [ durch < und ] durch > ersetzen.
     <li>Wenn du zur Liste der Kurse zurückkehren möchtest, klicke auf den Link "Zurück".</li>
     </ul>',
     'Course Date Edit Help' => '<h1>Kurs Termine bearbeiten</h1>
-<p>Auf dieser Seite können Sie die Details eines bestimmten Kurses bearbeiten. Sie können die Anzahl der möglichen Teilnehmer und Informationen zum Kurs ändern.</p>
+<p>Auf dieser Seite können Sie die Details eines bestimmten Kurses bearbeiten. Du kannst die Anzahl der möglichen Teilnehmer und Informationen zum Kurs ändern.</p>
 
 <h2>Anzahl der möglichen Teilnehmer ändern</h2>
 <p>Wählen Sie aus dem Dropdown-Menü die maximale Anzahl der Teilnehmer aus, die an dem Kurs teilnehmen können.</p>
 
 <h2>Informationen zum Kurs ändern</h2>
-<p>Geben Sie in das Textfeld die Informationen ein, die Sie den Teilnehmern des Kurses mitteilen möchten. Dies könnte Details über den Kursinhalt, den Trainer oder andere relevante Informationen enthalten.</p>
+<p>Geben Sie in das Textfeld die Informationen ein, die Du den Teilnehmern des Kurses mitteilen möchten. Dies könnte Details über den Kursinhalt, den Trainer oder andere relevante Informationen enthalten.</p>
 
 <h2>Änderungen speichern</h2>
-<p>Klicken Sie auf den Button "Eintragen", um die Änderungen zu speichern. Wenn Sie die Änderungen nicht speichern möchten, können Sie auf den Button "Zurück" klicken, um zur vorherigen Seite zurückzukehren.</p>',
+<p>Klicke auf den Button "Eintragen", um die Änderungen zu speichern. Wenn Du die Änderungen nicht speichern möchten, können Sie auf den Button "Zurück" klicken, um zur vorherigen Seite zurückzukehren.</p>',
     'sporting equipment help' => '<ol>
-        <li><strong>Kursdaten und Sportgeräte:</strong> Auf der Hauptseite sehen Sie die Kursdaten und die zugehörigen Sportgeräte. Klicken Sie auf das Info-Symbol, um eine Hilfestellung zu erhalten.</li>
+        <li><strong>Kursdaten und Sportgeräte:</strong> Auf der Hauptseite siehst Du die Kursdaten und die zugehörigen Sportgeräte. Klicken Sie auf das Info-Symbol, um eine Hilfestellung zu erhalten.</li>
         <li><strong>Kursdetails:</strong> Sie können Details wie Startdatum, Enddatum, Trainer und Kursname einsehen. Diese Informationen werden automatisch aus den Daten des Kurses generiert.</li>
         <li><strong>Belegte und freie Plätze:</strong> Sie können die Anzahl der belegten und freien Plätze für jedes Sportgerät sehen. Wenn noch Plätze frei sind, können Sie einen neuen Teilnehmer hinzufügen, indem Sie auf das Plus-Symbol neben dem Sportgerät klicken.</li>
         <li><strong>Teilnehmer entfernen:</strong> Wenn Sie einen Teilnehmer entfernen möchten, klicken Sie auf das Minus-Symbol neben dem Namen des Teilnehmers.</li>

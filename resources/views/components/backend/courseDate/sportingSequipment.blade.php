@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('backend.Course Dates') }}  - {{  __('backend.Sport Equipment') }}
+        <h2 class="header-h2">
+            {{ __('backend.Date Management') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
             <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
@@ -17,15 +17,15 @@
                 <div class="form-group">
                     <div class="form-card">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Startdatum:</label>
-                            <div class="form-field flex text">
+                            <label for="kursstarttermin" class="form-label">Start Datum:</label>
+                            <div class="form-field flex form-box">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }} Uhr
                             </div>
                         </div>
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Enddatum:</label>
-                            <div class="form-field flex text">
+                            <label for="kursstarttermin" class="form-label">letztmögliches Ende::</label>
+                            <div class="form-box">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }} Uhr
                             </div>
@@ -33,7 +33,7 @@
 
                         <div class="form-field">
                             <label for="trainer_id" class="form-label">Trainer:</label>
-                            <div class="text">
+                            <div class="form-box">
                                 @foreach($trainers as $trainer)
                                     {{ $trainer->vorname }} {{ $trainer->nachname }}<br>
                                 @endforeach
@@ -42,13 +42,13 @@
 
                         <div class="form-field">
                             <label for="course_id" class="form-label">Name des Termins:</label>
-                            <div class="form-field flex text">
+                            <div class="form-box">
                                {{ $course->kursName }}
                             </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e)</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
                             <div class="form-box">
                                 @if($sportgeraetanzahlMax>0)
                                     <a href="{{ route('backend.courseDate.Book' ,
@@ -132,7 +132,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in anderen Termin:</label>
+                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in andere Termin(e):</label>
                             <div class="form-box">
                                 @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
                                     <span>
@@ -148,7 +148,7 @@
 
                 <div class="form-footer">
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                 </div>
         </div>

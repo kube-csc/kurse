@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="header-h2">
                     {{ __('backend.Sport Equipment') }}
             </h2>
         </div>
@@ -16,42 +16,42 @@
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Sportgerät:</label>
+                        <label class="label">Sportgerät:</label>
                         {{ $sportEquipment->sportgeraet }}<br>
-                        <label class="form-label">Datum der Anschaffung:</label>
+                        <label class="label">Datum der Anschaffung:</label>
                         {{ date('d.m.Y', strtotime($sportEquipment->anschafdatum)) }}
                         @if($sportEquipment->verschrottdatum != null)
-                             <label class="form-label">Datum der Verschrottung:</label>
+                             <label class="label">Datum der Verschrottung:</label>
                              {{ date('d.m.Y', strtotime($sportEquipment->verschrottdatum)) }}
                         @endif
                         @if($sportEquipment->bild != Null)
-                             <label class="form-label">Bild:</label>
+                             <label class="label">Bild:</label>
                              <img src="/storage/sportgeraet/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/><br>
                         @endif
                         @if($sportEquipment->laenge != null)
-                            <label class="form-label">Länge in Meter:</label>
+                            <label class="label">Länge in Meter:</label>
                             {{ $sportEquipment->laenge }}<br>
                         @endif
                         @if($sportEquipment->breite != null)
-                            <label class="form-label">Breite in Meter:</label>
+                            <label class="label">Breite in Meter:</label>
                             {{ $sportEquipment->breite }}<br>
                         @endif
                         @if($sportEquipment->hoehe != null)
-                            <label class="form-label">Höhe in Meter:</label>
+                            <label class="label">Höhe in Meter:</label>
                             {{ $sportEquipment->hoehe }}<br>
                         @endif
                         @if($sportEquipment->gewicht != null)
-                            <label class="form-label">Gewicht in kg:</label>
+                            <label class="label">Gewicht in kg:</label>
                             {{ $sportEquipment->gewicht }}<br>
                         @endif
                         @if($sportEquipment->tragkraft != null)
-                            <label class="form-label">Tragkraft in kg:</label>
+                            <label class="label">Tragkraft in kg:</label>
                             {{ $sportEquipment->tragkraft }}<br>
                         @endif
-                        <label class="form-label">Sportleranzahl:</label>
+                        <label class="label">Sportleranzahl:</label>
                         {{ $sportEquipment->sportleranzahl }}<br>
                         @if($sportEquipment->typ != null)
-                            <label class="form-label">Beschreibung:</label>
+                            <label class="label">Beschreibung:</label>
                             {!! $sportEquipment->typ !!}<br>
                         @endif
                     </div>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="header-h2">
                 {{ __('backend.Course Dates') }}
             </h2>
             <div class="dasboard-iconbox w-12 ml-4">
@@ -47,26 +47,26 @@
                             </a>
                            @endif
                         </div>
-                        <label class="form-label">Start Datum:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
-                        <label class="form-label">End Datum:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
-                        <label class="form-label">Länge des Kurses:</label>
-                        {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
-                        <label class="form-label">Name des Kurses:</label>
+                        <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
-                        <label class="form-label">{{ $organiser->trainerUeberschrift }}:</label>
+                        <label class="label">Start Datum:</label>
+                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                        <label class="label">letztmögliches Ende:</label>
+                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        <label class="label">Dauer:</label>
+                        {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
+                        <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
                         @if($coursedate->sportgeraetanzahl > 0)
                             <div>
-                                <label class="form-label">Teilnehmer:</label>
+                                <label class="label">Teilnehmer:</label>
                                 {{ $coursedate->booked_count }} von {{ $coursedate->sportgeraetanzahl }} Teilnehmer
                             </div>
                         @else
                             <div>
-                                <label class="form-label">Teilnehmer:</label>
+                                <label class="label">Teilnehmer:</label>
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif

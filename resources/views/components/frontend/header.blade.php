@@ -13,10 +13,10 @@
                 <li class="active"><a href="/">Home</a></li>
                 @if(Auth::check())
                     <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
-                    <li><a href="{{ route('frontend.logout') }}">{{ __('de.Log Out') }}</a></li>
+                    <li><a href="{{ route('frontend.logout') }}">{{ __('main.Log Out') }}</a></li>
                 @else
-                    <li><a href="/login">{{ __('de.Log In') }}</a></li>
-                    <li><a href="/register">{{ __('de.Register') }}</a></li>
+                    <li><a href="/login">{{ __('main.Log In') }}</a></li>
+                    <li><a href="/register">{{ __('main.Register') }}</a></li>
                 @endif
             </ul>
         </nav><!-- .nav-menu -->

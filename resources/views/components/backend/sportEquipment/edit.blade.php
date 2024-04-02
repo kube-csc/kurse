@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="header-h2">
             {{ __('backend.Sport Equipment Edit') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
@@ -13,7 +13,7 @@
             <div x-data="{ openHelpEdit: false }" class="text-left">
                 <button @click="openHelpEdit = !openHelpEdit">
                     {{ __('backend.Edit help HTML button') }}
-                    Hilfe zum editieren</button>
+                </button>
                 <div class="help-box" x-show="openHelpEdit" @click.away="openHelpEdit = false">
                     <p class="help-text">
                         {!! __('backend.Edit help HTML') !!}
@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="kursendtermin" class="form-label">Datum der Stillegung:</label>
+                            <label for="kursendtermin" class="form-label">Datum der Verschrottung:</label>
                             <div class="form-field flex">
                                 <input type="date" name="verschrottdatum" id="verschrottdatum" class="form-input-date @if(isset($danger)) is-invalid @endif"
                                        @if(isset($verschrottdatum))
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Sportleranzahl:</label>
+                            <label class="form-label">Anzahl der möglichen Sportler:</label>
                             <input type="text" name="sportleranzahl" class="form-input-text @if($errors->has('sportleranzahl')) is-invalid @endif" value="{{ old('sportleranzahl', $sportEquipment->sportleranzahl) }}">
                             @if ($errors->has('sportleranzahl'))
                                 <span class="invalid-feedback" role="alert">
@@ -145,10 +145,10 @@
 
                 <div class="form-footer">
                     <a href="{{ route('backend.sportEquipment.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                     <button type="submit" class="form-button">
-                        Eintragen
+                        {{ __('main.save') }}
                     </button>
                 </div>
             </form>

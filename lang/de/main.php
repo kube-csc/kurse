@@ -16,5 +16,6 @@ return [
     'Log Out' => 'Abmelden',
     'Log In' => 'Anmelden',
     'Register' => 'Registrieren',
-
+    'back' => 'Zurück',
+    'save' => 'Eintragen',
 ];

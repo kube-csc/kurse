@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="header-h2">
                     {{ __('backend.Course') }}
             </h2>
         </div>
@@ -16,10 +16,10 @@
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
-                        <label class="form-label">Kurs:</label>
+                        <label class="label">Kurs / Training / Fahrt:</label>
                         {{ $course->kursName }}<br>
                         @if($course->kursBeschreibung != null)
-                            <label class="form-label">Beschreibung:</label>
+                            <label class="label">Beschreibung:</label>
                             {!! $course->kursBeschreibung !!}<br>
                         @endif
                     </div>

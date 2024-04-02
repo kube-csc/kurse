@@ -59,7 +59,7 @@
                     <h4>Intern</h4>
                     <ul>
                         @if(Auth::check())
-                            <li><a href="{{ route('frontend.logout') }}">{{ __('de.Log Out') }}</a></li>
+                            <li><a href="{{ route('frontend.logout') }}">{{ __('main.Log Out') }}</a></li>
                         @else
                             <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> {{ $organiser->trainerUeberschrift }} Login</a></li>
                         @endif

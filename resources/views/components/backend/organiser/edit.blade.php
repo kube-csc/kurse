@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="header-h2">
             {{ __('backend.Organiser Edit') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
@@ -25,7 +25,7 @@
     <div class="main-box">
         <div class="box">
             <div class="form-field">
-                <label for="course_id" class="form-label">{{ $pickedSportSections->count() }} zugewiesende Abteilung(en) für Sportgeräte</label>
+                <label for="course_id" class="form-label">{{ $pickedSportSections->count() }} zugewiesende Abteilung(en) für Sportgeräte:</label>
                 <div class="form-box">
                     @foreach($pickedSportSections as $pickedSportSection)
                         <a href="{{ route('backend.organiser.destroySportSection',
@@ -44,7 +44,7 @@
             </div>
 
             <div class="form-field">
-                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesende Abteilung(en)</label>
+                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesende Abteilung(en):</label>
                 <div class="form-box">
                     @foreach($sportSections as $sportSection)
                         <a href="{{ route('backend.organiser.pickSportSection',
@@ -85,7 +85,7 @@
                             </div>
                             @enderror
 
-                            <label class="form-label">Kurs Bezeichnung:</label>
+                            <label class="form-label">Bezeichnung des Kurs / Fahrt / Training:</label>
                             <input type="text" name="kurseUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old( 'kurseUeberschrift', $organiser->kurseUeberschrift) }}">
                             @error('kurseUeberschrift')
                             <div class="invalid-feedback" role="alert">
@@ -107,7 +107,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Veranstaltung Beschreibung:</label>
+                            <label class="form-label">Lange Beschreibung der Veranstaltung:</label>
                             <textarea name="veranstaltungBeschreibungLang" class="form-input-textarea @if($errors->has('veranstaltungBeschreibungLang')) is-invalid @endif">{{ old('veranstaltungBeschreibungLang', $organiser->getOrganiserInformation->veranstaltungBeschreibungLang) }}</textarea>
                             @if ($errors->has('veranstaltungBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
@@ -128,7 +128,7 @@
                         </div>
 
                         <div class="form-field" x-data="{ sportartUeberschrift: '{{ old('sportartUeberschrift', $organiser->sportartUeberschrift) }}' }">
-                            <label class="form-label">Überschrift Beschreibungstext:</label>
+                            <label class="form-label">Überschrift Beschreibung:</label>
                             <input type="text" name="sportartUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" x-model="sportartUeberschrift">
                             @error('sportartUeberschrift')
                             <div class="invalid-feedback" role="alert">
@@ -136,7 +136,7 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                             @enderror
-                            <label class="form-label"><span x-text="sportartUeberschrift"></span> Beschreibung langer Text:</label>
+                            <label class="form-label">Langer Text <span x-text="sportartUeberschrift"></span> Beschreibung:</label>
                             <textarea name="sportartBeschreibungLang" class="form-input-textarea @if($errors->has('sportartBeschreibungLang')) is-invalid @endif">{{ old('sportartBeschreibungLang', $organiser->getOrganiserInformation->sportartBeschreibungLang) }}</textarea>
                             @if ($errors->has('sportartBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
@@ -144,7 +144,7 @@
                                 </span>
                             @endif
 
-                            <label class="form-label"><span x-text="sportartUeberschrift"></span> Beschreibung kurz Text:</label>
+                            <label class="form-label">Kurzer Text <span x-text="sportartUeberschrift"></span> Beschreibung:</label>
                             <textarea name="sportartBeschreibungKurz" class="form-input-textarea @if($errors->has('sportartBeschreibungKurz')) is-invalid @endif">{{ old('sportartBeschreibungKurz', $organiser->getOrganiserInformation->sportartBeschreibungKurz) }}</textarea>
                             @if ($errors->has('sportartBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">
@@ -155,7 +155,7 @@
 
 
                         <div class="form-field" x-data="{ materialUeberschrift: '{{ old('materialUeberschrift', $organiser->materialUeberschrift) }}' }">
-                            <label class="form-label">Überschrift Materialbeschreibung :</label>
+                            <label class="form-label">Überschrift Materialbeschreibung:</label>
                             <input type="text" name="materialUeberschrift" class="form-input-text @if(isset($danger)) is-invalid @endif" x-model="materialUeberschrift">
                             @error('materialUeberschrift')
                             <div class="invalid-feedback" role="alert">
@@ -163,7 +163,7 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                             @enderror
-                            <label class="form-label"><span x-text="materialUeberschrift"></span> Lange Materialbeschreibung für die Veranstaltung:</label>
+                            <label class="form-label">Lange <span x-text="materialUeberschrift"></span> Beschreibung:</label>
                             <textarea name="materialBeschreibungLang" class="form-input-textarea @if($errors->has('materialBeschreibungLang')) is-invalid @endif">{{ old('materialBeschreibungLang', $organiser->getOrganiserInformation->materialBeschreibungLang) }}</textarea>
                             @if ($errors->has('materialBeschreibungLang'))
                                 <span class="invalid-feedback" role="alert">
@@ -171,7 +171,7 @@
                                 </span>
                             @endif
 
-                            <label class="form-label"><span x-text="materialUeberschrift"></span> Kurze Materialbeschreibung für die Veranstaltung:</label>
+                            <label class="form-label">Kurze <span x-text="materialUeberschrift"></span> Beschreibung:</label>
                             <textarea name="materialBeschreibungKurz" class="form-input-textarea @if($errors->has('materialBeschreibungKurz')) is-invalid @endif">{{ old('materialBeschreibungKurz', $organiser->getOrganiserInformation->materialBeschreibungKurz) }}</textarea>
                             @if ($errors->has('materialBeschreibungKurz'))
                                 <span class="invalid-feedback" role="alert">
@@ -181,7 +181,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Text lang Mitglied werden:</label>
+                            <label class="form-label">Langer Text für Mitglied werden:</label>
                             <textarea name="mitgliedschaftLang" class="form-input-textarea @if($errors->has('mitgliedschaftLang')) is-invalid @endif">{{ old('mitgliedschaftLang', $organiser->getOrganiserInformation->mitgliedschaftLang) }}</textarea>
                             @if ($errors->has('mitgliedschaftLang'))
                                 <span class="invalid-feedback" role="alert">
@@ -191,7 +191,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Text kurz Mitglied werden:</label>
+                            <label class="form-label">Kurzer Text für Mitglied werden:</label>
                             <textarea name="mitgliedschaftKurz" class="form-input-textarea @if($errors->has('mitgliedschaftKurz')) is-invalid @endif">{{ old('mitgliedschaftKurz', $organiser->getOrganiserInformation->mitgliedschaftKurz) }}</textarea>
                             @if ($errors->has('mitgliedschaftKurz'))
                                 <span class="invalid-feedback" role="alert">
@@ -201,7 +201,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Text keine Kurse eingestellt:</label>
+                            <label class="form-label">Text wenn keine Kurse / Fahrten / Trainings eingestellt ist:</label>
                             <textarea name="keineKurse" class="form-input-textarea @if($errors->has('keineKurse')) is-invalid @endif">{{ old('keineKurse', $organiser->getOrganiserInformation->keineKurse) }}</textarea>
                             @if ($errors->has('keineKurse'))
                                 <span class="invalid-feedback" role="alert">
@@ -211,7 +211,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">Information für Termine:</label>
+                            <label class="form-label">Information für Kurse / Fahrten / Trainings:</label>
                             <textarea name="terminInformation" class="form-input-textarea @if($errors->has('terminInformation')) is-invalid @endif">{{ old('terminInformation', $organiser->getOrganiserInformation->terminInformation) }}</textarea>
                             @if ($errors->has('terminInformation'))
                                 <span class="invalid-feedback" role="alert">
@@ -225,10 +225,10 @@
 
                 <div class="form-footer">
                     <a href="{{ route('backend.organiser.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                     <button type="submit" class="form-button">
-                        Eintragen
+                        {{ __('main.save') }}
                     </button>
                 </div>
             </form>

@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'Date' => 'Date',
+    'Date Management' => 'Date Management',
     'Course Dates' => 'Your Dates',
     'Course Dates All' => 'All Dates',
     'Course Date Create' => 'Course Date Create',
@@ -26,12 +28,12 @@ At the end of the module, there is an option to return to the overview page.
 
 Please note that all actions you perform in this module have an impact on the data in the database.',
     'Course Date Create Help' => 'Start Date: Here you enter the start date and start time of the course. There are two input fields, one for the date and one for the time.',
-    'Course' => 'Courses Description',
-    'Course Edit' => 'Course Description Edit',
-    'Course Edit Help' => 'Course Name: Here you enter the name of the course.',
+    'Course' => 'Courses / Trip Description',
+    'Course Edit' => 'Course / Trip description edit',
+    'Course Edit Help' => 'Course Name: Here you enter the name and description of the course / trip',
     'Sport Equipment' => 'Sport Equipment',
     'Sport Equipment Edit' => 'Sport Equipment Edit',
-    'Sport Equipment Edit Help' => 'Sport Equipment Edit help',
+    'Sport Equipment Edit Help' => 'Sport Equipment Edit Help',
     'Organiser' => 'Organiser',
     'Organiser Edit' => 'Organiser Edit',
     'Organiser Edit Help' => 'Organiser: Here you enter the name of the organiser.',

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="header-h2">
             {{ __('backend.Course Dates') }}
         </h2>
         <div x-data="{ open: false }" class="dasboard-iconbox">
@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <div class="form-card" x-data="{ kursstatterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}', kursendterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}' }">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Start Datum</label>
+                            <label for="kursstarttermin" class="form-label">Start Datum:</label>
                             <div class="form-field flex">
                                 <input type="date" name="kursstartterminDatum" id="kursstartterminDatum" class="form-input-date"
                                         @if(isset($kursstartterminDatum))
@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="kursendtermin" class="form-label">End Datum</label>
+                            <label for="kursendtermin" class="form-label">letztmögliches Ende:</label>
                             <div class="form-field flex">
                                 <input type="date" name="kursendterminDatum" id="kursendterminDatum" class="form-input-date @if(isset($danger)) is-invalid @endif"
                                         @if(isset($kursendterminDatum))
@@ -63,7 +63,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="kurslaenge" class="form-label">Kursdauer</label>
+                            <label for="kurslaenge" class="form-label">Dauer:</label>
                             <input type="time" name="kurslaenge" id="kurslaenge"  class="form-input-date @if(isset($danger)) is-invalid @endif"
                                    @if(isset($kurslaenge))
                                        value="{{ $kurslaenge }}"
@@ -83,7 +83,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">Kursname:</label>
+                            <label for="course_id" class="form-label">Name:</label>
                             <select name="course_id">
                                 <!-- Fixme: Kursname bei Edit Aufruf kein alter Wert -->
                                 @foreach ($courses as $course)
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="form-field">
-                                <label class="form-label">Information zum Kurs:</label>
+                                <label class="form-label">Information zum Termin:</label>
                                 <textarea name="kursInformation" class="form-input-textarea @if($errors->has('kursInformation')) is-invalid @endif">{{ old('kursInformation', $coursedate->kursInformation)}}</textarea>
                                 @if ($errors->has('kursInformation'))
                                     <span class="invalid-feedback" role="alert">
@@ -134,10 +134,10 @@
                 </div>
                 <div class="form-footer">
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
-                        Zurück
+                        {{ __('main.back') }}
                     </a>
                     <button type="submit" class="form-button">
-                        Eintragen
+                        {{ __('main.save') }}
                     </button>
                 </div>
             </form>
