@@ -9,6 +9,6 @@
                 <box-icon name='home'></box-icon>
             </a>
         @endif
-            <a href="{{ env('APP_URL') }}" class="dasboard-iconbox-a"><box-icon name='globe'></box-icon></a>
+            <a href="{{ url('/') }}" class="dasboard-iconbox-a"><box-icon name='globe'></box-icon></a>
     </div>
 </div>

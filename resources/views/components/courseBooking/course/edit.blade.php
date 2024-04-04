@@ -26,7 +26,7 @@
                                 <div class="form-input-text">
                                      {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 </div>
-                                @if($courseBookes->count()+$courseBookeAlls->count()==0)
+                                @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin<>$timeMax)
                                 <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date"
                                        @if(isset($kursstartterminTime))
                                            value="{{ $kursstartterminTime }}"
@@ -40,7 +40,7 @@
                                 <div class="form-field">
                                     <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster geändert werden:</label>
                                     <div class="form-input-text">
-                                        {{ $timeMin }} - {{ $timeMax }}
+                                        {{ $timeMin }} Uhr - {{ $timeMax }} Uhr
                                     </div>
 
                                @else
@@ -59,9 +59,9 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookeAlls->count() }} belegt(e) Plätz(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
                             <div class="form-box">
-                                @if($sportgeraetanzahlMax>0)
+                                @if($sportgeraetanzahlMax>0 and ($courseBookes->count()+$courseBookedAlls->count()>0 or $timeMin==$timeMax))
                                     <a href="{{ route('courseBooking.course.book' ,
                                         [
                                            'coursedateId'     => $coursedate->id
@@ -85,13 +85,13 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookeAlls->count() }} andere Teilnehmer:</label>
+                            <label for="course_id" class="form-label">{{ $courseBookedAlls->count() }} andere Teilnehmer:</label>
                             <div class="form-box">
-                                @foreach($courseBookeAlls as $courseBookAll)
+                                @foreach($courseBookedAlls as $courseBookedAll)
                                        <span class="form-button-fix">
                                             {{ $loop->iteration+$courseBookes->count() }}.
-                                           @if($courseBookAll->participant_id<>null)
-                                                {{ $courseBookAll->participant->name }}
+                                           @if($courseBookedAll->participant_id<>null)
+                                                {{ $courseBookedAll->participant->name }}
                                            @else
                                                 Teilnehmer
                                            @endif
@@ -115,7 +115,7 @@
                     <a href="{{ route('courseBooking.course.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                  @if($courseBookes->count()+$courseBookeAlls->count()==0)
+                  @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin!=$timeMax)
                     <button type="submit" class="form-button">
                         {{ __('main.save') }}
                     </button>

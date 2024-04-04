@@ -13,7 +13,7 @@
             <div x-data="{ openHelpEdit: false }" class="text-left">
                 <button @click="openHelpEdit = !openHelpEdit">
                     {{ __('backend.Edit help HTML button') }}
-                    Hilfe zum editieren</button>
+                </button>
                 <div class="help-box" x-show="openHelpEdit" @click.away="openHelpEdit = false">
                     <p class="help-text">
                         {!! __('backend.Edit help HTML') !!}

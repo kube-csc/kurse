@@ -55,13 +55,13 @@
                   @include('textimport.footer')
                 </div>
 
-                <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
+                <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="200">
                     <h4>Intern</h4>
                     <ul>
                         @if(Auth::check())
-                            <li><a href="{{ route('frontend.logout') }}">{{ __('main.Log Out') }}</a></li>
+                            <li><a href="{{ route('frontend.logout') }}"><i class="bx bx-log-out"></i> {{ __('main.Log Out') }}</a></li>
                         @else
-                            <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> {{ $organiser->trainerUeberschrift }} Login</a></li>
+                            <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> {{ $organiser->trainerUeberschrift }} {{ __('main.Log In') }}</a></li>
                         @endif
                     </ul>
                 </div>

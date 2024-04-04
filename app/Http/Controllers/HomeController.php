@@ -59,6 +59,7 @@ class HomeController extends Controller
             ->where('course_participant_bookeds.deleted_at', null)
             ->where('coursedates.kursendtermin', '>=', $yearnow)
             ->where('coursedates.kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->where('coursedates.organiser_id', $organiser->id)
             ->get()->count();
 
         $trainers = Trainertable::join('organiser_sport_section', 'trainertables.sportSection_id', '=', 'organiser_sport_section.sport_section_id')

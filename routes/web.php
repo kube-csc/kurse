@@ -96,10 +96,11 @@ Route::middleware([
     Route::get('/backend/CourseDateEditGebucht/{coursedate}', [CoursedateController::class, 'editBooked'])->name('backend.courseDate.editBooked');
     Route::put('/backend/CourseDateUpdate/{coursedate}', [CoursedateController::class, 'update'])->name('backend.courseDate.update');
     Route::put('/backend/CourseDateUpdateGebucht/{coursedate}', [CoursedateController::class, 'updateBooked'])->name('backend.courseDate.updateBooked');
+    Route::put('/backend/CourseDateUpdateGebuchtFirst/{coursedate}', [CoursedateController::class, 'updateBookFirst'])->name('backend.courseDate.updateBookFirst');
     Route::put('/backend/CourseDateStore', [CoursedateController::class, 'store'])->name('backend.courseDate.store');
     Route::get('/backend/CourseDateDestroy/{coursedate}', [CoursedateController::class, 'destroy'])->name('backend.courseDate.destroy');
     Route::get('/backend/CourseDatesportingEquipment/{coursedate}', [CoursedateController::class, 'sportingEquipment'])->name('backend.courseDate.sportingEquipment');
-    Route::get('/backend/Book/{coursedateId}', [CoursedateController::class, 'Book'])->name('backend.courseDate.Book');
+    Route::get('/backend/Book/{coursedateId}', [CoursedateController::class, 'book'])->name('backend.courseDate.book');
     Route::get('/backend/destroyBooked/{coursedateId}/{courseBookId}', [CoursedateController::class, 'destroyBooked'])->name('backend.courseDate.destroyBooked');
     Route::get('/backend/CourseDateEquipmentBooked/{coursedateId}/{sportequipmentId}', [CoursedateController::class, 'equipmentBooked'])->name('backend.courseDate.equipmentBooked');
     Route::get('/backend/CourseDateEquipmentBookedDestroy/{coursedateId}/{kursId}/{sportgeraet}', [CoursedateController::class, 'equipmentBookedDestroy'])->name('backend.courseDate.equipmentBookedDestroy');
