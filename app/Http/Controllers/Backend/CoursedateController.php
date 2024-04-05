@@ -350,10 +350,10 @@ class CoursedateController extends Controller
             }
         }
 
-        $timeMin=Carbon::parse($coursedate->kursstartvorschlag)->format('H:i');
+        $timeMin=Carbon::parse($coursedate->kursstarttermin)->format('H:i');
         $courseLength = Carbon::parse($coursedate->kurslaenge);
         $courseLengthInMinutes = $courseLength->hour * 60 + $courseLength->minute;
-        $timeMax = Carbon::parse($coursedate->kursendvorschlag)->subMinutes($courseLengthInMinutes)->format('H:i');
+        $timeMax = Carbon::parse($coursedate->kursendtermin)->subMinutes($courseLengthInMinutes)->format('H:i');
 
         return view('components.backend.courseDate.sportingEquipment', compact([
             'organiser',

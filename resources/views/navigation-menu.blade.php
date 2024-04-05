@@ -33,7 +33,7 @@
                             {{ __('Dashboard') }}
                         </x-nav-link>
                     @endif
-                        <x-nav-link href="{{ env('APP_URL') }}">
+                        <x-nav-link href="{{ url('/') }}">
                             {{ __('Homepage') }}
                         </x-nav-link>
                 </div>

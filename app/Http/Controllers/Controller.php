@@ -36,7 +36,7 @@ class Controller extends BaseController
 
     public function kursendtermin($request, $coursedate)
     {
-        $date             = Carbon::parse($request->kursstarttermin)->format('Y-m-d');
+        $date             = Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d');
         $kursstarttermin  = Carbon::parse($date.' '.$request->kursstartterminTime);
         $time             = Carbon::parse($coursedate->kurslaenge);
         $hours            = $time->hour;
