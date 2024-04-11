@@ -10,6 +10,7 @@ use App\Models\SportEquipment;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use PhpParser\Node\Stmt\Return_;
 
 class CourseParticipantController extends Controller
 {
@@ -164,10 +165,10 @@ class CourseParticipantController extends Controller
                 $sportgeraetanzahlMax = $sportEquipments->count();
             }
         }
-        $timeMin=Carbon::parse($coursedate->kursstartvorschlag)->format('H:i');
+        $timeMin=Carbon::parse($coursedate->kursstarttermin)->format('H:i');
         $courseLength = Carbon::parse($coursedate->kurslaenge);
         $courseLengthInMinutes = $courseLength->hour * 60 + $courseLength->minute;
-        $timeMax = Carbon::parse($coursedate->kursendvorschlag)->subMinutes($courseLengthInMinutes)->format('H:i');
+        $timeMax = Carbon::parse($coursedate->kursendtermin)->subMinutes($courseLengthInMinutes)->format('H:i');
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -198,12 +199,14 @@ class CourseParticipantController extends Controller
 
         $coursedate->update(
             [
-                'kursstarttermin'         => $daten['kursstarttermin'],
-                'kursendtermin'           => $daten['kursendtermin'],
-                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
-                'kursendvorschlagkunde'   => $daten['kursendtermin'],
+               'kursstarttermin'         => $daten['kursstarttermin'],
+               'kursendtermin'           => $daten['kursendtermin'],
+               'kursstartvorschlagkunde' => $daten['kursstarttermin'],
+               'kursendvorschlagkunde'   => $daten['kursendtermin'],
            ]
         );
+
+        $this->timeOptimizationTrainer($coursedate->id);
 
         $this->book($coursedate->id);
 
@@ -222,8 +225,6 @@ class CourseParticipantController extends Controller
                 [
                     'participant_id' => Auth::user()->id,
                     'kurs_id' => $coursedateId,
-                    //'user_id'           => Auth::user()->id,
-                    //'bearbeiter_id'     => Auth::user()->id,
                     'updated_at' => Carbon::now(),
                     'created_at' => Carbon::now()
                 ]
@@ -256,7 +257,8 @@ class CourseParticipantController extends Controller
                     'kursstarttermin'         => $coursedate->kursstartvorschlag,
                     'kursendtermin'           => $coursedate->kursendvorschlag,
                     'kursstartvorschlagkunde' => $coursedate->kursstartvorschlag,
-                    'kursendvorschlagkunde'   => $coursedate->kursendvorschlag
+                    'kursendvorschlagkunde'   => $coursedate->kursendvorschlag,
+                    'kursNichtDurchfuerbar'   => false,
                 ]
             );
         }
@@ -323,4 +325,5 @@ class CourseParticipantController extends Controller
             'courseBookesCount'    => $courseBookes->count(),
         ];
     }
+
 }

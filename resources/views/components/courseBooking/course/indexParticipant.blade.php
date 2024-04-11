@@ -13,17 +13,19 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             <a class="dasboard-iconbox-a" href="{{ route('courseBooking.course.edit', $coursedate->id) }}">
-                                <box-icon name='bookmark'></box-icon> Buchungen bearbeiten
+                                <box-icon name='bookmark'></box-icon>Buchungen bearbeiten
                             </a>
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
                         <label class="label">Termin im Zeitfenster:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
-                        <label class="label">letztmögliches Ende::</label>
+                        <label class="label">letztmögliches Ende des Termins:</label>
                         {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
+                        <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
+                        {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>

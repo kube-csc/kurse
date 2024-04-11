@@ -35,6 +35,7 @@ class HomeController extends Controller
             ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiser->id)
+            ->where('coursedates.kursNichtDurchfuerbar', 0)
             ->groupBy('courses.kursName')
             ->get();
 

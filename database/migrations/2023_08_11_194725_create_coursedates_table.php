@@ -23,6 +23,9 @@ return new class extends Migration
             $table->dateTime('kursendvorschlag');
             $table->dateTime('kursstartvorschlagkunde');
             $table->dateTime('kursendvorschlagkunde');
+            $table->boolean('kursNichtDurchfuerbar')->default(false);
+            $table->decimal('kursKosten',8, 2)->nullable();
+            $table->string('kursBezahlsystem')->nullable();
 
             $table->integer('sportgeraetanzahl');
             $table->float('kursFahrtenlaenge')->default(0);

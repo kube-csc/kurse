@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Components\FlashMessages;
+use App\Models\Coursedate;
 use App\Models\Organiser;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -78,6 +79,121 @@ class Controller extends BaseController
             'kursendtermin'   => $kursendtermin,
             'message'         => $message,
         ];
+    }
+
+    public function timeOptimizationTrainer($cousedateId)
+    {
+        $coursedate = Coursedate::find($cousedateId);
+        $trainers = \DB::table('coursedate_user')
+            ->where('coursedate_id', $cousedateId)
+            ->get();
+
+        // Einkürzen von Terminen die im Zeitraum des Kurses liegen. Dieses wird realisiert indem die Startzeit auf die Endzeit des gebuchten Termins gesetzt wird.
+        foreach ($trainers as $trainer) {
+            $coursedateOptimizationAlls = Coursedate::join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+                ->where('coursedates.organiser_id', $this->organiserDomainId())
+                ->where('coursedates.id', '<>', $cousedateId)
+                ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
+                ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+                ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+                ->where('coursedate_user.user_id', $trainer->user_id)
+                ->orderBy('coursedate_user.coursedate_id')
+                ->orderBy('coursedates.kursstarttermin')
+                ->get();
+
+            $coursedateOptimizationBoockeds = Coursedate::join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
+                ->where('coursedates.organiser_id', $this->organiserDomainId())
+                ->where('coursedates.id', '<>', $cousedateId)
+                ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
+                ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+                ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+                ->get();
+
+            $coursedateOptimizationBoockedsIds = $coursedateOptimizationBoockeds->pluck('kurs_id');
+            $coursedateOptimizations = $coursedateOptimizationAlls->whereNotIn('id', $coursedateOptimizationBoockedsIds);
+
+            foreach ($coursedateOptimizations as $coursedateOptimization) {
+                $counter = 0;
+                $time = Carbon::parse($coursedateOptimization->kurslaenge);
+                $hours = $time->hour;
+                $minutes = $time->minute;
+                $kurslaeneminuten = $hours * 60 + $minutes;
+
+                $timeControl = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
+                if ($timeControl <= $kurslaeneminuten * 2.1) {
+                    $counter = 1;
+                    $diffMinute = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
+                    $update = Coursedate::find($coursedateOptimization->coursedate_id);
+                    if ($kurslaeneminuten < $diffMinute) {
+                        $update->update(['kursstarttermin' => $coursedate->kursendtermin]);
+                    } else {
+                        $update->update([
+                            'kursstarttermin' => $coursedate->kursendtermin,
+                            'kursNichtDurchfuerbar' => true
+                        ]);
+                    }
+                }
+
+                $timeControl = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
+                if ($timeControl <= $kurslaeneminuten * 2.1) {
+                    $counter = 1;
+                    $diffMinute = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
+                    $update = Coursedate::find($coursedateOptimization->coursedate_id);
+                    if ($kurslaeneminuten <= $diffMinute) {
+                        $update->update(['kursendtermin' => $coursedate->kursstarttermin]);
+                    } else {
+                        $update->update([
+                            'kursendtermin' => $coursedate->kursstarttermin,
+                            'kursNichtDurchfuerbar' => true
+                        ]);
+                    }
+                }
+
+            }
+
+            if($counter == 0) {
+                $coursedateOptimizationAlls = Coursedate::join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+                    ->where('coursedates.organiser_id', $this->organiserDomainId())
+                    ->where('coursedates.id', '<>', $cousedateId)
+                    ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
+                    ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+                    ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+                    ->where('coursedate_user.user_id', $trainer->user_id)
+                    ->orderBy('coursedate_user.coursedate_id')
+                    ->orderBy('coursedates.kursstarttermin')
+                    ->get();
+
+                $coursedateOptimizationBoockedsIds = $coursedateOptimizationBoockeds->pluck('kurs_id');
+                $coursedateOptimizations = $coursedateOptimizationAlls->whereNotIn('id', $coursedateOptimizationBoockedsIds);
+
+                foreach ($coursedateOptimizations as $coursedateOptimization) {
+                    $time = Carbon::parse($coursedateOptimization->kurslaenge);
+                    $hours = $time->hour;
+                    $minutes = $time->minute;
+                    $kurslaeneminuten = $hours * 60 + $minutes;
+
+                    if ($counter == 1) {
+                        $diffMinute = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
+                        $update = Coursedate::find($coursedateOptimization->coursedate_id);
+                        if ($kurslaeneminuten < $diffMinute) {
+                            $update->update(['kursstarttermin' => $coursedate->kursendtermin]);
+                        }
+                    }
+
+                    if ($counter == 0 and $coursedateOptimizations->count() > 1) {
+                        $diffMinute = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
+                        if ($kurslaeneminuten <= $diffMinute) {
+                            $counter = 1;
+                            $update = Coursedate::find($coursedateOptimization->coursedate_id);
+                            $update->update(['kursendtermin' => $coursedate->kursstarttermin]);
+                        }
+                    }
+
+                }
+            }
+
+            return $coursedateOptimizations;
+        }
     }
 
 }
