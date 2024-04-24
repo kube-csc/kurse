@@ -264,9 +264,11 @@ class CoursedateController extends Controller
 
         self::success('Die Startzeit wurde im Termin erfolgreich bearbeitet.');
 
-        $this->timeOptimizationTrainer($coursedate->id);
+        //$this->timeOptimizationTrainerFirst($coursedate->id);
 
         $this->book($coursedate->id);
+
+        $this->testBookCount($coursedate->id);
 
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedate->id);
     }

@@ -34,7 +34,8 @@ class CourseParticipantController extends Controller
                 $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', Auth::user()->id);
             }])
             ->orderBy('kursstarttermin')
-            ->paginate(10);
+            //->paginate(20);
+            ->get();
 
         return view('components.courseBooking.course.index', compact('coursedates', 'organiser'));
     }
@@ -206,9 +207,9 @@ class CourseParticipantController extends Controller
            ]
         );
 
-        $this->timeOptimizationTrainer($coursedate->id);
-
         $this->book($coursedate->id);
+
+        $this->testBookCount($coursedate->id);
 
         self::success('Die Zeit für den Termin wurde angepasst.');
 
@@ -221,7 +222,7 @@ class CourseParticipantController extends Controller
         $bookedCount=$this->bookedCount($coursedate);
 
         if($bookedCount['sportgeraetanzahlMax'] - $bookedCount['courseBookesCount'] >= 1) {
-            $sportEquipmentBooked = new CourseParticipantBooked(
+            $participantBook = new CourseParticipantBooked(
                 [
                     'participant_id' => Auth::user()->id,
                     'kurs_id' => $coursedateId,
@@ -230,7 +231,7 @@ class CourseParticipantController extends Controller
                 ]
             );
 
-            $sportEquipmentBooked->save();
+            $participantBook->save();
 
             self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
         }
