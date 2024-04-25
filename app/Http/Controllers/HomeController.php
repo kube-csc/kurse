@@ -249,8 +249,8 @@ class HomeController extends Controller
             ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             ->join('users', 'users.id', '=', 'coursedate_user.user_id')
             ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<=', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>=', $coursedate->kursstarttermin)
+            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
+            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
             ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
             ->orderBy('sport_equipment.sportgeraet')
             ->get();

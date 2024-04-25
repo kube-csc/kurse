@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <div class="form-card" x-data="{ kursstatterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}', kursendterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}' }">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Start Datum:</label>
+                            <label for="kursstarttermin" class="form-label">Start Datum: bb</label>
                             <div class="form-field flex">
                                 <div class="form-input-text">
                                      {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
@@ -115,7 +115,7 @@
                     <a href="{{ route('courseBooking.course.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                  @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin!=$timeMax)
+                  @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin!=$timeMax and $sportgeraetanzahlMax>0)
                     <button type="submit" class="form-button">
                         {{ __('main.save') }}
                     </button>

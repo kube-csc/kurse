@@ -178,7 +178,7 @@
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                    @if($courseBookes->count()==0 and $timeMin<>$timeMax)
+                    @if($courseBookes->count()==0 and $timeMin<>$timeMax and $sportgeraetanzahlMax>0)
                         <button type="submit" class="form-button">
                             {{ __('main.save') }}
                         </button>
