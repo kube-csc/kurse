@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Components\FlashMessages;
 use App\Models\Coursedate;
+use App\Models\CourseParticipantBooked;
 use App\Models\Organiser;
+use App\Models\SportEquipment;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -119,91 +121,11 @@ class Controller extends BaseController
         }
     }
 
-    public function timeOptimizationTrainerFirst($cousedateId, $coursedate, $coursedateOptimizationAlls, $coursedateOptimizations, $trainer)
-    {
-       foreach ($coursedateOptimizations as $coursedateOptimization) {
-            $startus = 0;
-            $kurslaeneminuten = $this->kurslaenge($coursedateOptimization->kurslaenge);
-
-            //Erstmöglicher Termin
-            $timeControl = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
-            if ($timeControl <= $kurslaeneminuten * 2.1) {
-                $startus = 1;
-                $diffMinute = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
-                $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                if ($kurslaeneminuten < $diffMinute) {
-                    $update->update(['kursstarttermin' => $coursedate->kursendtermin]);
-                    self::success('Termin wurde nach oben verschoben.'.$coursedateOptimization->coursedate_id);
-                } else {
-                    $update->update([
-                        'kursstarttermin' => $coursedate->kursendtermin,
-                        'kursNichtDurchfuerbar' => true
-                    ]);
-                    self::success('Termin wurde nach oben blind verschoben.'.$coursedateOptimization->coursedate_id);
-                    continue;
-                }
-            }
-
-            //Letzmöglicher Termin
-            $timeControl = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
-            if ($timeControl <= $kurslaeneminuten * 2.1) {
-                $startus = 1;
-                $diffMinute = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
-                $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                if ($kurslaeneminuten <= $diffMinute) {
-                    $update->update(['kursendtermin' => $coursedate->kursstarttermin]);
-                    self::success('Termin wurde zum ende verschoben.'.$coursedateOptimization->coursedate_id);
-                } else {
-                    $update->update([
-                        'kursendtermin' => $coursedate->kursstarttermin,
-                        'kursNichtDurchfuerbar' => true
-                    ]);
-                    self::success('Termin wurde zum ende blind verschoben.'.$coursedateOptimization->coursedate_id);
-                }
-            }
-       }
-
-       if($startus == 0) {
-            foreach ($coursedateOptimizations as $coursedateOptimization) {
-                $kurslaeneminuten = $this->kurslaenge($coursedateOptimization->kurslaenge);
-
-                if ($startus == 1) {
-                    $diffMinute = Carbon::parse($coursedate->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendtermin));
-                    $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                    if ($kurslaeneminuten < $diffMinute) {
-                        $update->update(['kursstarttermin' => $coursedate->kursendtermin]);
-                        self::success('Termin wurde oben angehangen. '.$coursedateOptimization->coursedate_id);
-                    }
-                }
-
-                if ($startus == 0 and $coursedateOptimizations->count() > 1) {
-                    $diffMinute = Carbon::parse($coursedate->kursstarttermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursstarttermin));
-                    if ($kurslaeneminuten <= $diffMinute) {
-                        $startus = 1;
-                        $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                        $update->update(['kursendtermin' => $coursedate->kursstarttermin]);
-                        self::success('Termin wurde unten angehangen. '.$coursedateOptimization->coursedate_id);
-                    }
-                }
-
-            }
-       }
-      // Temp:
-       self::warning('First Book');
-       return $coursedateOptimizations;
-    }
-
     public function timeOptimizationTrainer($cousedateId, $coursedate, $coursedateOptimizationAlls, $coursedateOptimizationBoockeds, $coursedateOptimizations, $trainer)
     {
-        //dump('coursedateOptimizations');
-        //dump($coursedateOptimizations);
-        //dump($coursedateOptimizations->count());
             $statusFirst=0;
-            $loopCounterMax=0;
             $coursedateOptimizationBoockedDell=0;
             foreach ($coursedateOptimizations as $coursedateOptimization) {
-             //dump('Neuplanung von Termin coursedateOptimization');
-             //dump($coursedateOptimization);
                 // Termin verschieben die nur einen freien Termin im Zeitfenster gebuchten Termin
                 if($coursedateOptimizations->count()==1){
                     $kurslaeneminuten = $this->kurslaenge($coursedateOptimization->kurslaenge);
@@ -211,21 +133,17 @@ class Controller extends BaseController
                     foreach ($coursedateOptimizationBoockeds as $coursedateOptimizationBoocked) {
                         $loopCounter++;
                         if ($loopCounter==1) {
-                            //dump('erster');
                             $diffMinute = Carbon::parse($coursedateOptimization->kursstartvorschlag)->diffInMinutes(Carbon::parse($coursedateOptimizationBoocked->kursstarttermin));
                             if ($kurslaeneminuten <= $diffMinute) {
-                                //dump('erster Termin');
                                 $fruesterStarttermin = $coursedateOptimization->kursstartvorschlag;
                                 $spaetesterEndtermin = $coursedateOptimizationBoocked->kursstarttermin;
                             }
                             $naesterStarttermin = $coursedateOptimizationBoocked->kursendtermin;
                         }
                         if($loopCounter>1 and $coursedateOptimizationBoockeds->count()>$loopCounter) {
-                            //dump('zweiter');
                             $diffMinute = Carbon::parse($coursedateOptimizationBoocked->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimizationBoocked->kursstarttermin));
                             if ($kurslaeneminuten <= $diffMinute) {
                                 if(!isset($fruesterStarttermin)) {
-                                    //dump('zweiter Termin');
                                     $fruesterStarttermin = $coursedateOptimization->kursstartvorschlag;
                                 }
                                 $spaetesterEndtermin = $coursedateOptimizationBoocked->kursstarttermin;
@@ -233,26 +151,26 @@ class Controller extends BaseController
                             $naesterStarttermin = $coursedateOptimizationBoocked->kursendtermin;
                         }
                         if($coursedateOptimizationBoockeds->count()==$loopCounter) {
-                            //dump('letzter');
                             $diffMinute = Carbon::parse($coursedateOptimizationBoocked->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendvorschlag));
                             if ($kurslaeneminuten <= $diffMinute) {
                                 if(!isset($fruesterStarttermin)) {
                                     $fruesterStarttermin = $coursedateOptimizationBoocked->kursendtermin;
-                                    //dump('letzter Termin');
                                 }
                                 $spaetesterEndtermin = $coursedateOptimizationBoocked->kursendvorschlag;
                             }
                         }
                     }
-                    //dump('fruesterStarttermin '.$fruesterStarttermin);
-                    //dump('spaetesterEndtermin '.$spaetesterEndtermin);
+                    $update = Coursedate::find($coursedateOptimization->coursedate_id);
                     if(isset($fruesterStarttermin) and isset($spaetesterEndtermin)) {
-                        $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                        $update->update([
-                            'kursstarttermin' => $fruesterStarttermin,
-                            'kursendtermin'   => $spaetesterEndtermin,
-                            'kursNichtDurchfuerbar' => false
-                        ]);
+                        // ToDo: Noch nicht getestet
+                        $sportgeraetanzahlfree=$this->bookedCountDate($update, $fruesterStarttermin, $spaetesterEndtermin);
+                        if($sportgeraetanzahlfree>0) {
+                            $update->update([
+                                'kursstarttermin'       => $fruesterStarttermin,
+                                'kursendtermin'         => $spaetesterEndtermin,
+                                'kursNichtDurchfuerbar' => false
+                            ]);
+                        }
                     }
                     else
                     {
@@ -266,17 +184,11 @@ class Controller extends BaseController
                     $loopCounter=0;
                     $kurslaeneminuten = $this->kurslaenge($coursedateOptimization->kurslaenge);
                     if($coursedateOptimizationBoockedDell>0){
-                        //dump('gelöscht ');
-                        //dump($coursedateOptimizationBoockeds);
                         $coursedateOptimizationBoockeds = $coursedateOptimizationBoockeds->whereNotIn('id', $coursedateOptimizationBoockedDell);
                         $coursedateOptimizationBoockedDell=0;
-                        //dump($coursedateOptimizationBoockeds);
                     }
-                    //dump('anzahl CoursedateOptimizationBoockeds '.$coursedateOptimizationBoockeds->count());
                     foreach ($coursedateOptimizationBoockeds as $coursedateOptimizationBoocked) {
                         $loopCounter++;
-                        //dump('loopCounter '.$loopCounter);
-                         //dump('Bookedcount '.$coursedateOptimizationBoockeds->count().'Loop '.$loopCounter);
                         if($loopCounter==1){
                             if ($statusFirst==0) {
                                 $statusFirst = 1;
@@ -284,70 +196,74 @@ class Controller extends BaseController
                                 $diffMinute = Carbon::parse($coursedateOptimization->kursstartvorschlag)->diffInMinutes(Carbon::parse($coursedateOptimizationBoocked->kursstarttermin));
                                 if ($kurslaeneminuten <= $diffMinute) {
                                     $update = Coursedate::find($coursedateOptimization->coursedate_id);
-                                    $update->update([
-                                        'kursstarttermin'       => $coursedateOptimization->kursstartvorschlag,
-                                        'kursendtermin'         => $coursedateOptimizationBoocked->kursstarttermin,
-                                        'kursNichtDurchfuerbar' => false
-                                    ]);
-                                    //dump($coursedateOptimizationBoocked);
-                                    //dump($coursedateOptimization);
-                                    //dump('update first');
-                                    //dump($update);
+                                    $sportgeraetanzahlfree=$this->bookedCountDate($update, $coursedateOptimization->kursstartvorschlag, $coursedateOptimizationBoocked->kursstarttermin);
+                                    if($sportgeraetanzahlfree>0) {
+                                        $update->update([
+                                            'kursstarttermin'       => $coursedateOptimization->kursstartvorschlag,
+                                            'kursendtermin'         => $coursedateOptimizationBoocked->kursstarttermin,
+                                            'kursNichtDurchfuerbar' => false
+                                        ]);
+                                    }
                                     break;
-                                  }
+                                }
                            }
                            $coursedateOptimizationBoockedDell=$coursedateOptimizationBoocked->id;
                         }
-                         //dump('loopcounter '.$loopCounter.' Loopmax '. $loopCounterMax);
+
                         if($loopCounter>1) {
                             $diffMinute = Carbon::parse($fruesterStarttermin)->diffInMinutes(Carbon::parse($coursedateOptimizationBoocked->kursstarttermin));
                             if($fruesterStarttermin>$coursedateOptimizationBoocked->kursstarttermin){
                                 $diffMinute = $diffMinute * -1;
                             }
-                             //dump($coursedateOptimizationBoocked);
-                             //dump($fruesterStarttermin, $coursedateOptimizationBoocked->kursstarttermin, $diffMinute);
                             if ($kurslaeneminuten <= $diffMinute) {
                                 $update = Coursedate::find($coursedateOptimization->coursedate_id);
                                 if($coursedateOptimizationBoockeds->count()==1) {
-                                    $diffMinute = Carbon::parse($coursedateOptimizationBoocked->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendvorschlag));
-                                     //dump($coursedateOptimizationBoocked->kursendtermin, $coursedateOptimization->kursendvorschlag, $diffMinute);
-                                    //dump('update middel kursendvorschlag'. $coursedateOptimization->coursedate_id);
-                                    $update->update([
-                                        'kursstarttermin' => $fruesterStarttermin,
-                                        'kursendtermin' => $coursedateOptimization->kursendvorschlag,
-                                        'kursNichtDurchfuerbar' => false
-                                    ]);
+                                    $sportgeraetanzahlfree=$this->bookedCountDate($update, $fruesterStarttermin, $coursedateOptimization->kursendvorschlag);
+                                    if($sportgeraetanzahlfree>0) {
+                                        $update->update([
+                                            'kursstarttermin'       => $fruesterStarttermin,
+                                            'kursendtermin'         => $coursedateOptimization->kursendvorschlag,
+                                            'kursNichtDurchfuerbar' => false
+                                        ]);
+                                    }
                                 }
                                 else {
-                                    $update->update([
-                                        'kursstarttermin' => $fruesterStarttermin,
-                                        'kursendtermin' => $coursedateOptimizationBoocked->kursstarttermin,
-                                        'kursNichtDurchfuerbar' => false
-                                    ]);
-                                    //dump('update middel kursstarttermin'. $coursedateOptimization->coursedate_id);
+                                    $sportgeraetanzahlfree=$this->bookedCountDate($update, $fruesterStarttermin, $coursedateOptimizationBoocked->kursstarttermin);
+                                    if($sportgeraetanzahlfree>0) {
+                                        $update->update([
+                                            'kursstarttermin'       => $fruesterStarttermin,
+                                            'kursendtermin'         => $coursedateOptimizationBoocked->kursstarttermin,
+                                            'kursNichtDurchfuerbar' => false
+                                        ]);
+                                    }
                                 }
-
                                 $fruesterStarttermin = $coursedateOptimizationBoocked->kursendtermin;
-                                 //dump('fruesterStarttermin '.$fruesterStarttermin);
                                 break;
                             }
                             $fruesterStarttermin = $coursedateOptimizationBoocked->kursendtermin;
-                             //dump('fruesterStarttermin ohne update'.$fruesterStarttermin);
                         }
 
                         if($coursedateOptimizationBoockeds->count()==$loopCounter){
                             $diffMinute = Carbon::parse($coursedateOptimizationBoocked->kursendtermin)->diffInMinutes(Carbon::parse($coursedateOptimization->kursendvorschlag));
-                             //dump($coursedateOptimizationBoocked->kursendtermin, $coursedateOptimization->kursendvorschlag, $diffMinute);
                             $update = Coursedate::find($coursedateOptimization->coursedate_id);
                             if ($kurslaeneminuten <= $diffMinute) {
-                                $update->update([
-                                    'kursstarttermin'       => $coursedateOptimizationBoocked->kursendtermin,
-                                    'kursendtermin'         => $coursedateOptimization->kursendvorschlag,
-                                    'kursNichtDurchfuerbar' => false
-                                ]);
-                                //dump('coursedateOptimizationBoocked ');
-                                //dump($coursedateOptimizationBoocked);
-                                //dump('Last update false '.$coursedateOptimization->coursedate_id. 'Daten von coursedateOptimizationBoocked '.$coursedateOptimizationBoocked->coursedate_id);
+                                $update = Coursedate::find($coursedateOptimization->coursedate_id);
+                                $sportgeraetanzahlfree=$this->bookedCountDate($update, $coursedateOptimizationBoocked->kursendtermin, $coursedateOptimization->kursendvorschlag);
+                                if($sportgeraetanzahlfree>0) {
+                                    $update->update([
+                                        'kursstarttermin'       => $coursedateOptimizationBoocked->kursendtermin,
+                                        'kursendtermin'         => $coursedateOptimization->kursendvorschlag,
+                                        'kursNichtDurchfuerbar' => false
+                                    ]);
+                                }
+                                else{
+                                    $update->update([
+                                        'kursstarttermin'       => $coursedateOptimizationBoocked->kursendtermin,
+                                        'kursendtermin'         => $coursedateOptimization->kursendvorschlag,
+                                        'kursNichtDurchfuerbar' => true
+                                    ]);
+
+                                }
                             }
                             else{
                                 $update->update([
@@ -355,17 +271,13 @@ class Controller extends BaseController
                                     'kursendtermin'         => $coursedateOptimization->kursendvorschlag,
                                     'kursNichtDurchfuerbar' => true
                                 ]);
-                                 //dump('Last update true '.$coursedateOptimization->kurs_id);
                             }
-                             //dump($update);
                             $loopCounter=0;
                         }
 
                     }
                 }
-
             }
-        //dd('Ende');
     }
 
     public function kurslaenge($kurslaenge){
@@ -376,4 +288,28 @@ class Controller extends BaseController
 
         return $kurslaeneminuten;
    }
+
+    public function bookedCountDate($coursedate, $kursstarttermin, $kursendtermin)
+    {
+        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl')
+
+        $courseBookedCount = CourseParticipantBooked::where('kurs_id', $coursedate->id)->count();
+
+        // Alle Sportgeräte
+        $sportEquipmentCount = Coursedate::
+              join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
+            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
+            ->where('coursedates.id', $coursedate->id)
+            ->count();
+
+        // Belegte Boote
+        $sportEquipmentBookedCount = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('coursedates.kursstarttermin', '<', $kursendtermin)
+            ->where('coursedates.kursendtermin', '>', $kursstarttermin)
+            ->count();
+
+        return $sportgeraetanzahlfree=$sportEquipmentCount-$sportEquipmentBookedCount-($courseBookedCount-$sportEquipmentBookedCount);
+    }
 }

@@ -271,7 +271,7 @@ class CourseParticipantController extends Controller
 
     public function bookedCount($coursedate)
     {
-        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl');
+        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl')
         $courseBookes = CourseParticipantBooked::where('kurs_id', $coursedate->id)->get();
 
         // Alle Sportgeräte
@@ -326,5 +326,4 @@ class CourseParticipantController extends Controller
             'courseBookesCount'    => $courseBookes->count(),
         ];
     }
-
 }

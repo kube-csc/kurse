@@ -34,7 +34,7 @@ class CoursedateController extends Controller
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
             ->orderBy('kursstarttermin')
-            ->paginate(10);
+            ->get();
 
         return view('components.backend.courseDate.index', compact('coursedates', 'organiser'));
     }
@@ -52,7 +52,7 @@ class CoursedateController extends Controller
             }])
             ->distinct()
             ->orderBy('kursstarttermin')
-            ->paginate(10);
+            ->get();
 
         return view('components.backend.courseDate.indexAll', compact('coursedates', 'organiser'));
     }
