@@ -55,14 +55,14 @@ Route::middleware([
 
         return view('dashboard', ['organiser' => $organiser]);
     })->name('dashboard');
-});
 
-Route::get('/Kursbuchung', [CourseParticipantController::class, 'index'])->name('courseBooking.course.index');
-Route::get('/Kursbuchung/Participant', [CourseParticipantController::class, 'indexParticipant'])->name('courseBooking.course.indexParticipant');
-Route::get('/Kursbuchung/edit/{coursedateId}', [CourseParticipantController::class, 'edit'])->name('courseBooking.course.edit');
-Route::put('/Kursbuchung/update/{coursedate}', [CourseParticipantController::class, 'update'])->name('courseBooking.course.update');
-Route::get('/Kursbuchung/buchen/{coursedateId}', [CourseParticipantController::class, 'book'])->name('courseBooking.course.book');
-Route::get('/Kursbuchung/stornieren/{coursedateId}/{courseBookId}', [CourseParticipantController::class, 'destroyBooked'])->name('courseBooking.course.destroyBooked');
+    Route::get('/Kursbuchung', [CourseParticipantController::class, 'index'])->name('courseBooking.course.index');
+    Route::get('/Kursbuchung/Participant', [CourseParticipantController::class, 'indexParticipant'])->name('courseBooking.course.indexParticipant');
+    Route::get('/Kursbuchung/edit/{coursedateId}', [CourseParticipantController::class, 'edit'])->name('courseBooking.course.edit');
+    Route::put('/Kursbuchung/update/{coursedate}', [CourseParticipantController::class, 'update'])->name('courseBooking.course.update');
+    Route::get('/Kursbuchung/buchen/{coursedateId}', [CourseParticipantController::class, 'book'])->name('courseBooking.course.book');
+    Route::get('/Kursbuchung/stornieren/{coursedateId}/{courseBookId}', [CourseParticipantController::class, 'destroyBooked'])->name('courseBooking.course.destroyBooked');
+});
 
 Route::middleware('admin:admin')->group(function () {
     Route::get('admin/login', [AdminController::Class, 'loginForm']);
