@@ -23,6 +23,7 @@ return new class extends Migration
             $table->float('teilnehmerFahrtenlaenge')->default(0);
             $table->text('teilnehmerInformation')->nullable();
 
+            $table->foreign('trainer_id')->references('id')->on('users');
             $table->foreign('participant_id')->references('id')->on('course_participants');
             $table->foreign('kurs_id')->references('id')->on('coursedates')->onDelete('cascade');
 

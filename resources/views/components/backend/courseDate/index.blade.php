@@ -33,18 +33,22 @@
                                     <box-icon name='calendar-edit'></box-icon>
                                 </a>
                             @endif
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
-                                <box-icon name='user'></box-icon>
-                            </a>
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
+                                    <box-icon name='user'></box-icon>
+                                </a>
                             @if($coursedate->booked_count==0)
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
-                                <box-icon name='trash'></box-icon>
-                            </a>
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
+                                    <box-icon name='trash'></box-icon>
+                                </a>
+                            @else
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
+                                   <box-icon name='info-square'></box-icon>
+                                </a>
                             @endif
-                           @if($coursedate->users->count() > 1)
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
-                                <box-icon name='minus'></box-icon>
-                            </a>
+                            @if($coursedate->users->count() > 1)
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
+                                    <box-icon name='minus'></box-icon>
+                                </a>
                            @endif
                         </div>
                         <label class="label">Name:</label>

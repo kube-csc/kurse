@@ -18,6 +18,7 @@ return [
     'Course Dates' => 'Deine Termine',
     'Course Dates All' => 'Alle Termine',
     'Course Date Create' => 'Kurs Termine erstellen',
+    'Participant Booked' => 'gebuchte Teilnehmer',
     'sport quipment help' => 'Dieses Modul ermöglicht es Dir, die Sportgeräteverwaltung für Kurse zu verwalten. Du kannst sehen, wann ein Kurs beginnt und endet, wer der Trainer ist und welcher Kursname zugeordnet ist.
 
 Es zeigt Dir auch die Anzahl der belegten Plätze für Sportgeräte und die Anzahl der freien Plätze für Teilnehmer. Wenn noch freie Plätze verfügbar sind, kannst Du einen neuen Teilnehmer hinzufügen.

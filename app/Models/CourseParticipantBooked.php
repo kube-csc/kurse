@@ -31,4 +31,9 @@ class CourseParticipantBooked extends Model
     {
         return $this->belongsTo(CourseParticipant::class);
     }
+
+    public function trainer()
+    {
+        return $this->belongsTo(CourseParticipant::class);
+    }
 }

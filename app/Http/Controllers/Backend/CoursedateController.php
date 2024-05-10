@@ -470,6 +470,14 @@ class CoursedateController extends Controller
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
     }
 
+    public function CourseBockedInformation($coursedateId)
+    {
+        $courseParticipantBookeds = CourseParticipantBooked::where('kurs_id', $coursedateId)
+            ->get();
+
+        return view('components.backend.courseDate.CourseBockedInformation', compact('courseParticipantBookeds'));
+    }
+
     public function trainerRegister($coursedateId)
     {
         // Find the Coursedate by its ID

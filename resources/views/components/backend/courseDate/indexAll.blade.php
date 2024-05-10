@@ -45,6 +45,10 @@
                                     <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
                                         <box-icon name='minus'></box-icon>
                                     </a>
+                                @else
+                                    <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
+                                        <box-icon name='info-square'></box-icon>
+                                    </a>
                                 @endif
                             @endif
                             {{ $coursedate->coursedate_id }}

@@ -18,6 +18,7 @@ return [
     'Course Dates' => 'Your Dates',
     'Course Dates All' => 'All Dates',
     'Course Date Create' => 'Course Date Create',
+    'Participant Booked' => 'Booked Participants',
     'sport quipment help' => 'This module allows you to manage the sports equipment administration for courses. You can see when a course starts and ends, who the trainer is, and which course name is assigned.
 
 It also shows you the number of occupied places for sports equipment and the number of free places for participants. If there are still free places available, you can add a new participant.
