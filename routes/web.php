@@ -27,6 +27,8 @@ Route::get('/', function () {
 });
 */
 
+Route::get('/TrainerMail', 'App\Http\Controllers\Backend\TrainerMailController@TrainerMail')->name('backend.trainerMail');
+
 Route::get('/', 'App\Http\Controllers\HomeController@index');
 Route::get('/Startseite', 'App\Http\Controllers\HomeController@index');
 Route::get('/Impressum', 'App\Http\Controllers\ImpressumController@getImpressumDaten');
