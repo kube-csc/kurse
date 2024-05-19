@@ -14,6 +14,7 @@ use App\Models\SportEquipmentBooked;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CoursedateController extends Controller
 {
@@ -262,13 +263,11 @@ class CoursedateController extends Controller
             ]
         );
 
-        self::success('Die Startzeit wurde im Termin erfolgreich bearbeitet.');
-
-        //$this->timeOptimizationTrainerFirst($coursedate->id);
-
         $this->book($coursedate->id);
 
         $this->testBookCount($coursedate->id);
+
+        self::success('Die Startzeit wurde im Termin erfolgreich bearbeitet.');
 
         return redirect()->route('backend.courseDate.sportingEquipment', $coursedate->id);
     }
@@ -389,6 +388,13 @@ class CoursedateController extends Controller
         );
 
         $sportEquipmentBooked->save();
+
+        // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
+        $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
+        // Aktualisieren Sie die trainernachricht für diese Benutzer auf 1
+        User::whereIn('id', $userIds)
+            ->where('trainernachricht', '')
+            ->update(['trainernachricht' => 1]);
 
         self::success('Teilnehmer wurde erfolgreich gebucht.');
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Coursedate;
 use App\Models\Trainertable;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -13,7 +14,8 @@ class TrainerMailController extends Controller
 {
     public function TrainerMail()
     {
-        $trainers = Trainertable::all();
+        $trainers = Trainertable::join('users', 'trainertables.user_id', '=', 'users.id')
+            ->where('users.trainernachricht', 1)->get();
 
         foreach ($trainers as $trainer) {
 
@@ -41,6 +43,10 @@ class TrainerMailController extends Controller
                     }
                 }
             }
+
+            User::where('trainernachricht', '1')
+                ->update(['trainernachricht' => '']);
+
             self::success('Informationsmails wurden erfolgreich versendet.');
 
             return redirect()->route('admin.dashboard');

@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateCourseParticipantRequest;
 use App\Models\Coursedate;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Return_;
 
 class CourseParticipantController extends Controller
@@ -232,6 +234,13 @@ class CourseParticipantController extends Controller
             );
 
             $participantBook->save();
+
+            // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
+            $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
+            // Aktualisieren Sie die trainernachricht für diese Benutzer auf 1
+            User::whereIn('id', $userIds)
+                ->where('trainernachricht', '')
+                ->update(['trainernachricht' => 1]);
 
             self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
         }
