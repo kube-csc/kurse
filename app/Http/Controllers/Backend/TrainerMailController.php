@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Coursedate;
 use App\Models\Trainertable;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class TrainerMailController extends Controller
 {
-    public function TrainerMail()
+    public function trainerMail()
     {
         $trainers = Trainertable::join('users', 'trainertables.user_id', '=', 'users.id')
             ->where('users.trainernachricht', 1)->get();
@@ -20,8 +19,8 @@ class TrainerMailController extends Controller
         foreach ($trainers as $trainer) {
 
             $coursedate = Coursedate::where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')))
-                ->where('coursedate_user.user_id', $trainer->user_id)
                 ->join('coursedate_user', 'coursedates.id', '=', 'coursedate_user.coursedate_id')
+                ->where('coursedate_user.user_id', $trainer->user_id)
                 ->orderBy('kursstarttermin')
                 ->first();
 
