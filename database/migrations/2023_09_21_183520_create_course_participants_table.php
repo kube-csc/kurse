@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('telefon', 60);
             $table->integer('nachricht');
+            $table->char('teilnehmernachricht', 1)->default('');
+            $table->decimal('kredit' ,8, 2)->nullable();
             $table->integer('status');
 
             $table->string('name')->nullable();

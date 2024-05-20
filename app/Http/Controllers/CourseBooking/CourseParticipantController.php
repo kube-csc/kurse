@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CourseBooking;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateCourseParticipantRequest;
 use App\Models\Coursedate;
+use App\Models\CourseParticipant;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
 use App\Models\User;
@@ -241,6 +242,10 @@ class CourseParticipantController extends Controller
             User::whereIn('id', $userIds)
                 ->where('trainernachricht', '')
                 ->update(['trainernachricht' => 1]);
+
+            CourseParticipant::where('id', Auth::user()->id)
+                ->where('teilnehmernachricht', '')
+                ->update(['teilnehmernachricht' => 1]);
 
             self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
         }

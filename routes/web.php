@@ -21,13 +21,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*
-Route::get('/', function () {
-    return view('welcome');
-});
-*/
-
 Route::get('/TrainerMail', 'App\Http\Controllers\Backend\TrainerMailController@TrainerMail')->name('backend.trainerMail');
+Route::get('/TeilehmerMail', 'App\Http\Controllers\CourseBooking\ParticipantMailController@participantMail')->name('backend.participantMail');
 
 Route::get('/', 'App\Http\Controllers\HomeController@index');
 Route::get('/Startseite', 'App\Http\Controllers\HomeController@index');
