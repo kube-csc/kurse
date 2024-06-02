@@ -13,6 +13,10 @@ class Course extends Model
              'sportSection_id',
              'kursName',
              'kursBeschreibung',
+             'kursKosten',
+             'kursBezahlsystem',
+             'visible',
+             'trainer',
              'autor_id',
              'bearbeiter_id'
    ];

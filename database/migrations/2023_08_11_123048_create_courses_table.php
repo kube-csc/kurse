@@ -18,7 +18,10 @@ return new class extends Migration
 
             $table->string('kursName');
             $table->text('kursBeschreibung')->nullable();
+            $table->decimal('kursKosten',8, 2)->nullable();
+            $table->string('kursBezahlsystem')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
+            $table->boolean('trainer')->default(false);  // true = 1 = Trainer ist Pflicht
 
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');

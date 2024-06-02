@@ -11,6 +11,7 @@ use App\Models\CourseParticipantBooked;
 use App\Models\Organiser;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
+use App\Models\Trainertable;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -73,9 +74,27 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $courses = Course::where('organiser_id' , $organiser->id)
-            ->orderBy('kursName')
-            ->get();
+        $trainer = Trainertable::where('user_id', Auth::user()->id)
+                               ->where('organiser_id', $organiser->id)
+                               ->get();
+
+        if($trainer->count()>0){
+        $courses = Course::where('organiser_id', $organiser->id)
+                         ->orderBy('kursName')
+                         ->get();
+        }
+        else{
+        $courses = Course::where('organiser_id', $organiser->id)
+                         ->where('trainer', 0)
+                         ->orderBy('kursName')
+                         ->get();
+        }
+
+        if($courses->count()==0){
+            self::warning('Es kann kein Kein Kurs / Fahrt angelegt werden, weil es hierfür keine Vorlage angelegt wurde.');
+
+            return redirect()->back();
+        }
 
         $course_id = 0;
         $sportgeraetanzahl = 0;

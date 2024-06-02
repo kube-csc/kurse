@@ -30,7 +30,8 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             'kursName'         => 'required',
-            'kursBeschreibung' => 'nullable'
+            'kursBeschreibung' => 'nullable',
+             'trainer'         => 'in:0,1'
             ];
     }
 }

@@ -62,6 +62,7 @@
                             <li><a href="{{ route('frontend.logout') }}"><i class="bx bx-log-out"></i> {{ __('main.Log Out') }}</a></li>
                         @else
                             <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> {{ $organiser->trainerUeberschrift }} {{ __('main.Log In') }}</a></li>
+                            <li><a href="{{ route('admin.login') }}"><i class="bx bx-log-in"></i> Mitglied {{ __('main.Log In') }}</a></li>
                         @endif
                     </ul>
                 </div>

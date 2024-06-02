@@ -45,7 +45,7 @@
             </div>
 
             <div class="form-field">
-                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesende Abteilung(en):</label>
+                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugeordnete Abteilung(en):</label>
                 <div class="form-box">
                     @foreach($sportSections as $sportSection)
                         <a href="{{ route('backend.course.pickSportSection',
@@ -76,10 +76,16 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                             @enderror
+                            <br><br>
+                            <label class="form-label">Trainer ist erforderlich:</label>
+                            <span class="form-label">
+                            <input type="checkbox" name="trainer" value="1" @if(old('trainer', $course->trainer)==1) checked @endif>
+                            erforderlich
+                            </span>
                         </div>
 
                         <div class="form-field">
-                            <label class="form-label">KBeschreibung:</label>
+                            <label class="form-label">Beschreibung:</label>
                             <textarea name="kursBeschreibung" class="form-input-textarea @if($errors->has('kursBeschreibung')) is-invalid @endif">{{ old('kursBeschreibung', $course->kursBeschreibung) }}</textarea>
                             @if ($errors->has('kursBeschreibung'))
                                 <span class="invalid-feedback" role="alert">
