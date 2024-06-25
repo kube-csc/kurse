@@ -8,6 +8,6 @@
         <h1>{{ $Verein }}</h1>
         <h2>{{ $SLogen }}</h2>
         <a href="#services" style="color: white;">Termine</a>
-        <a href="#services" class="btn-get-started scrollto"><i class="bx bx-termin"></i></a>
+        <a href="#services" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
     </div>
 </section><!-- End Hero -->

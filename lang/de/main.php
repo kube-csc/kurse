@@ -16,6 +16,12 @@ return [
     'Log Out' => 'Abmelden',
     'Log In' => 'Anmelden',
     'Register' => 'Registrieren',
+    'Password' => 'Passwort',
     'back' => 'Zurück',
     'save' => 'Eintragen',
+    'book' => 'Buchen',
+    'Forgot your password?' => 'Passwort vergessen?',
+    'Remember me' => 'Angemeldet bleiben',
+    'Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.' => 'Passwort vergessen? Kein Problem. Geben Sie einfach Ihre E-Mail-Adresse an und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts, mit dem Sie ein neues auswählen können.',
+    'Email Password Reset Link' => 'E-Mail-Passwort-Reset-Link',
 ];

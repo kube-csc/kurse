@@ -24,13 +24,13 @@
                             @if($courseParticipantBooked->participant->nachricht != null)
                                 <label class="label">Nachricht:</label>
                                 <p>
-                                    {!! $courseParticipantBooked->participant->nachricht !!}
+                                  {!! $courseParticipantBooked->participant->nachricht !!}
                                 </p>
                             @endif
                         @endif
                         @if($courseParticipantBooked->trainer_id>0)
-                                <label class="label">Teilnemer gebucht von:</label>
-                                {{$courseParticipantBooked->trainer->vorname }} {{$courseParticipantBooked->trainer->nachname }}<br>
+                               <label class="label">Teilnehmer gebucht von:</label>
+                               {{$courseParticipantBooked->trainer->vorname }} {{$courseParticipantBooked->trainer->nachname }}<br>
                         @endif
                     </div>
                 </div>

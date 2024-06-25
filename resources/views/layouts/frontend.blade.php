@@ -48,7 +48,7 @@
 
   {{ $slot }}
 
-<x-frontend.footer></x-frontend.footer>
+<x-frontend.Footer></x-frontend.Footer>
 
 <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
 

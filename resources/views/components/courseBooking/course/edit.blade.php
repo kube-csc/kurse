@@ -117,7 +117,7 @@
                     </a>
                   @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin!=$timeMax and $sportgeraetanzahlMax>0)
                     <button type="submit" class="form-button">
-                        {{ __('main.save') }}
+                        {{ __('main.book') }}
                     </button>
                   @endif
                 </div>
