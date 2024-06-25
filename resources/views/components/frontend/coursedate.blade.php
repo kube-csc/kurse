@@ -25,7 +25,7 @@
                 {{ date("d.m.Y", strtotime($coursedate->kursendtermin)) }} {{ date("H:i", strtotime($coursedate->kursendtermin)) }} Uhr<br>
                 Dauer: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
                 Teilnehmer: {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
-                <br><br>
+                <br>
                 @if(Auth::check())
                     @if (Auth::user()->getTable()=='course_participants')
                       Deine gebuchten Teilnehmer: {{ $courseBookedCount }}
@@ -46,6 +46,10 @@
                       @endif
                     @endif
                 @endif
+                @guest
+                        <a href="/login" class="icofont-arrow-right">Login</a><br>
+                        <a href="/register" class="icofont-arrow-right">Regristieren</a>
+                @endguest
 
                 <h3>{{ $organiser->trainerUeberschrift }}:</h3>
                 @foreach($coursedate->users as $user)

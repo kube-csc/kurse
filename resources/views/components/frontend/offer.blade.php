@@ -4,6 +4,7 @@
 
     <div class="d-flex justify-content-between align-items-center">
       <h2></h2>
+      <a href="/#services">zu den Terminen</a>
       <ol>
         <li><a href="/">Home</a></li>
         <li>Angebot</li>

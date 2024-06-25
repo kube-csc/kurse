@@ -30,6 +30,17 @@
                             {{ $user->vorname }} {{ $user->nachname }}
                         @endforeach
                     </p>
+                    @auth
+                        <div class="read-more">
+                            <a href="{{ route('courseBooking.course.edit', $coursedate->id) }}" class="icofont-arrow-right">Termin buchen / stornieren</a>
+                        </div>
+                    @endauth
+                    @guest
+                        <div class="read-more">
+                            <a href="/login" class="icofont-arrow-right">Login</a><br>
+                            <a href="/register" class="icofont-arrow-right">Regristieren</a>
+                        </div>
+                    @endguest
                 </div>
             </div>
 
