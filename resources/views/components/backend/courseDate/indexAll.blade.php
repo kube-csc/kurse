@@ -45,11 +45,12 @@
                                     <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
                                         <box-icon name='minus'></box-icon>
                                     </a>
-                                @else
-                                    <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
-                                        <box-icon name='info-square'></box-icon>
-                                    </a>
                                 @endif
+                            @endif
+                            @if($userIsInCourse == true && $coursedate->booked_count > 0)
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
+                                    <box-icon name='info-square'></box-icon>
+                                </a>
                             @endif
                             {{ $coursedate->coursedate_id }}
                         </div>
@@ -62,7 +63,7 @@
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
-                         @foreach($coursedate->users as $user)
+                        @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
                         @if($coursedate->sportgeraetanzahl > 0)

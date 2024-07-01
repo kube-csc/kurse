@@ -94,6 +94,7 @@
                                             'coursedateId'  => $coursedate->id
                                         ]
                                         ) }}"
+                                       onclick="return confirm('Sind Sie sicher, dass Sie diesen {{ $courseBook->participant_id > 0 ? $courseBook->participant->name : 'Teilnehmer'}} löschen möchten?')"
                                     >
                                       <span class="form-button"><box-icon name='user-minus'></box-icon>
                                           {{ $loop->iteration }}
@@ -150,11 +151,21 @@
                         <div class="form-field">
                             <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegt(e) Sportgerät(e) in anderen Termin:</label>
                             <div class="form-box">
+                                @php
+                                  $sporgeraeteIdVorher=0;
+                                @endphp
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
                                     <span>
-                                        {{ $sportEquipmentBooked->sportgeraet}} /
-                                        {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                        @if($sporgeraeteIdVorher<>$sportEquipmentBooked->sportgeraet_id)
+                                            {{ $sportEquipmentBooked->sportgeraet}} /
+                                            {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                        @else
+                                            und {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                        @endif
                                     </span><br>
+                                    @php
+                                        $sporgeraeteIdVorher=$sportEquipmentBooked->sportgeraet_id;
+                                    @endphp
                                 @endforeach
                             </div>
                         </div>

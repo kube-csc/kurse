@@ -77,6 +77,7 @@
                                             'coursedateId'  => $coursedate->id
                                         ]
                                         ) }}"
+                                       onclick="return confirm('Sind Sie sicher, dass Sie diesen {{ $courseBook->participant_id > 0 ? $courseBook->participant->name : 'Teilnehmer'}} löschen möchten?')"
                                     >
                                         <span class="form-button"><box-icon name='user-minus'></box-icon> {{ $loop->iteration }}. {{ $courseBook->participant->name}}</span>
                                     </a>
