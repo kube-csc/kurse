@@ -14,9 +14,9 @@
                     <div class="dashboard-flexbox-text">
                         @if($courseParticipantBooked->participant_id>0)
                             <label class="label">Vorname:</label>
-                            {{$courseParticipantBooked->participant->nachname }}<br>
-                            <label class="label">Nachname:</label>
                             {{$courseParticipantBooked->participant->vorname }}<br>
+                            <label class="label">Nachname:</label>
+                            {{$courseParticipantBooked->participant->nachname }}<br>
                             <label class="label">Telefon:</label>
                             {{$courseParticipantBooked->participant->telefon }}<br>
                             <label class="label">E-Mail:</label>

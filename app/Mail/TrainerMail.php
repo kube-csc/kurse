@@ -25,7 +25,7 @@ class TrainerMail extends Mailable
     public function __construct($coursedates, $trainer)
     {
         $this->coursedates = $coursedates;
-        $this->trainer = $trainer;
+        $this->trainer     = $trainer;
     }
 
     /**
@@ -46,7 +46,7 @@ class TrainerMail extends Mailable
         $mailtext = "";
         foreach ($this->coursedates as $coursedate) {
 
-            // Belegte Boote andere Kurse
+            // Belegte Sportgeräte andere Termine
             $sportEquipmentBookeds = SportEquipment::
                   join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
                 ->where('sport_equipment_bookeds.deleted_at', null)
@@ -62,7 +62,7 @@ class TrainerMail extends Mailable
                 //->distinct()
                 ->get();
 
-            // Gebuchte Boote für den Kurs
+            // Gebuchte Sportgeräte für den Termine
             $sportEquipmentKursBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
                 ->where('sport_equipment_bookeds.deleted_at', null)
                 ->where('sport_equipment_bookeds.kurs_id', $coursedate->coursedate_id)
@@ -76,7 +76,7 @@ class TrainerMail extends Mailable
                 $mailtext = $mailtext . "<b>Termininformation:</b> " . $coursedate->kursInformation . "<br><br>";
             }
 
-            $courseParticipantBookeds = CourseParticipantBooked::where('kurs_id', $coursedate->id)->get();
+            $courseParticipantBookeds = CourseParticipantBooked::where('kurs_id', $coursedate->coursedate_id)->get();
 
             $trainerNamen = "Folgende Trainer sind für den Termin eingetragen:<br>";
             foreach ($coursedate->users as $user) {
@@ -86,6 +86,7 @@ class TrainerMail extends Mailable
             $mailtext = $mailtext . $trainerNamen . "<br>";
 
             $participant = "<b>Folgende Teilnehmer sind für den Termin eingetragen:</b><br>";
+
             foreach ($courseParticipantBookeds as $courseParticipantBooked) {
                 if ($courseParticipantBooked->participant_id > 0) {
                     $participant = $participant . "Name: " . $courseParticipantBooked->participant->nachname . " " . $courseParticipantBooked->participant->vorname . "<br>";
@@ -108,7 +109,7 @@ class TrainerMail extends Mailable
             foreach ($sportEquipmentKursBookeds as $sportEquipmentKursBooked) {
                 $gebuchteSportgeraete = $gebuchteSportgeraete.$sportEquipmentKursBooked->sportgeraet."<br>";
             }
-            $mailtext = $mailtext .$gebuchteSportgeraete."<br>";
+            $mailtext = $mailtext . $gebuchteSportgeraete . "<br>";
 
             $belegtSportgeraeteAndereKurse = "<b>Folgende Sportgeräte sind von anderen Terminen belegt:</b><br>";
             $sporgeraeteIdVorher=0;
