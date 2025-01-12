@@ -1,3 +1,130 @@
+<h1>Internetauftritt von Kursangebote</h1>
+<p>
+Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
+</p>
+Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
+    <ul>
+      <li>Jugend</li>
+      <li>Wandersport</li>
+      <li>Rennsport</li>
+      <li>Drachenboot mit drei Mannschaften</li>
+      <li>SUP</li>
+    </ul>
+
+<a href="https://sup.kel-datteln.de">Beispiel eines Frontend</a>
+
+<h2>Installierte Programme / Temples</h2>
+<ul>
+  <li>Installation Laravel 10.* mit jetstream 4.* , livewire 3.* teams  und tailwindcss 3.*
+    <ul>
+        <li><a href="https://jetstream.laravel.com/4.x/introduction.html">jetstream 4.x Anleitung</a></li>
+        <li><a href="https://jetstream.laravel.com/3.x/stacks/livewire.html">livewire</a></li>
+    </ul>
+  </li>
+  <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
+  <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
+  <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
+  <li>.htaccess für ionos.de (1und1.de) Server</li>
+  <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
+    <ul>
+     <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
+     <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
+     <li>kurse.blade.php anlegen und mit der Vorlage von kurse_example.blade.php ausfüllen</li>
+     <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
+    </ul></li>
+  <li>in Ordner "public sind die folgenden Dateien anzulegen:
+    <ul>
+     <li>apple-touch-icon.png</li>
+     <li>favicon.ico</li>
+    </ul>   
+  </li>
+</ul>
+
+
+
+
+<h2>Benötigte Lizenzen</h2>
+Es wird eine Lizenz für
+<a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
+benötigt.
+
+<h2>Frontend</h2>
+<ul>
+    <li>Header ist abhängig von den Abteilungen / Sportarten *</li>
+    <li>Leanding Page
+         <ul>
+          <li>Ausgabe der Vereinsbeschreibung</li>
+          <li>Kontakt des Vereins inc. Map **</li>
+        </ul>
+    </li>
+    <li>Präsentation der Abteilungen / Sportarten</li>
+    <li>Präsentation der Mannschaften</li>
+    <li>Informationsseiten
+        <ul>
+            <li>Anfahrt **</li>
+            <li>Selbst angelegte Informationsseiten</li>
+            <li>Abteilungen *
+              <ul>
+                <li>Sportarten *</li>
+              </ul> 
+            </li>
+        </ul>
+    </li>
+    <li>Footer
+        <ul>
+            <li>Impresssum</li>
+            <li>Datenschutzerklärung</li>
+        </ul>
+    </li>
+</ul>
+
+* Begriff wird in der .env eintragen  
+  ** Anfahrt kann in der .env aktiviert bzw. deaktiviert werden
+
+<h2>Backend</h2>
+<h3>Vereinsverwaltung</h3>
+<h4>Insatllation</h4>
+<p>
+Die Verwaltung der Userdaten der Trainer und Abteilungen muss die APP Vereinsverwaltung installiert werden.
+Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.07.xx</a>
+</p>
+
+<h4>Demodaten</h4>
+<p>
+  Email: info@info.de<br>
+  Password: password
+</p>
+<h4>Veraltete Daten:</h4>
+<ul>
+    <li>Userdaten der Trainer</li>
+    <li>Abteilungen</li>
+</ul>
+
+## Instalation
+
+<ul>
+   <li>git clone https://github.com/kube-csc/kurse.git</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)</li>
+   <li>cd kurse</li>
+   <li>curl -sS https://getcomposer.org/installer</li>
+   <li>php composer.phar</li>
+   <li>php composer.phar install</li>
+   <li>php artisan storage:link</li>
+</ul>
+
+## Anleitung für die Kursbuchung
+<ul>
+    <li>Öffne die Anwendung und navigiere zum Bereich "Kursbuchung". Hier siehst du eine Liste der verfügbaren Kurse und Termine.</li>
+    <li>Wenn du einen Kurs buchen möchtest, klicke auf den Link "Teilnehmer buchen". Du wirst zur Buchungsseite weitergeleitet.</li>
+    <li>Auf der Buchungsseite kannst du das Startdatum und die Startzeit des Kurses einsehen. Wenn noch keine Teilnehmer gebucht haben, kannst du auch die Startzeit ändern. oWenn du die Startzeit geändert, klicke auf den Button "Eintragen", um die Änderungen zu speichern. Automatisch wird ein Teilnehmer hinzuzubuchen.</li>
+    <li>Du siehst auch die Dauer des Kurses und die Anzahl der gebuchten und freien Plätze. Wenn noch Plätze frei sind, kannst du einen neuen Teilnehmer hinzufügen, indem du auf den Link "neuer Teilnehmer" klickst.</li>
+    <li>Du kannst auch die Teilnehmer sehen, die bereits für den Kurs gebucht haben. Wenn du einen Teilnehmer entfernen möchtest, klicke auf den Link neben dem Namen des Teilnehmers.</li>
+    <li>Wenn du zur Liste der Kurse zurückkehren möchtest, klicke auf den Link "Zurück".</li>
+</ul>     
+<p>Bitte beachte, dass diese Anleitung auf der Annahme basiert, dass du bereits als Benutzer in der Anwendung angemeldet bist.</p>
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

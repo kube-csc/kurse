@@ -18,8 +18,8 @@
                     <div class="icon-box" data-aos="fade-up">
                         <h4 class="title">{{ $sportEquipment->sportgeraet }}</h4>
                         @if($sportEquipment->bild != Null)
-                            @if (!is_file('/storage/sportgeraet/'.$sportEquipment->bild))
-                                <img src="/storage/sportgeraet/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/>
+                            @if (!is_file('/storage/sportgeraete/'.$sportEquipment->bild))
+                                <img src="/storage/sportgeraete/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/>
                             @else
                                 @auth
                                     <p class="text-danger">Bild {{ $sportEquipment->bild }} ist nicht auf dem Server vorhanden.</p>
