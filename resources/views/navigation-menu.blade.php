@@ -208,7 +208,7 @@
 
                     <x-responsive-nav-link href="{{ route('logout') }}"
                                    @click.prevent="$root.submit();">
-                        {{ __('Log Out') }}
+                        {{ __('main.Log Out') }}
                     </x-responsive-nav-link>
                 </form>
 
