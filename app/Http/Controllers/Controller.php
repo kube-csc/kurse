@@ -112,12 +112,16 @@ class Controller extends BaseController
             $coursedateOptimizationBoockedsIds = $coursedateOptimizationBoockeds->pluck('kurs_id');
             $coursedateOptimizations = $coursedateOptimizationAlls->whereNotIn('coursedate_id', $coursedateOptimizationBoockedsIds);
 
+            $this->timeOptimizationTrainer($coursedate->id, $coursedate, $coursedateOptimizationAlls, $coursedateOptimizationBoockeds, $coursedateOptimizations, $trainer);
+
+            /* ToDo: Wird das noch benötigt?
             if($coursedateOptimizationBoockedsIds->count()<0) {
                 $this->timeOptimizationTrainerFirst($coursedate->id, $coursedate, $coursedateOptimizationAlls, $coursedateOptimizationBoockeds, $coursedateOptimizations, $trainer);
             }
             else {
                 $this->timeOptimizationTrainer($coursedate->id, $coursedate, $coursedateOptimizationAlls, $coursedateOptimizationBoockeds, $coursedateOptimizations, $trainer);
             }
+            */
         }
     }
 
