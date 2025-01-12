@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @if(Auth::User()->admin>1)
     <div class="main-box">
         <div class="box">
             <div class="dashboard-menu-box">
@@ -12,7 +13,9 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if(Auth::User()->admin>2)
     <div class="main-box">
         <div class="box">
             <div class="dashboard-menu-box">
@@ -36,5 +39,6 @@
             </div>
         </div>
     </div>
+    @endif
 
 </x-app-layout>

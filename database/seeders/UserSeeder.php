@@ -31,6 +31,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => NULL,
                 'telefon' => '0123456789',
                 'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
+                'admin' => '4',
                 'two_factor_secret' => NULL,
                 'two_factor_recovery_codes' => NULL,
                 'remember_token' => NULL,
@@ -48,6 +49,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => NULL,
                 'telefon' => '',
                 'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
+                'admin' => '3',
                 'two_factor_secret' => NULL,
                 'two_factor_recovery_codes' => NULL,
                 'remember_token' => NULL,
@@ -65,6 +67,7 @@ class UserSeeder extends Seeder
                  'email_verified_at' => NULL,
                  'telefon' => '0123456789',
                  'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
+                 'admin' => '2',
                  'two_factor_secret' => NULL,
                  'two_factor_recovery_codes' => NULL,
                  'remember_token' => NULL,
