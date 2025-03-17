@@ -38,7 +38,7 @@
                     @guest
                         <div class="read-more">
                             <a href="/login" class="icofont-arrow-right">Login</a><br>
-                            <a href="/register" class="icofont-arrow-right">Regristieren</a>
+                            <a href="/register" class="icofont-arrow-right">Registrieren</a>
                         </div>
                     @endguest
                 </div>
