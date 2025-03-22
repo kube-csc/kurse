@@ -17,6 +17,7 @@ return [
     'Log In' => 'Anmelden',
     'Register' => 'Registrieren',
     'Password' => 'Passwort',
+    'Booking' => 'Buchen',
     'back' => 'Zurück',
     'save' => 'Eintragen',
     'book' => 'Buchen',

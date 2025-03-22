@@ -31,6 +31,7 @@ Please note that all actions you perform in this module have an impact on the da
     'Course Date Create Help' => 'Start Date: Here you enter the start date and start time of the course. There are two input fields, one for the date and one for the time.',
     'Course' => 'Courses / Trip Description',
     'Course Edit' => 'Course / Trip description edit',
+    'Course Create Help' => 'Course Name: Here you create a new course / trip / .',
     'Course Edit Help' => 'Course Name: Here you enter the name and description of the course / trip',
     'Sport Equipment' => 'Sport Equipment',
     'Sport Equipment Edit' => 'Sport Equipment Edit',

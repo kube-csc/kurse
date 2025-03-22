@@ -32,12 +32,12 @@
                     </p>
                     @auth
                         <div class="read-more">
-                            <a href="{{ route('courseBooking.course.edit', $coursedate->id) }}" class="icofont-arrow-right">Termin buchen / stornieren</a>
+                            <a href="{{ route('courseBooking.course.edit', $coursedate->id) }}" class="icofont-arrow-right">Termin {{ __('main.Booking') }} / stornieren</a>
                         </div>
                     @endauth
                     @guest
                         <div class="read-more">
-                            <a href="/login" class="icofont-arrow-right">Login</a><br>
+                            <a href="/login" class="icofont-arrow-right">{{ __('main.Booking') }}</a><br>
                             <a href="/register" class="icofont-arrow-right">Registrieren</a>
                         </div>
                     @endguest

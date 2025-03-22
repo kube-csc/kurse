@@ -47,8 +47,8 @@
                     @endif
                 @endif
                 @guest
-                        <a href="/login" class="icofont-arrow-right">Login</a><br>
-                        <a href="/register" class="icofont-arrow-right">Registrieren</a>
+                    <a href="/login" class="icofont-arrow-right">{{ __('main.Booking') }}</a><br>
+                    <a href="/register" class="icofont-arrow-right">Registrieren</a>
                 @endguest
 
                 <h3>{{ $organiser->trainerUeberschrift }}:</h3>

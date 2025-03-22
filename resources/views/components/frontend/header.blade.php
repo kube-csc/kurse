@@ -15,7 +15,7 @@
                     <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
                     <li><a href="{{ route('frontend.logout') }}">{{ __('main.Log Out') }}</a></li>
                 @else
-                    <li><a href="/login">{{ __('main.Log In') }}</a></li>
+                    <li><a href="/login">{{ __('main.Booking') }}</a></li>
                     <li><a href="/register">{{ __('main.Register') }}</a></li>
                 @endif
             </ul>
