@@ -1,4 +1,5 @@
 <h1>Internetauftritt von Kursangebote</h1>
+Version 00.01.00
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -13,7 +14,6 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
 
 <a href="https://sup.kel-datteln.de">Beispiel eines Frontend</a>
 
-<h2>Installierte Programme / Temples</h2>
 <ul>
   <li>Installation Laravel 10.* mit jetstream 4.* , livewire 3.* teams  und tailwindcss 3.*
     <ul>
@@ -21,27 +21,24 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
         <li><a href="https://jetstream.laravel.com/3.x/stacks/livewire.html">livewire</a></li>
     </ul>
   </li>
-  <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
+  <li><a href="https://boxicons.com/">boxicons</a>(Frontend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de (1und1.de) Server</li>
-  <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
+  <li>in Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
     <ul>
-     <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
      <li>kurse.blade.php anlegen und mit der Vorlage von kurse_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
-    </ul></li>
+    </ul>
+  </li>
   <li>in Ordner "public sind die folgenden Dateien anzulegen:
-    <ul>
+<ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>
-    </ul>   
+    </ul>
   </li>
 </ul>
-
-
-
 
 <h2>Benötigte Lizenzen</h2>
 Es wird eine Lizenz für
@@ -50,26 +47,17 @@ benötigt.
 
 <h2>Frontend</h2>
 <ul>
-    <li>Header ist abhängig von den Abteilungen / Sportarten *</li>
+    <li>Header ist abhängig von den Kurs / Temin / Trainings Angebot *</li>
     <li>Leanding Page
          <ul>
-          <li>Ausgabe der Vereinsbeschreibung</li>
-          <li>Kontakt des Vereins inc. Map **</li>
+          <li>Kurs / Termin / Trainings Angebot Beschreibung</li>
+          <li>Material</li>
+          <li>Trainer</li>
+          <li>Kurs / Termin / Trainings</li>
         </ul>
     </li>
-    <li>Präsentation der Abteilungen / Sportarten</li>
-    <li>Präsentation der Mannschaften</li>
-    <li>Informationsseiten
-        <ul>
-            <li>Anfahrt **</li>
-            <li>Selbst angelegte Informationsseiten</li>
-            <li>Abteilungen *
-              <ul>
-                <li>Sportarten *</li>
-              </ul> 
-            </li>
-        </ul>
-    </li>
+    <li>Buchen</li>
+    <li>Anzal der Kurse gebuchte Kurse und Teilnehmer</li>
     <li>Footer
         <ul>
             <li>Impresssum</li>
@@ -83,7 +71,7 @@ benötigt.
 
 <h2>Backend</h2>
 <h3>Vereinsverwaltung</h3>
-<h4>Insatllation</h4>
+<h4>Installation</h4>
 <p>
 Die Verwaltung der Userdaten der Trainer und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
@@ -123,7 +111,6 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
     <li>Wenn du zur Liste der Kurse zurückkehren möchtest, klicke auf den Link "Zurück".</li>
 </ul>     
 <p>Bitte beachte, dass diese Anleitung auf der Annahme basiert, dass du bereits als Benutzer in der Anwendung angemeldet bist.</p>
-
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
