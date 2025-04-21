@@ -31,7 +31,7 @@ class CourseController extends Controller
      */
     public function create()
     {
-        //
+        return view('components.backend.course.create');
     }
 
     /**
@@ -39,7 +39,42 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        //
+        //ToDo: Verbessern der Validierung
+        //$data = $request->validated();
+
+        $data = $request->validate([
+            'kursName'         => 'required',
+            'kursBeschreibung' => 'nullable',
+            'trainer'          => 'in:0,1',
+            'schnupperkurs'    => 'in:0,1'
+        ]);
+
+        if(!isset($data['trainer'])){
+            $data['trainer'] = 0;
+        }
+
+        if(!isset($data['schnupperkurs'])){
+            $data['schnupperkurs'] = 0;
+        }
+
+        $course = new course(
+            [
+                'organiser_id'            => $this->organiserDomainId(),
+                'kursName'                => $request->kursName,
+                'kursBeschreibung'        => $request->kursBeschreibung,
+                'trainer'                 => $data['trainer'],
+                'schnupperkurs'           => $data['schnupperkurs'],
+                'bearbeiter_id'           => Auth::user()->id,
+                'autor_id'                => Auth::user()->id,
+                'updated_at'              => Carbon::now(),
+                'created_at'              => Carbon::now()
+            ]
+        );
+        $course->save();
+
+        self::success('Ein Kurs wurde erfolgreich eintragen.');
+
+        return redirect()->route('backend.course.index');
     }
 
     /**
@@ -89,12 +124,18 @@ class CourseController extends Controller
         $data = $request->validate([
             'kursName'         => 'required',
             'kursBeschreibung' => 'nullable',
-            'trainer'          => 'in:0,1'
+            'trainer'          => 'in:0,1',
+            'schnupperkurs'    => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
             $data['trainer'] = 0;
         }
+
+        if(!isset($data['schnupperkurs'])){
+            $data['schnupperkurs'] = 0;
+        }
+
         $data['bearbeiter_id'] = Auth::user()->id;
         $data['updated_at'] = Carbon::now();
 

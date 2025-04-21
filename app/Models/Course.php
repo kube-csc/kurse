@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
@@ -10,6 +11,7 @@ class Course extends Model
    use SoftDeletes;
 
    protected $fillable = [
+             'organiser_id',
              'sportSection_id',
              'kursName',
              'kursBeschreibung',
@@ -17,6 +19,7 @@ class Course extends Model
              'kursBezahlsystem',
              'visible',
              'trainer',
+             'schnupperkurs',
              'autor_id',
              'bearbeiter_id'
    ];
@@ -25,7 +28,7 @@ class Course extends Model
         'deleted_at'
     ];
 
-    public function sportSection()
+    public function sportSection(): BelongsToMany
     {
         return $this->belongsToMany(SportSection::class);
     }

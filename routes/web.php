@@ -114,6 +114,8 @@ Route::middleware([
     Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
+    Route::get('/backend/CourseCreate', [CourseController::class, 'create'])->name('backend.course.create');
+    Route::post('/backend/CourseStore', [CourseController::class, 'store'])->name('backend.course.store');
     Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
     Route::put('/backend/CourseUpdate/{course}', [CourseController::class, 'update'])->name('backend.course.update');
     Route::get('/backend/CourseSportartPick/{courseId}/{pickSportSectionId}', [CourseController::class, 'pickSportSection'])->name('backend.course.pickSportSection');

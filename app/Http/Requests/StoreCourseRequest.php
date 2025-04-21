@@ -11,7 +11,14 @@ class StoreCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        if (auth()->check())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
