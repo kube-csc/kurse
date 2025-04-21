@@ -21,9 +21,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Cronjobs
 Route::get('/TrainerMail', 'App\Http\Controllers\Backend\TrainerMailController@trainerMail')->name('backend.trainerMail');
-Route::get('/TeilehmerMail', 'App\Http\Controllers\CourseBooking\ParticipantMailController@participantMail')->name('backend.participantMail');
+Route::get('/TeilnehmerMail', 'App\Http\Controllers\CourseBooking\ParticipantMailController@participantMail')->name('backend.participantMail');
+Route::get('/Training/Planung', 'App\Http\Controllers\Backend\CoursedateController@cronPlanung');
 
+//Frontend
 Route::get('/', 'App\Http\Controllers\HomeController@index');
 Route::get('/Startseite', 'App\Http\Controllers\HomeController@index');
 Route::get('/Impressum', 'App\Http\Controllers\ImpressumController@getImpressumDaten');

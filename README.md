@@ -1,9 +1,9 @@
 <h1>Internetauftritt von Kursangebote</h1>
-Version 00.01.00
+Version 00.02.00
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
-Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
+Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -15,7 +15,7 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
 <a href="https://sup.kel-datteln.de">Beispiel eines Frontend</a>
 
 <ul>
-  <li>Installation Laravel 10.* mit jetstream 4.* , livewire 3.* teams  und tailwindcss 3.*
+  <li>Installation Laravel 10.* mit jetstream 4.*, livewire 3.* teams  und tailwindcss 3.*
     <ul>
         <li><a href="https://jetstream.laravel.com/4.x/introduction.html">jetstream 4.x Anleitung</a></li>
         <li><a href="https://jetstream.laravel.com/3.x/stacks/livewire.html">livewire</a></li>
@@ -53,11 +53,11 @@ benötigt.
           <li>Kurs / Termin / Trainings Angebot Beschreibung</li>
           <li>Material</li>
           <li>Trainer</li>
-          <li>Kurs / Termin / Trainings</li>
+          <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten</li>
         </ul>
     </li>
     <li>Buchen</li>
-    <li>Anzal der Kurse gebuchte Kurse und Teilnehmer</li>
+    <li>Anzahl der Kurse, gebuchte Kurse und Teilnehmer</li>
     <li>Footer
         <ul>
             <li>Impresssum</li>
@@ -75,7 +75,7 @@ benötigt.
 <p>
 Die Verwaltung der Userdaten der Trainer und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.07.xx</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.010.xx</a>
 </p>
 
 <h4>Demodaten</h4>
@@ -83,11 +83,16 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
   Email: info@info.de<br>
   Password: password
 </p>
-<h4>Veraltete Daten:</h4>
+<h4>Verwaltete Daten:</h4>
 <ul>
     <li>Userdaten der Trainer</li>
     <li>Abteilungen</li>
 </ul>
+
+<h2>Cronjobs</h2>
+Versendung von Emails an Teilnehmer die Kurse gebucht haben -> [URL]/TeilnehmerMail
+Versendung von Emails an Trainer die gebuchte Teilnehmer haben -> [URL]/TrainerMail
+Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt -> [URL]/Training/Planung
 
 ## Instalation
 
