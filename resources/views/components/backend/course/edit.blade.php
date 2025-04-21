@@ -82,8 +82,13 @@
                             <input type="checkbox" name="trainer" value="1" @if(old('trainer', $course->trainer)==1) checked @endif>
                             erforderlich
                             </span>
+                            <br>
+                            <label class="form-label">Schnupperkurs:</label>
+                            <span class="form-label">
+                                <input type="checkbox" name="schnupperkurs" value="1" @if(old('schnupperkurs', $course->schnupperkurs)==1) checked @endif>
+                                Ja
+                            </span>
                         </div>
-
                         <div class="form-field">
                             <label class="form-label">Beschreibung:</label>
                             <textarea name="kursBeschreibung" class="form-input-textarea @if($errors->has('kursBeschreibung')) is-invalid @endif">{{ old('kursBeschreibung', $course->kursBeschreibung) }}</textarea>

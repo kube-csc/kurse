@@ -4,6 +4,11 @@
             <h2 class="header-h2">
                     {{ __('backend.Course') }}
             </h2>
+            <div class="dasboard-iconbox w-12 ml-4">
+                <a href="{{ route('backend.course.create') }}">
+                    <box-icon name='calendar-plus'></box-icon>
+                </a>
+            </div>
         </div>
     </x-slot>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">

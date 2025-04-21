@@ -24,8 +24,7 @@
                   <a href="{{ route('frontend.course' , $coursedate->id) }}"> <div class="icon"><i class="bx bx-calendar-event"></i></div></a>
                   <h4 class="title"><a href="{{ route('frontend.course' , $coursedate->id) }}">{{ $coursedate->getCousename->kursName }}</a></h4>
                   @if($coursedate->training_id)
-                      {{ $coursedate->training_id }} {{--Temp: Nur zum test --}}
-                       <b>{{ $coursedate->getSportSectionAbteilung() }}</b>
+                    <b>{{ $coursedate->getSportSectionAbteilung() }}</b>
                   @endif
                   <p class="description">
                       <?php
