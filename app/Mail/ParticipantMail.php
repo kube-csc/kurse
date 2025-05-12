@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class ParticipantMail extends Mailable
 {
@@ -30,7 +31,7 @@ class ParticipantMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Participant Mail',
+            subject: 'Buchungsbestätigung für den Kurs',
         );
     }
 
@@ -44,22 +45,31 @@ class ParticipantMail extends Mailable
         $teilnehmerAnzahl = 1;
         foreach ($this->coursedates as $coursedate) {
             if($datevorher<>$coursedate->kurs_id) {
+                if ($datevorher !== "") {
+                    $mailtext .= "<br>"; // Zeilenumbruch zwischen Terminen
+                }
                 $teilnehmerAnzahl = 1;
-                $mailtext = $mailtext . "<b>Termin Name:</b> " . $coursedate->getCousename->kursName . "<br><br>";
-                $mailtext = $mailtext . "Datum: " . date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) . " Uhr bis " . date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) . " Uhr<br>";
-                $mailtext = $mailtext . "Dauer: " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n)<br><br>";
+                $mailtext .= "<b>Termin:</b> " . $coursedate->getCousename->kursName . "<br><br>";
+                $mailtext .= "Datum: " . date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) . " Uhr bis " . date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) . " Uhr<br>";
+                $mailtext .= "Dauer: " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n)<br><br>";
 
-                $trainerNamen = "Folgende Trainer sind für den Termin eingetragen:<br>";
-                foreach ($coursedate->users as $user) {
-                    $trainerNamen = $trainerNamen . $user->vorname . " " . $user->nachname . " " . $user->email . " " . $user->telefon . "<br>";
+                $trainerNamen = "Folgende ".$coursedate->getOrganiserName->trainerUeberschrift." sind für den Termin eingetragen:<br>";
+
+                $trainers = DB::table('coursedate_user')
+                    ->join('users', 'coursedate_user.user_id', '=', 'users.id')
+                    ->where('coursedate_user.coursedate_id', $coursedate->kurs_id)
+                    ->get();
+
+                foreach ($trainers as $trainer) {
+                    $trainerNamen .= "<b>".$trainer->vorname . " " . $trainer->nachname . "</b><br>E-Mail: " . $trainer->email . "<br>Telefon: " . $trainer->telefon . "<br>";
                 }
                 $mailtext = $mailtext . $trainerNamen . "<br>";
                 $mailtext = $mailtext . "Gebucht für:<br>";
-                $mailtext = $mailtext . "1. Teilnehmer:<br>";
+                $mailtext = $mailtext . "1. Teilnehmer<br>";
             }
             else {
                 $teilnehmerAnzahl ++;
-                $mailtext = $mailtext . $teilnehmerAnzahl . ". Teilnehmer:<br>";
+                $mailtext = $mailtext . $teilnehmerAnzahl . ". Teilnehmer<br>";
             }
             $datevorher = $coursedate->kurs_id;
         }

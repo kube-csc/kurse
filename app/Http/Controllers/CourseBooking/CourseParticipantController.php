@@ -13,7 +13,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\Return_;
+//use PhpParser\Node\Stmt\Return_;
 
 class CourseParticipantController extends Controller
 {
@@ -25,7 +25,7 @@ class CourseParticipantController extends Controller
         $organiser = $this->organiser();
 
         $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
-            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Trainer zugeordnet sind
+            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Kursleiter zugeordnet sind
             // Aktuel wird das in der blade mit einer if Abfrage gemacht
             //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             //->where('coursedate_user.user_id', Auth::user()->id)
@@ -48,7 +48,7 @@ class CourseParticipantController extends Controller
         $organiser = $this->organiser();
 
         $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
-            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Trainer zugeordnet sind
+            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Kursleiter zugeordnet sind
             // Aktuel wird das in der blade mit einer if Abfrage gemacht
             //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
             //->where('coursedate_user.user_id', Auth::user()->id)
@@ -238,7 +238,7 @@ class CourseParticipantController extends Controller
 
             // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
             $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
-            // Aktualisieren Sie die trainernachricht für diese Benutzer auf 1
+            // Aktualisieren Sie die Kursleiternachricht für diese Benutzer auf 1
             User::whereIn('id', $userIds)
                 ->where('trainernachricht', '')
                 ->update(['trainernachricht' => 1]);

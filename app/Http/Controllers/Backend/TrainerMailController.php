@@ -28,7 +28,9 @@ class TrainerMailController extends Controller
                 $kursstarttermin = new Carbon($coursedate->kursstarttermin);
                 $now = Carbon::now();
 
-                if ($now->diffInDays($kursstarttermin, false) < 3) {
+                $diffDays= $now->diffInDays($kursstarttermin, false);
+
+                if ($diffDays < 3) {
                     $coursedates = Coursedate::where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')))
                         ->where('coursedate_user.user_id', $trainer->user_id)
                         ->join('coursedate_user', 'coursedates.id', '=', 'coursedate_user.coursedate_id')
@@ -39,16 +41,16 @@ class TrainerMailController extends Controller
                         Mail::to($trainer->getKursTrainer->email)->send(new \App\Mail\TrainerMail($coursedates, $trainer));
                         //Temp: Zusätzlicher Testmailversand an Vereinshomepage Technik
                         Mail::to(env('VEREIN_HP_TECH_VERTRETEMAIL'))->send(new \App\Mail\TrainerMail($coursedates, $trainer));
+
+                        User::where('id', $trainer->user_id)
+                            ->where('trainernachricht', '1')
+                            ->update(['trainernachricht' => '']);
                     }
                 }
             }
-
-            User::where('trainernachricht', '1')
-                ->update(['trainernachricht' => '']);
-
-            self::success('Informationsmails wurden erfolgreich versendet.');
-
-            return redirect()->route('admin.dashboard');
         }
+        self::success('Informationsmails wurden erfolgreich versendet.');
+
+        return redirect()->route('admin.dashboard');
     }
 }

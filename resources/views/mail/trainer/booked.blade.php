@@ -1,9 +1,8 @@
 <x-mail::message>
 # Information zu den Terminen
+Hallo {{ $trainername->getKursTrainer->vorname }},
 
-Hallo {{ $trainer->getKursTrainer->vorname }},<br>
-
-Du hast folgende Termine eingestellt: <br> <br>
+du hast folgende Termin(e) eingestellt:
 
 {!! $mailtext !!}
 
@@ -12,10 +11,10 @@ Du hast folgende Termine eingestellt: <br> <br>
 Button Text
 </x-mail::button>
 -->
+Wir bedanken uns für die Organisation der Termine.
 
-Wir bedanken uns für die Organisation der Termine.,<br>
 {{ config('app.name') }}<br>
-{{ env('VEREIN_NAME') }}
-
+{{ env('VEREIN_NAME') }}<br>
+@include('textimport.mailImpressum')
 
 </x-mail::message>

@@ -12,6 +12,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class TrainerMail extends Mailable
 {
@@ -45,7 +46,6 @@ class TrainerMail extends Mailable
     {
         $mailtext = "";
         foreach ($this->coursedates as $coursedate) {
-
             // Belegte Sportgeräte andere Termine
             $sportEquipmentBookeds = SportEquipment::
                   join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
@@ -69,7 +69,7 @@ class TrainerMail extends Mailable
                 ->orderBy('sport_equipment.sportgeraet')
                 ->get();
 
-            $mailtext = $mailtext . "<b>Termin Name:</b> " . $coursedate->getCousename->kursName . "<br><br>";
+            $mailtext = $mailtext . "<b>Termin:</b> " . $coursedate->getCousename->kursName . "<br><br>";
             $mailtext = $mailtext . "Datum: " . date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) . " Uhr bis " . date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) . " Uhr<br>";
             $mailtext = $mailtext . "Dauer: " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n)<br><br>";
             if ($coursedate->kursInformation != null) {
@@ -79,8 +79,14 @@ class TrainerMail extends Mailable
             $courseParticipantBookeds = CourseParticipantBooked::where('kurs_id', $coursedate->coursedate_id)->get();
 
             $trainerNamen = "Folgende Trainer sind für den Termin eingetragen:<br>";
-            foreach ($coursedate->users as $user) {
-                $trainerNamen = $trainerNamen . $user->vorname . " " . $user->nachname . "<br>";
+
+            $trainerCourses = DB::table('coursedate_user')
+                ->join('users', 'coursedate_user.user_id', '=', 'users.id')
+                ->where('coursedate_user.coursedate_id', $coursedate->coursedate_id)
+                ->get();
+
+            foreach ($trainerCourses as $trainerCourse) {
+                $trainerNamen .= "<b>".$trainerCourse->vorname . " " . $trainerCourse->nachname . "</b><br>E-Mail: " . $trainerCourse->email . "<br>Telefon: " . $trainerCourse->telefon . "<br>";
             }
 
             $mailtext = $mailtext . $trainerNamen . "<br>";
@@ -91,7 +97,7 @@ class TrainerMail extends Mailable
                 if ($courseParticipantBooked->participant_id > 0) {
                     $participant = $participant . "Name: " . $courseParticipantBooked->participant->nachname . " " . $courseParticipantBooked->participant->vorname . "<br>";
                     $participant = $participant . "Telefon: " . $courseParticipantBooked->participant->telefon . "<br>";
-                    $participant = $participant . "E-Mail: " . $courseParticipantBooked->participant->email . "<br>";
+                    $participant = $participant . "E-Mail: " . $courseParticipantBooked->participant->email . "<br><br>";
 
                     if ($courseParticipantBooked->participant->nachricht != null) {
                         $praticipant = $participant . "Nachricht: " . $courseParticipantBooked->participant->nachricht . "<br>";
@@ -124,14 +130,14 @@ class TrainerMail extends Mailable
             }
             $mailtext = $mailtext.$belegtSportgeraeteAndereKurse."<br>";
 
-            $mailtext = $mailtext."<br><br><br><br>";
+            $mailtext = $mailtext."<br><br>";
         }
 
         return new Content(
             markdown: 'mail.trainer.booked',
             with: [
-                'mailtext' => $mailtext,
-                'trainer' => $this->trainer,
+                'mailtext'    => $mailtext,
+                'trainername' => $this->trainer,
            ],
         );
     }

@@ -1,9 +1,8 @@
 <x-mail::message>
-# Information zu den Terminen
+# Information zu den Buchungen
+Hallo {{ $courseParticipants->vorname }},
 
-Hallo {{ $courseParticipants->vorname }},<br>
-
-Du hast folgende Termine gebucht: <br> <br>
+du hast folgende Termin(e) gebucht:
 
 {!! $mailtext !!}
 
@@ -12,7 +11,10 @@ Du hast folgende Termine gebucht: <br> <br>
 Button Text
 </x-mail::button>
 -->
+Wir bedanken uns für die Buchungen.
 
-Wir bedanken uns für die Buchung eines Termins,<br>
-{{ config('app.name') }}
+{{ config('app.name') }}<br>
+{{ env('VEREIN_NAME') }}<br>
+@include('textimport.mailImpressum')
+
 </x-mail::message>
