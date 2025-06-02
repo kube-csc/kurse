@@ -61,10 +61,26 @@
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
-                        <label class="label">Start Datum:</label>
-                        {{ strftime('%a', strtotime($coursedate->kursstarttermin)) }} {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
-                        <label class="label">letztmögliches Ende:</label>
-                        {{ strftime('%a', strtotime($coursedate->kursendtermin)) }} {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) == strtotime($coursedate->kursendtermin)
+                              && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
+                            <label class="label">Termin von:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            <label class="label">bis:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        @endif
+                        @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) != strtotime($coursedate->kursendtermin)
+                              && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
+                            <label class="label">Termin im Zeitfenster:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            <label class="label">letztmögliches Ende des Termins:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        @endif
+                        @if(date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
+                            <label class="label">wiederkehrender Termin von:</label>
+                            {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }} ab {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            <label class="label">bis:</label>
+                            {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
+                        @endif
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
@@ -82,6 +98,9 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
+                        <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
+                        {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                     </div>
                 </div>
             @endforeach

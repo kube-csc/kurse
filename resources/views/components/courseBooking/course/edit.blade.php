@@ -26,7 +26,7 @@
                                 <div class="form-input-text {{ $errors->has('kursstarttermin') ? 'form-input-error' : '' }}">
                                      {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 </div>
-                                @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin<>$timeMax)
+                                @if($courseBookes->count()+$courseBookedAlls->count() == 0 and $timeMin <> $timeMax and  date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
                                 <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date form-input-date-blue"
                                        @if(isset($kursstartterminTime))
                                            value="{{ $kursstartterminTime }}"
@@ -42,10 +42,18 @@
                                     <div class="form-input-text">
                                         {{ $timeMin }} Uhr - {{ $timeMax }} Uhr
                                     </div>
-
-                               @else
+                                @endif
+                                @if($courseBookes->count()+$courseBookedAlls->count() == 0 and $timeMin == $timeMax and date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
                                     <div class="form-input-text">
                                         {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }}
+                                    </div>
+                                @endif
+                                @if($courseBookes->count()+$courseBookedAlls->count() == 0 and $timeMin != $timeMax and date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
+                                    <div class="form-input-text">
+                                      ab {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('H:i') }} bis
+                                    </div>
+                                    <div class="form-input-text">
+                                       {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                     </div>
                                 @endif
                             </div>
@@ -116,10 +124,15 @@
                     <a href="{{ route('courseBooking.course.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                  @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin!=$timeMax and $sportgeraetanzahlMax>0)
+                  @if($courseBookes->count()+$courseBookedAlls->count() == 0 and $timeMin != $timeMax and $sportgeraetanzahlMax > 0 and date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
                     <button type="submit" class="form-button">
                         {{ __('main.book') }}
                     </button>
+                  @endif
+                  @if($courseBookes->count()+$courseBookedAlls->count() == 0 and $timeMin != $timeMax and $sportgeraetanzahlMax > 0 and date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
+                      <button type="submit" class="form-button">
+                          {{ __('main.book and choose time') }}
+                      </button>
                   @endif
                 </div>
             </form>
