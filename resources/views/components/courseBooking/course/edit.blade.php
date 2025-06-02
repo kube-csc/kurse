@@ -21,13 +21,13 @@
                 <div class="form-group">
                     <div class="form-card" x-data="{ kursstatterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}', kursendterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}' }">
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">Start Datum: bb</label>
+                            <label for="kursstarttermin" class="form-label">Start Datum / Zeit:</label>
                             <div class="form-field flex">
-                                <div class="form-input-text">
+                                <div class="form-input-text {{ $errors->has('kursstarttermin') ? 'form-input-error' : '' }}">
                                      {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 </div>
                                 @if($courseBookes->count()+$courseBookedAlls->count()==0 and $timeMin<>$timeMax)
-                                <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date"
+                                <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date form-input-date-blue"
                                        @if(isset($kursstartterminTime))
                                            value="{{ $kursstartterminTime }}"
                                        @else
@@ -38,7 +38,7 @@
                                </div>
                                <br>
                                 <div class="form-field">
-                                    <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster geändert werden:</label>
+                                    <label for="kurslaenge" class="form-label">Die Startzeit kann im Zeitfenster (blau unterlegt) geändert werden:</label>
                                     <div class="form-input-text">
                                         {{ $timeMin }} Uhr - {{ $timeMax }} Uhr
                                     </div>

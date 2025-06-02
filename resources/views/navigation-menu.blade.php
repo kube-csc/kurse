@@ -33,7 +33,7 @@
                             {{ __('Dashboard') }}
                         </x-nav-link>
                     @endif
-                        <x-nav-link href="{{ url('/') }}">
+                        <x-nav-link href="{{ url('/') }}" target="_blank">
                             {{ __('Homepage') }}
                         </x-nav-link>
                 </div>

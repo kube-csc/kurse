@@ -28,8 +28,9 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
   <li>in Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
     <ul>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
-     <li>kurse.blade.php anlegen und mit der Vorlage von kurse_example.blade.php ausfüllen</li>
+     <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
+     <li>mailImpressum.blade.php anlegen mit der Vorlage mailImpressum_example.blade.php ausfüllen</li>
     </ul>
   </li>
   <li>in Ordner "public sind die folgenden Dateien anzulegen:
@@ -52,7 +53,7 @@ benötigt.
          <ul>
           <li>Kurs / Termin / Trainings Angebot Beschreibung</li>
           <li>Material</li>
-          <li>Trainer</li>
+          <li>Trainer / Kursleiter</li>
           <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten</li>
         </ul>
     </li>
@@ -73,7 +74,7 @@ benötigt.
 <h3>Vereinsverwaltung</h3>
 <h4>Installation</h4>
 <p>
-Die Verwaltung der Userdaten der Trainer und Abteilungen muss die APP Vereinsverwaltung installiert werden.
+Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
 <a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.010.xx</a>
 </p>
@@ -85,7 +86,7 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
 </p>
 <h4>Verwaltete Daten:</h4>
 <ul>
-    <li>Userdaten der Trainer</li>
+    <li>Userdaten der Trainer / Kursleiter</li>
     <li>Abteilungen</li>
 </ul>
 

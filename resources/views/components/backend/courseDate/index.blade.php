@@ -13,6 +13,11 @@
     </x-slot>
     <div class="main-box">
         <div class="dashboard-flexbox">
+            @php
+                if (!setlocale(LC_TIME, 'de_DE.UTF-8')) {
+                   setlocale(LC_TIME, 'German_Germany.1252'); // Für Windows
+                }
+            @endphp
             @foreach($coursedates as $coursedate)
                 @php($userIsInCourse = false)
                 @foreach($coursedate->users as $user)
@@ -53,10 +58,14 @@
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
+                        @if($coursedate->training_id)
+                            <label class="label">{{ env('MENUE_ABTEILUNG') }} / {{ env('MENUE_MANNSCHAFTEN') }}:</label>
+                            <b>{{ $coursedate->getSportSectionAbteilung() }}</b>
+                        @endif
                         <label class="label">Start Datum:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                        {{ strftime('%a', strtotime($coursedate->kursstarttermin)) }} {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                         <label class="label">letztmögliches Ende:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        {{ strftime('%a', strtotime($coursedate->kursendtermin)) }} {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>

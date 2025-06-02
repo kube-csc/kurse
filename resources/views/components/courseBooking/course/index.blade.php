@@ -22,10 +22,18 @@
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
-                        <label class="label">Termin im Zeitfenster:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
-                        <label class="label">letztmögliches Ende des Termins:</label>
-                        {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        @if(strtotime($coursedate->kursstarttermin) + strtotime($coursedate->kurslaenge) == strtotime($coursedate->kursendtermin))
+                            <label class="label">Termin von:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            <label class="label">bis:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                            {{-- Zeiten stimmen überein--}}
+                        @else
+                            <label class="label">Termin im Zeitfenster:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            <label class="label">letztmögliches Ende des Termins:</label>
+                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                        @endif
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
                         <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
