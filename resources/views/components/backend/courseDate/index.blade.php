@@ -77,7 +77,7 @@
                             {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                         @endif
                         @if(date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
-                            <label class="label">wiederkehrender Termin von:</label>
+                            <label class="label">Serientermin von:</label>
                             {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }} ab {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                             <label class="label">bis:</label>
                             {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
