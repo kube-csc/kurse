@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 //Cronjobs
 Route::get('/TrainerMail', 'App\Http\Controllers\Backend\TrainerMailController@trainerMail')->name('backend.trainerMail');
 Route::get('/TeilnehmerMail', 'App\Http\Controllers\CourseBooking\ParticipantMailController@participantMail')->name('backend.participantMail');
-Route::get('/Training/Planung', 'App\Http\Controllers\Backend\CoursedateController@cronPlanung');
+Route::get('/Training/Planung', 'App\Http\Controllers\Backend\CoursedateController@cronJobPlanung');
 
 //Frontend
 Route::get('/', 'App\Http\Controllers\HomeController@index');
@@ -127,4 +127,3 @@ Route::middleware([
     Route::get('/backend/OranisationSportartPick/{organiserId}/{pickSportSectionId}', [OrganiserController::class, 'pickSportSection'])->name('backend.organiser.pickSportSection');
     Route::get('/backend/OranisationSportartDestroy/{organiserId}/{destroySportSectionId}', [OrganiserController::class, 'destroySportSection'])->name('backend.organiser.destroySportSection');
 });
-
