@@ -19,37 +19,49 @@
         <div class="container">
 
             <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+
                 <h2>{{ $coursedate->getCousename->kursName }}</h2>
                 <?php
-                $startDay = strftime('%a', strtotime($coursedate->kursstarttermin));
-                $endDay   = strftime('%a', strtotime($coursedate->kursendtermin));
+                    if (!setlocale(LC_TIME, 'de_DE.UTF-8')) {
+                       setlocale(LC_TIME, 'German_Germany.1252'); // Für Windows
+                    }
+                    $startDay = strftime('%a', strtotime($coursedate->kursstarttermin));
+                    $endDay   = strftime('%a', strtotime($coursedate->kursendtermin));
                 ?>
                 @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) == strtotime($coursedate->kursendtermin)
                       && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
-                    Termin: {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }}<br>
+                    <b>Datum:</b><br>
+                    {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }}<br>
+                    <b>Uhrzeit:</b><br>
                     von {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr bis {{ date('H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                 @endif
                 @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) != strtotime($coursedate->kursendtermin)
                       && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
-                    Termin im Zeitfenster:<br>
+                    <b>Datum:</b><br>
                     {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }}<br>
-                    von {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr<br>
-                    letztmögliches Ende:<br>
-                    {{ date('H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                    <b>Uhrzeit:</b><br>
+                    von {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr bis {{ date('H:i', strtotime($coursedate->kursendtermin)) }} Uhr<br>
+                    <span class="text-info" style="font-size: 0.95em;">
+                              <i class="bx bx-info-circle"></i>
+                               Die Startuhrzeit kann beim Buchen individuell angepasst werden.
+                           </span>
                 @endif
                 @if(date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
-                    Serientermin:<br>
-                    von {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }}
+                    <b>Terminserie<br>
+                        Start Datum:</b><br>
+                    von {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }}<br>
+                    <b>Uhrzeit:</b><br>
                     ab {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr<br>
-                    bis: {{ $endDay }} {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
+                    <b>End Datum:</b><br>
+                    bis {{ $endDay }} {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
                 @endif
                 <br>
-                Dauer: {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
-                Teilnehmer: {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
+                <b>Dauer:</b> {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
+                <b>Teilnehmer:</b> {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
                 <br>
                 @if(Auth::check())
                     @if (Auth::user()->getTable()=='course_participants')
-                      Deine gebuchten Teilnehmer: {{ $courseBookedCount }}
+                      <b>Deine gebuchten Teilnehmer:</b> {{ $courseBookedCount }}
                       @if($teilnehmerKursBookeds < $sportgeraetanzahlMax and ($coursedate->kursstarttermin <> $coursedate->kursstartvorschlag or $coursedate->kursendtermin <> $coursedate->kursendvorschlag))
                           <a href="{{ route('courseBooking.course.book' , $coursedate->id) }}"><i class="bx bx-user-plus"></i> Teilnehmer buchen</a>
                           <br><br>
