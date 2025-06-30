@@ -76,7 +76,7 @@ benötigt.
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.010.xx</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.09.01</a>
 </p>
 
 <h4>Demodaten</h4>
@@ -91,16 +91,17 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
 </ul>
 
 <h2>Cronjobs</h2>
-Versendung von Emails an Teilnehmer die Kurse gebucht haben -> [URL]/TeilnehmerMail
-Versendung von Emails an Trainer die gebuchte Teilnehmer haben -> [URL]/TrainerMail
-Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt -> [URL]/Training/Planung
+Versendung von Emails an Teilnehmer die Kurse gebucht haben → [URL]/TeilnehmerMail
+Versendung von Emails an Trainer die gebuchte Teilnehmer haben → [URL]/TrainerMail
+Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt → [URL]/Training/Planung
 
-## Instalation
+## Installation
 
 <ul>
    <li>git clone https://github.com/kube-csc/kurse.git</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)</li>
    <li>cd kurse</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
+   <li>php artisan key:generate</li>
    <li>curl -sS https://getcomposer.org/installer</li>
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
