@@ -70,8 +70,18 @@ class TrainerMail extends Mailable
                 ->get();
 
             $mailtext = $mailtext . "<b>Termin:</b> " . $coursedate->getCousename->kursName . "<br><br>";
-            $mailtext = $mailtext . "Datum: " . date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) . " Uhr bis " . date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) . " Uhr<br>";
-            $mailtext = $mailtext . "Dauer: " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n)<br><br>";
+
+            if (date('Y-m-d', strtotime($coursedate->kursstarttermin)) === date('Y-m-d', strtotime($coursedate->kursendtermin))) {
+                $mailtext .= "Datum: " . date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) . " Uhr bis " . date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) . " Uhr<br>";
+                $mailtext .= "Dauer: " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n)<br><br>";
+            } else {
+                $mailtext .= "Der Aktivität findet täglich im Zeitraum von " .
+                    date('d.m.Y', strtotime($coursedate->kursstarttermin)) . " bis " .
+                    date('d.m.Y', strtotime($coursedate->kursendtermin)) .
+                    " ab " . date('H:i', strtotime($coursedate->kursstarttermin)) . " Uhr statt.<br>";
+                $mailtext .= "Die Aktivität dauert jeweils " . date('H:i', strtotime($coursedate->kurslaenge)) . " Stunde(n).<br><br>";
+            }
+
             if ($coursedate->kursInformation != null) {
                 $mailtext = $mailtext . "<b>Termininformation:</b> " . $coursedate->kursInformation . "<br><br>";
             }

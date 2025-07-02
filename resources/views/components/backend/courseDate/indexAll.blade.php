@@ -15,10 +15,14 @@
         <div class="dashboard-flexbox">
             @php
                 if (!setlocale(LC_TIME, 'de_DE.UTF-8')) {
-                   setlocale(LC_TIME, 'German_Germany.1252'); // Für Windows
+                    setlocale(LC_TIME, 'German_Germany.1252'); // Für Windows
                 }
             @endphp
             @foreach($coursedates as $coursedate)
+                @php
+                    $startDay = strftime('%a', strtotime($coursedate->kursstarttermin));
+                    $endDay   = strftime('%a', strtotime($coursedate->kursendtermin));
+                @endphp
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
@@ -64,22 +68,22 @@
                         @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) == strtotime($coursedate->kursendtermin)
                               && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
                             <label class="label">Termin von:</label>
-                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            {{ $startDay }} {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                             <label class="label">bis:</label>
-                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                            {{ $endDay }} {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                         @endif
                         @if(strtotime($coursedate->kursstarttermin) + (strtotime($coursedate->kurslaenge) - strtotime('00:00:00')) != strtotime($coursedate->kursendtermin)
                               && date('Y-m-d', strtotime($coursedate->kursstarttermin)) == date('Y-m-d', strtotime($coursedate->kursendtermin)))
                             <label class="label">Termin im Zeitfenster:</label>
-                            {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            {{ $startDay }} {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                             <label class="label">letztmögliches Ende des Termins:</label>
-                            {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
+                            {{ $endDay }} {{ date('d.m.Y H:i', strtotime($coursedate->kursendtermin)) }} Uhr
                         @endif
                         @if(date('Y-m-d', strtotime($coursedate->kursstarttermin)) != date('Y-m-d', strtotime($coursedate->kursendtermin)))
                             <label class="label">Serientermin von:</label>
-                            {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }} ab {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
+                            {{ $startDay }} {{ date('d.m.Y', strtotime($coursedate->kursstarttermin)) }} ab {{ date('H:i', strtotime($coursedate->kursstarttermin)) }} Uhr
                             <label class="label">bis:</label>
-                            {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
+                            {{ $endDay }} {{ date('d.m.Y', strtotime($coursedate->kursendtermin)) }}
                         @endif
                         <label class="label">Dauer:</label>
                         {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)
