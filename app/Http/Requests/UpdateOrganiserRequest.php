@@ -29,7 +29,11 @@ class UpdateOrganiserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'veranstaltungHeader'            => 'nullable',
+            // Headerbild (optional)
+            // Spezifischer als "nullable", damit nur echte Bilder akzeptiert werden.
+            'veranstaltungHeader'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+            'veranstaltungHeaderKlein'       => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+
             'veranstaltungBeschreibungLang'  => 'nullable',
             'veranstaltungBeschreibungKurz'  => 'nullable',
             'sportartBeschreibungLang'       => 'nullable',

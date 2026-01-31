@@ -1,3 +1,4 @@
+@include('layouts.header')
 <!-- ======= Header ======= -->
 <header id="header" class="fixed-top header-transparent">
     <div class="container d-flex align-items-center">

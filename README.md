@@ -25,7 +25,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de (1und1.de) Server</li>
-  <li>in Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
+  <li>in Ordner "/resources/views/textimport ist folgendes zu bearbeiten:
     <ul>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
@@ -34,11 +34,12 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
     </ul>
   </li>
   <li>in Ordner "public sind die folgenden Dateien anzulegen:
-<ul>
+    <ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>
     </ul>
   </li>
+   <li>php artisan storage:link</li>
 </ul>
 
 <h2>Benötigte Lizenzen</h2>
@@ -76,7 +77,7 @@ benötigt.
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.09.01</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.01</a>
 </p>
 
 <h4>Demodaten</h4>

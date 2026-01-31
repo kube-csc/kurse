@@ -25,7 +25,7 @@
     <div class="main-box">
         <div class="box">
             <div class="form-field">
-                <label for="course_id" class="form-label">{{ $pickedSportSections->count() }} zugewiesende Abteilung(en) für Sportgeräte:</label>
+                <label for="course_id" class="form-label">{{ $pickedSportSections->count() }} zugewiesene Abteilung(en) für Sportgeräte:</label>
                 <div class="form-box">
                     @foreach($pickedSportSections as $pickedSportSection)
                         <a href="{{ route('backend.organiser.destroySportSection',
@@ -44,7 +44,7 @@
             </div>
 
             <div class="form-field">
-                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesende Abteilung(en):</label>
+                <label for="course_id" class="form-label">{{ $sportSections->count() }} nicht zugewiesene Abteilung(en):</label>
                 <div class="form-box">
                     @foreach($sportSections as $sportSection)
                         <a href="{{ route('backend.organiser.pickSportSection',
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('backend.organiser.update', $organiser->id) }}" method="POST">
+            <form action="{{ route('backend.organiser.update', $organiser->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -104,6 +104,78 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                             @enderror
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Headerbild (Upload):</label>
+                            @php
+                                $grossFilename = !empty($organiser->veranstaltungHeader) ? ltrim($organiser->veranstaltungHeader, '/') : null;
+                                $grossUrl = $grossFilename ? asset('storage/organisers/' . $grossFilename) : null;
+                            @endphp
+
+                            @if($grossUrl)
+                                <div class="mb-2">
+                                    <img src="{{ $grossUrl }}" alt="Headerbild" style="max-width: 100%; max-height: 200px; object-fit: contain;" />
+                                </div>
+                            @endif
+
+                            <div class="mb-2" style="display:flex; align-items:center; gap:8px;">
+                                <input type="file" name="veranstaltungHeader" accept="image/*" class="form-input-text @if($errors->has('veranstaltungHeader')) is-invalid @endif">
+
+                                @if($grossUrl)
+                                    <button
+                                        type="button"
+                                        class="image-delete-icon-btn"
+                                        data-delete-url="{{ route('backend.organiser.destroyVeranstaltungHeader', $organiser) }}"
+                                        data-confirm="Headerbild wirklich löschen?"
+                                        title="Headerbild löschen"
+                                    >
+                                        <box-icon name='trash'></box-icon>
+                                    </button>
+                                @endif
+                            </div>
+
+                            @if ($errors->has('veranstaltungHeader'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('veranstaltungHeader') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Headerbild klein (Handy) (Upload):</label>
+                            @php
+                                $kleinFilename = !empty($organiser->veranstaltungHeaderKlein) ? ltrim($organiser->veranstaltungHeaderKlein, '/') : null;
+                                $kleinUrl = $kleinFilename ? asset('storage/organisers/' . $kleinFilename) : null;
+                            @endphp
+
+                            @if($kleinUrl)
+                                <div class="mb-2">
+                                    <img src="{{ $kleinUrl }}" alt="Headerbild klein" style="max-width: 100%; max-height: 200px; object-fit: contain;" />
+                                </div>
+                            @endif
+
+                            <div class="mb-2" style="display:flex; align-items:center; gap:8px;">
+                                <input type="file" name="veranstaltungHeaderKlein" accept="image/*" class="form-input-text @if($errors->has('veranstaltungHeaderKlein')) is-invalid @endif">
+
+                                @if($kleinUrl)
+                                    <button
+                                        type="button"
+                                        class="image-delete-icon-btn"
+                                        data-delete-url="{{ route('backend.organiser.destroyVeranstaltungHeaderKlein', $organiser) }}"
+                                        data-confirm="Kleines Headerbild wirklich löschen?"
+                                        title="Kleines Headerbild löschen"
+                                    >
+                                        <box-icon name='trash'></box-icon>
+                                    </button>
+                                @endif
+                            </div>
+
+                            @if ($errors->has('veranstaltungHeaderKlein'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('veranstaltungHeaderKlein') }}</strong>
+                                </span>
+                            @endif
                         </div>
 
                         <div class="form-field">
@@ -232,6 +304,43 @@
                     </button>
                 </div>
             </form>
+
+            <script>
+                // DELETE ohne verschachtelte <form>-Tags: sendet korrekten DELETE an die Bild-Routen
+                document.addEventListener('click', async (e) => {
+                    const btn = e.target.closest('.image-delete-btn, .image-delete-icon-btn');
+                    if (!btn) return;
+
+                    const url = btn.getAttribute('data-delete-url');
+                    const confirmText = btn.getAttribute('data-confirm') || 'Wirklich löschen?';
+                    if (!url) return;
+
+                    if (!window.confirm(confirmText)) return;
+
+                    try {
+                        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        const res = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token || '',
+                                'Accept': 'text/html,application/xhtml+xml',
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                            },
+                            body: new URLSearchParams({ _method: 'DELETE' })
+                        });
+
+                        if (res.ok) {
+                            window.location.reload();
+                            return;
+                        }
+
+                        alert('Löschen fehlgeschlagen (' + res.status + ').');
+                    } catch (err) {
+                        console.error(err);
+                        alert('Löschen fehlgeschlagen.');
+                    }
+                });
+            </script>
         </div>
     </div>
 </x-app-layout>

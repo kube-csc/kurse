@@ -124,6 +124,10 @@ Route::middleware([
     Route::get('/backend/Oranisation', [OrganiserController::class, 'index'])->name('backend.organiser.index');
     Route::get('/backend/OranisationEdit/{organiser}', [OrganiserController::class, 'edit'])->name('backend.organiser.edit');
     Route::put('/backend/OranisationUpdate/{organiser}', [OrganiserController::class, 'update'])->name('backend.organiser.update');
+    Route::delete('/backend/Oranisation/{organiser}/veranstaltungHeader', [OrganiserController::class, 'destroyVeranstaltungHeader'])
+        ->name('backend.organiser.destroyVeranstaltungHeader');
+    Route::delete('/backend/Oranisation/{organiser}/veranstaltungHeaderKlein', [OrganiserController::class, 'destroyVeranstaltungHeaderKlein'])
+        ->name('backend.organiser.destroyVeranstaltungHeaderKlein');
     Route::get('/backend/OranisationSportartPick/{organiserId}/{pickSportSectionId}', [OrganiserController::class, 'pickSportSection'])->name('backend.organiser.pickSportSection');
     Route::get('/backend/OranisationSportartDestroy/{organiserId}/{destroySportSectionId}', [OrganiserController::class, 'destroySportSection'])->name('backend.organiser.destroySportSection');
 });
