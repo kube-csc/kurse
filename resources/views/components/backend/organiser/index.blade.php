@@ -11,9 +11,13 @@
             @foreach($organisers as $organiser)
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
-                        <div class="dasboard-iconbox">
-                            <a href="{{ route('backend.organiser.edit', $organiser->id) }}">
+                        <div class="dasboard-iconbox" style="display:flex; gap:10px; align-items:center;">
+                            <a href="{{ route('backend.organiser.edit', $organiser->id) }}" title="Veranstaltung bearbeiten">
                                 <box-icon name='edit'></box-icon>
+                            </a>
+
+                            <a href="{{ route('faq.index', ['organiser' => $organiser->id]) }}" title="FAQ verwalten">
+                                <box-icon name='help-circle'></box-icon>
                             </a>
                         </div>
                         <label class="label">Veranstaltung:</label>
@@ -28,5 +32,3 @@
         </div>
     </div>
 </x-app-layout>
-
-

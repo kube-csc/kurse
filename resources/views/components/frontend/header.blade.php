@@ -9,9 +9,23 @@
             <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
         </div>
 
+        @php
+            $host = $_SERVER['HTTP_HOST'] ?? null;
+            $currentOrganiser = \App\Models\Organiser::where('veranstaltungDomain', $host)->first() ?? \App\Models\Organiser::find(1);
+            $hasFaq = \App\Models\Faq::query()
+                ->active()
+                ->visibleForOrganiser($currentOrganiser?->id)
+                ->exists();
+        @endphp
+
         <nav class="nav-menu d-none d-lg-block">
             <ul>
                 <li class="active"><a href="/">Home</a></li>
+
+                @if($hasFaq)
+                    <li><a href="{{ route('frontend.faq') }}">FAQ</a></li>
+                @endif
+
                 @if(Auth::check())
                     <li><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
                     <li><a href="{{ route('frontend.logout') }}">{{ __('main.Log Out') }}</a></li>

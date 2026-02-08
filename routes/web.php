@@ -5,10 +5,16 @@ use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\TrainerMailController;
 use App\Http\Controllers\CourseBooking\CourseParticipantController;
+use App\Http\Controllers\CourseBooking\ParticipantMailController;
+use App\Http\Controllers\DatenschutzerklärungController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImpressumController;
 use App\Models\Organiser;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\FaqController as BackendFaqController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,22 +28,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Cronjobs
-Route::get('/TrainerMail', 'App\Http\Controllers\Backend\TrainerMailController@trainerMail')->name('backend.trainerMail');
-Route::get('/TeilnehmerMail', 'App\Http\Controllers\CourseBooking\ParticipantMailController@participantMail')->name('backend.participantMail');
-Route::get('/Training/Planung', 'App\Http\Controllers\Backend\CoursedateController@cronJobPlanung');
+Route::get('/TrainerMail', [TrainerMailController::class, 'trainerMail'])->name('backend.trainerMail');
+Route::get('/TeilnehmerMail', [ParticipantMailController::class, 'participantMail'])->name('backend.participantMail');
+Route::get('/Training/Planung', [CoursedateController::class, 'cronJobPlanung']);
 
 //Frontend
-Route::get('/', 'App\Http\Controllers\HomeController@index');
-Route::get('/Startseite', 'App\Http\Controllers\HomeController@index');
-Route::get('/Impressum', 'App\Http\Controllers\ImpressumController@getImpressumDaten');
-Route::get('/Information/Datenschutzerklaerung', 'App\Http\Controllers\DatenschutzerklärungController@getDatenschutzerklärungDaten');
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/Startseite', [HomeController::class, 'index']);
+Route::get('/Impressum', [ImpressumController::class, 'getImpressumDaten']);
+Route::get('/Information/Datenschutzerklaerung', [DatenschutzerklärungController::class, 'getDatenschutzerklärungDaten']);
 
-Route::get('/Angebot', 'App\Http\Controllers\HomeController@offer')->name('frontend.offer');
-Route::get('/Sportart', 'App\Http\Controllers\HomeController@sportType');
-Route::get('/Trainer', 'App\Http\Controllers\HomeController@trainer');
-Route::get('/Sportgeraete', 'App\Http\Controllers\HomeController@sportUnit');
-Route::get('/Kurse', 'App\Http\Controllers\HomeController@coursetype');
-Route::get('/Kurseangebot/{id}', 'App\Http\Controllers\HomeController@courseDate')->name('frontend.course');
+Route::get('/FAQ', [FaqController::class, 'index'])->name('frontend.faq');
+
+Route::get('/Angebot', [HomeController::class, 'offer'])->name('frontend.offer');
+Route::get('/Sportart', [HomeController::class, 'sportType']);
+Route::get('/Trainer', [HomeController::class, 'trainer']);
+Route::get('/Sportgeraete', [HomeController::class, 'sportUnit']);
+Route::get('/Kurse', [HomeController::class, 'coursetype']);
+Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('frontend.course');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
 Route::middleware([
@@ -130,4 +138,20 @@ Route::middleware([
         ->name('backend.organiser.destroyVeranstaltungHeaderKlein');
     Route::get('/backend/OranisationSportartPick/{organiserId}/{pickSportSectionId}', [OrganiserController::class, 'pickSportSection'])->name('backend.organiser.pickSportSection');
     Route::get('/backend/OranisationSportartDestroy/{organiserId}/{destroySportSectionId}', [OrganiserController::class, 'destroySportSection'])->name('backend.organiser.destroySportSection');
+
+    // FAQ Backend
+    Route::get('/backend/FAQ/{organiser}', [BackendFaqController::class, 'index'])->name('faq.index');
+    Route::get('/backend/FAQ/{organiser}/Create', [BackendFaqController::class, 'create'])->name('faq.create');
+    Route::post('/backend/FAQ/{organiser}/Store', [BackendFaqController::class, 'store'])->name('faq.store');
+    Route::get('/backend/FAQ/{organiser}/Edit/{faq}', [BackendFaqController::class, 'edit'])->name('faq.edit');
+    Route::post('/backend/FAQ/{organiser}/Update/{faq}', [BackendFaqController::class, 'update'])->name('faq.update');
+    Route::post('/backend/FAQ/{organiser}/Destroy/{faq}', [BackendFaqController::class, 'destroy'])->name('faq.destroy');
+
+    Route::get('/backend/FAQ/{organiser}/Aktiv/{faq}', [BackendFaqController::class, 'aktiv'])->name('faq.aktiv');
+    Route::get('/backend/FAQ/{organiser}/Inaktiv/{faq}', [BackendFaqController::class, 'inaktiv'])->name('faq.inaktiv');
+
+    Route::get('/backend/FAQ/{organiser}/Up/{faq}', [BackendFaqController::class, 'up'])->name('faq.up');
+    Route::get('/backend/FAQ/{organiser}/Down/{faq}', [BackendFaqController::class, 'down'])->name('faq.down');
+    Route::get('/backend/FAQ/{organiser}/Category/Up/{faq}', [BackendFaqController::class, 'categoryUp'])->name('faq.category.up');
+    Route::get('/backend/FAQ/{organiser}/Category/Down/{faq}', [BackendFaqController::class, 'categoryDown'])->name('faq.category.down');
 });
