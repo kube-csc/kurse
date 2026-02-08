@@ -6,9 +6,6 @@
     // Hier wird der Ablageordner fest im Code definiert (nicht in der DB)
     $organiserImagePrefix = 'organisers/';
 
-    // Default (wenn nichts hinterlegt ist)
-    $defaultHeader = asset('storage/' . $organiserImagePrefix . 'organisers-1.jpg');
-
     $normalize = function (?string $value) use ($organiserImagePrefix): ?string {
         if (empty($value)) {
             return null;
@@ -36,10 +33,13 @@
     $storedGross = $storedGross ?: $storedKlein;
     $storedKlein = $storedKlein ?: $storedGross;
 
-    $headerGross = $storedGross ? asset('storage/' . $storedGross) : $defaultHeader;
+    $hasAnyHeader = !empty($storedGross) || !empty($storedKlein);
+
+    $headerGross = $storedGross ? asset('storage/' . $storedGross) : null;
     $headerKlein = $storedKlein ? asset('storage/' . $storedKlein) : $headerGross;
 @endphp
 
+@if ($hasAnyHeader)
 <style>
     /* Default: Desktop/Tablet */
     #hero {
@@ -56,3 +56,4 @@
         }
     }
 </style>
+@endif

@@ -25,7 +25,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de (1und1.de) Server</li>
-  <li>in Ordner "/resources/views/textimport ist folgendes zu bearbeiten:
+  <li>in Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
     <ul>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
@@ -34,12 +34,11 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
     </ul>
   </li>
   <li>in Ordner "public sind die folgenden Dateien anzulegen:
-    <ul>
+<ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>
     </ul>
   </li>
-   <li>php artisan storage:link</li>
 </ul>
 
 <h2>Benötigte Lizenzen</h2>
@@ -72,8 +71,14 @@ benötigt.
   ** Anfahrt kann in der .env aktiviert bzw. deaktiviert werden
 
 <h2>Backend</h2>
-<h3>Vereinsverwaltung</h3>
-<h4>Installation</h4>
+
+<ul>
+    <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten anlegen, bearbeiten, löschen</li>
+    <li>Trainer / Kursleiter zuordnen</li>
+    <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
+    <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
+</ul>
+<h2>Installation</h2>
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.

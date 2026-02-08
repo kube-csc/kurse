@@ -3,7 +3,10 @@
 /public/hot
 /public/*_*.*
 /public/storage/
+/public/apple-touch-icon.png
+/public/favicon.ico
 /storage/app/public/**/*_*.*
+/storage/app/public/sportgeraete/S*.jpg
 /storage/*.key
 /vendor
 /Vorlage
