@@ -91,6 +91,14 @@
                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
+
+                        @if($coursedate->sportgeraeteReserviert !== null & $coursedate->sportgeraeteReserviert != 0)
+                            <div>
+                                <label class="label">Reservierte Sportgeräte:</label>
+                                {{ $coursedate->sportgeraeteReserviert }}
+                            </div>
+                        @endif
+
                         @if($coursedate->sportgeraetanzahl > 0)
                             <div>
                                 <label class="label">Teilnehmer:</label>

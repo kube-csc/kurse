@@ -30,7 +30,6 @@ class UpdateCoursedateRequest extends FormRequest
     {
         return [
             'kursInformation'    => 'nullable',
-       ];
+        ];
     }
 }
-

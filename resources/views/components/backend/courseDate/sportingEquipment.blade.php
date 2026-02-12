@@ -156,11 +156,15 @@
                                 @endphp
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
                                     <span>
+                                        @php
+                                            $bookedVorname = $sportEquipmentBooked->vorname ?? 'ohne Trainer';
+                                            $bookedNachname = $sportEquipmentBooked->nachname ?? '';
+                                        @endphp
                                         @if($sporgeraeteIdVorher<>$sportEquipmentBooked->sportgeraet_id)
                                             {{ $sportEquipmentBooked->sportgeraet}} /
-                                            {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                            {{ trim($bookedVorname.' '.$bookedNachname) }}
                                         @else
-                                            und {{ $sportEquipmentBooked->vorname }} {{ $sportEquipmentBooked->nachname }}
+                                            und {{ trim($bookedVorname.' '.$bookedNachname) }}
                                         @endif
                                     </span><br>
                                     @php
@@ -180,6 +184,11 @@
                                     </span><br>
                                 @endforeach
                             </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="kursInformation" class="form-label">Information:</label>
+                            <textarea name="kursInformation" id="kursInformation" class="form-input-textarea">{{ old('kursInformation', $coursedate->kursInformation) }}</textarea>
                         </div>
 
                     </div>

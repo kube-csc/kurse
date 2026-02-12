@@ -25,6 +25,7 @@ class Coursedate extends Model
         'kursendvorschlagkunde',
         'kursNichtDurchfuerbar',
         'sportgeraetanzahl',
+        'sportgeraeteReserviert',
         'kursInformation',
         'autor_id',
         'bearbeiter_id'

@@ -339,13 +339,14 @@ class CoursedateController extends Controller
         // Belegte Boote andere Kurse
         $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
+            ->leftJoin('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            ->leftJoin('users', 'users.id', '=', 'coursedate_user.user_id')
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
             ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
             ->orderBy('sport_equipment.sportgeraet')
+            ->selectRaw("sport_equipment.*, sport_equipment_bookeds.sportgeraet_id, sport_equipment_bookeds.kurs_id, COALESCE(users.vorname, 'ohne Trainer') as vorname, COALESCE(users.nachname, '') as nachname")
             ->get();
 
         // Gebuchte Boote für den Kurs
@@ -602,8 +603,7 @@ class CoursedateController extends Controller
                                 'kursendvorschlagkunde' => $datumbis,
                                 'kurslaenge' => $kurslaenge,
                                 'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                                'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                                'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                                 'bearbeiter_id' => $training->autor_id,
                                 'updated_at' => Carbon::now(),
                             ]);
@@ -647,8 +647,7 @@ class CoursedateController extends Controller
                             'kursendvorschlagkunde' => $datumbis,
                             'kurslaenge' => $kurslaenge,
                             'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                            'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
 
@@ -670,8 +669,7 @@ class CoursedateController extends Controller
                             'kursendvorschlagkunde' => $datumbis,
                             'kurslaenge' => $kurslaenge,
                             'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                            'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
                             'updated_at' => Carbon::now(),
