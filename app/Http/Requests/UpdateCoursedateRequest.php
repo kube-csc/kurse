@@ -30,6 +30,21 @@ class UpdateCoursedateRequest extends FormRequest
     {
         return [
             'kursInformation'    => 'nullable',
+
+            // Sportgeräte / Plätze
+            'sportgeraetanzahl' => ['nullable', 'integer', 'min:0'],
+
+            // Wenn sportgeraetanzahl > 0, darf reserviert nicht größer sein.
+            // (Bei 0 = "maximal/unbegrenzt" greifen andere Limits im Controller.)
+            'sportgeraeteReserviert' => ['nullable', 'integer', 'min:0', 'lte:sportgeraetanzahl'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        // Wenn das Feld nicht gesendet oder leer ist, immer auf 0 normalisieren.
+        if ($this->input('sportgeraeteReserviert') === null || $this->input('sportgeraeteReserviert') === '') {
+            $this->merge(['sportgeraeteReserviert' => 0]);
+        }
     }
 }

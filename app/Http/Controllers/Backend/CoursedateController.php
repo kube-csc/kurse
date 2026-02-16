@@ -17,6 +17,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\CoursedateHelper;
 
 class CoursedateController extends Controller
 {
@@ -49,7 +50,7 @@ class CoursedateController extends Controller
         $coursedates = Coursedate::where('organiser_id', $organiser->id)
             ->leftJoin('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            ->whereNull('course_participant_bookeds.deleted_at')
+            //->whereNull('course_participant_bookeds.deleted_at')
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
@@ -178,11 +179,46 @@ class CoursedateController extends Controller
 
         $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
 
+        $overlapRequiredBoatsSum=CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
+
+        $sportEquipmentBookedsForCoursedatesSum = CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
+
+        // Debug: neue Overlap-Stats (Counts + min/max)
+        $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
+
+        /*
+        // Variante A: als Array (gut lesbar)
+        dump($overlapStats->map(function ($row) {
+            return [
+                'coursedate_id' => $row['coursedate_id'],
+                'teilnehmerKursBookeds' => $row['teilnehmerKursBookeds'],
+                'sportEquipmentBookeds' => $row['sportEquipmentBookeds'],
+                'sportgeraeteReserviert' => $row['sportgeraeteReserviert'],
+                'min' => $row['min'],
+                'max' => $row['max'],
+            ];
+        })->all());
+       */
+
+        // Summe aller "max"-Werte über alle überlappenden Datensätze
+        $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
+
+        $maxReservierbarInput = min(
+                                                        $coursedate->sportgeraetanzahl,
+                                                        $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme
+                                                    );
+        $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
+
         return view('components.backend.courseDate.edit', compact([
             'coursedate',
             'sportgeraetanzahlMax',
+            'maxParticipant',
             'courses',
-            'organiser'
+            'organiser',
+            'maxReservierbarInput',
+            'overlapRequiredBoatsSum',
+            'sportEquipmentBookedsForCoursedatesSum',
+             'needEquipmentProCourstimeSumme'
         ]));
     }
 
@@ -221,22 +257,28 @@ class CoursedateController extends Controller
             '1' => 'Der Termin wurde erfolgreich bearbeitet.',
             '2' => 'Der Endtermin wurde neu berechnet und der Termin erfolgreich gespeichert.'
         ];
+
         $daten=$this->kursendterminMin($request, $message);
+
+        $sportgeraeteReserviert       = (int) ($request->sportgeraeteReserviert ?? 0);
+        $sportgeraetanzahl               = (int) ($request->sportgeraetanzahl ?? 0);
+        $sportgeraeteReserviertMin = min($sportgeraetanzahl, $sportgeraeteReserviert);
 
         $coursedate->update(
             [
-                'course_id'               => $request->course_id,
-                'kurslaenge'              => $request->kurslaenge,
-                'kursstarttermin'         => $daten['kursstarttermin'],
-                'kursendtermin'           => $daten['kursendtermin'],
-                'kursstartvorschlag'      => $daten['kursstarttermin'],
-                'kursendvorschlag'        => $daten['kursendtermin'],
-                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
-                'kursendvorschlagkunde'   => $daten['kursendtermin'],
-                'sportgeraetanzahl'       => $request->sportgeraetanzahl,
-                'kursInformation'         => $request->kursInformation,
-                'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
+                'course_id'                        => $request->course_id,
+                'kurslaenge'                      => $request->kurslaenge,
+                'kursstarttermin'               => $daten['kursstarttermin'],
+                'kursendtermin'                => $daten['kursendtermin'],
+                'kursstartvorschlag'          => $daten['kursstarttermin'],
+                'kursendvorschlag'           => $daten['kursendtermin'],
+                'kursstartvorschlagkunde'=> $daten['kursstarttermin'],
+                'kursendvorschlagkunde' => $daten['kursendtermin'],
+                'sportgeraetanzahl'          => $request->sportgeraetanzahl,
+                'kursInformation'              => $request->kursInformation,
+                'sportgeraeteReserviert'  => $sportgeraeteReserviertMin,
+                'bearbeiter_id'                  => Auth::user()->id,
+                'updated_at'                     => Carbon::now()
             ]
         );
 

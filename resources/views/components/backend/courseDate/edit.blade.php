@@ -104,23 +104,65 @@
 
                         <div class="form-field">
                             <label for="sportgeraetanzahl" class="form-label">Anzahl der möglichen Teilnehmer der {{ $organiser->materialUeberschrift }}:</label>
-                            <select name="sportgeraetanzahl">
-                                <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
-                                    maximale Teilnehmer
-                                </option>
-                                @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
-                                    <option value="{{ $i }}"
-                                            @if(isset($kursendtermin))
-                                                @selected(old('sportgeraetanzahl') ?? $i == $sportgeraetanzahl)
-                                            @else
-                                                @selected(old('sportgeraetanzahl') ?? $i == $coursedate->sportgeraetanzahl)
-                                           @endif
-                                    >
-                                        {{ $i }}
-                                    </option>
-                                @endfor
-                            </select>
+                            <input
+                                type="number"
+                                name="sportgeraetanzahl"
+                                id="sportgeraetanzahl"
+                                class="form-input {{ $errors->has('sportgeraetanzahl') ? 'is-invalid' : '' }}"
+                                min="1"
+                                max="{{ max(1, (int) $sportgeraetanzahlMax) }}"
+                                value="{{ old('sportgeraetanzahl', $coursedate->sportgeraetanzahl ?? 0) }}"
+                            >
+                            <label for="sportgeraetanzahl" class="form-label">(aktuell max. möglichen Teilnehmer {{ $maxParticipant }})</label>
+                            @if ($errors->has('sportgeraetanzahl'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportgeraetanzahl') }}</strong>
+                                </span>
+                            @endif
                         </div>
+
+                        @if($coursedate->training_id != Null)
+                            <div class="form-field">
+                                <label for="sportgeraeteReserviert" class="form-label">Reservierte Sportgeräte:</label>
+                                <input
+                                    type="number"
+                                    name="sportgeraeteReserviert"
+                                    id="sportgeraeteReserviert"
+                                    class="form-input {{ $errors->has('sportgeraeteReserviert') ? 'is-invalid' : '' }}"
+                                    min="0"
+                                    max="{{ $maxReservierbarInput }}"
+                                    value="{{ old('sportgeraeteReserviert', $coursedate->sportgeraeteReserviert ?? 0) }}"
+                                >
+                                <label for="sportgeraeteReserviert" class="form-label">(aktuell max. zu reservierende Sportgerät(e) {{ $maxReservierbarInput }}<br>
+                                    begrenzt durch max. mögliche Teilnehmer {{ $maxParticipant }}<br>
+                                    bereits gebuchte Sportgerät(e) {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}<br>
+                                    benötigte Sportgerät(e) für überlappende Termine {{ $needEquipmentProCourstimeSumme ?? 'n/a' }})
+                                </label>
+                                @if ($errors->has('sportgeraeteReserviert'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('sportgeraeteReserviert') }}</strong>
+                                    </span>
+                                @endif
+
+                                @php /*
+                                <div class="form-input-text" style="margin-top: 4px;">
+                                    Debug: max. Boote (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                </div>
+
+                                <div class="form-input-text" style="margin-top: 4px;">
+                                    Debug: Gebuchte Boote = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
+                                </div>
+
+                                <div class="form-input-text" style="margin-top: 4px;">
+                                    Debug: max. Boote zu Reservieren = {{ $maxReservierbarInput ?? 'n/a' }}
+                                </div>
+
+                                <div class="form-input-text" style="margin-top: 4px;">
+                                    Debug: max. Boote alles Überlappenden Termine= {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                </div>
+                               */ @endphp
+                            </div>
+                        @endif
 
                         <div class="form-field">
                                 <label class="form-label">Information zum Termin:</label>
