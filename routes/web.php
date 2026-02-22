@@ -118,8 +118,11 @@ Route::middleware([
 
     Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
     Route::get('/backend/SportgeraeteAlle', [SportEquipmentController::class, 'indexAll'])->name('backend.sportEquipment.indexAll');
+    Route::get('/backend/SportgeraeteCreate', [SportEquipmentController::class, 'create'])->name('backend.sportEquipment.create');
+    Route::post('/backend/SportgeraeteStore', [SportEquipmentController::class, 'store'])->name('backend.sportEquipment.store');
     Route::get('/backend/SportgeraeteEdit/{sportEquipment}', [SportEquipmentController::class, 'edit'])->name('backend.sportEquipment.edit');
     Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
+    Route::put('/backend/SportgeraeteBildDestroy/{sportEquipment}', [SportEquipmentController::class, 'destroyImage'])->name('backend.sportEquipment.destroyImage');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
     Route::get('/backend/CourseCreate', [CourseController::class, 'create'])->name('backend.course.create');
