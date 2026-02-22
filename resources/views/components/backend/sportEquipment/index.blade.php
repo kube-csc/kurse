@@ -4,15 +4,26 @@
             <h2 class="header-h2">
                     {{ __('backend.Sport Equipment') }}
             </h2>
+            <div class="dasboard-iconbox w-12 ml-4">
+                <a href="{{ route('backend.sportEquipment.create') }}">
+                    <box-icon name='plus-circle'></box-icon>
+                </a>
+            </div>
         </div>
     </x-slot>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
         <div class="dashboard-flexbox">
             @foreach($sportEquipments as $sportEquipment)
+                @php
+                    $editUrl = route('backend.sportEquipment.edit', $sportEquipment->id);
+                    if (request()->routeIs('backend.sportEquipment.indexAll')) {
+                        $editUrl .= '?fromAll=1';
+                    }
+                @endphp
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
-                            <a href="{{ route('backend.sportEquipment.edit', $sportEquipment->id) }}">
+                            <a href="{{ $editUrl }}">
                                 <box-icon name='edit'></box-icon>
                             </a>
                         </div>
@@ -26,7 +37,7 @@
                         @endif
                         @if($sportEquipment->bild != Null)
                              <label class="label">Bild:</label>
-                             <img src="/storage/sportgeraet/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/><br>
+                             <img src="/storage/sportgeraete/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/><br>
                         @endif
                         @if($sportEquipment->laenge != null)
                             <label class="label">Länge in Meter:</label>
@@ -60,5 +71,3 @@
         </div>
     </div>
 </x-app-layout>
-
-

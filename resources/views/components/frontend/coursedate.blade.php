@@ -113,8 +113,9 @@
                             <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                                 <div class="icon-box" data-aos="fade-up">
                                     <h4 class="title">{{ $sportEquipment->sportgeraet }}</h4>
-                                    @if($sportEquipment->bild != Null)
-                                        @if (!is_file('/storage/sportgeraete/'.$sportEquipment->bild))
+                                    @if($sportEquipment->bild != Null && $sportEquipment->bild !== '')
+                                        @php($path = public_path('storage/sportgeraete/'.$sportEquipment->bild))
+                                        @if (file_exists($path))
                                             <img src="/storage/sportgeraete/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/>
                                         @else
                                             @auth
