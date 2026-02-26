@@ -133,34 +133,45 @@
                                     max="{{ $maxReservierbarInput }}"
                                     value="{{ old('sportgeraeteReserviert', $coursedate->sportgeraeteReserviert ?? 0) }}"
                                 >
-                                <label for="sportgeraeteReserviert" class="form-label">(aktuell max. zu reservierende Sportgerät(e) {{ $maxReservierbarInput }}<br>
-                                    begrenzt durch max. mögliche Teilnehmer {{ $maxParticipant }}<br>
-                                    bereits gebuchte Sportgerät(e) {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}<br>
-                                    benötigte Sportgerät(e) für überlappende Termine {{ $needEquipmentProCourstimeSumme ?? 'n/a' }})
-                                </label>
+
+                                <label for="sportgeraeteReserviert" class="form-label">(aktuell max. zu reservierende {{ $organiser->materialUeberschrift }}: {{ $maxReservierbarInput }})</label>
                                 @if ($errors->has('sportgeraeteReserviert'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('sportgeraeteReserviert') }}</strong>
                                     </span>
                                 @endif
 
-                                @php /*
-                                <div class="form-input-text" style="margin-top: 4px;">
-                                    Debug: max. Boote (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
+                                    <button
+                                        type="button"
+                                        class="form-button"
+                                        style="padding: 6px 10px; font-size: 0.9em;"
+                                        @click="showEquipmentInfo = !showEquipmentInfo"
+                                        :aria-expanded="showEquipmentInfo.toString()"
+                                    >
+                                        <span x-show="!showEquipmentInfo">Details anzeigen</span>
+                                        <span x-show="showEquipmentInfo" x-cloak>Details ausblenden</span>
+                                    </button>
+
+                                    <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
+                                        <div class="form-input-text" style="margin-top: 8px;">
+                                            max. Boote (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            Gebuchte Boote = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            max. Boote zu Reservieren = {{ $maxReservierbarInput ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            max. Boote alles Überlappenden Termine= {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="form-input-text" style="margin-top: 4px;">
-                                    Debug: Gebuchte Boote = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
-                                </div>
-
-                                <div class="form-input-text" style="margin-top: 4px;">
-                                    Debug: max. Boote zu Reservieren = {{ $maxReservierbarInput ?? 'n/a' }}
-                                </div>
-
-                                <div class="form-input-text" style="margin-top: 4px;">
-                                    Debug: max. Boote alles Überlappenden Termine= {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
-                                </div>
-                               */ @endphp
                             </div>
                         @endif
 

@@ -57,17 +57,22 @@
                             </div>
 
                             <div class="form-field">
-                                <label for="sportgeraetanzahl" class="form-label">Anzahl Sportgeräte:</label>
-                                <select name="sportgeraetanzahl">
-                                    <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $sportgeraetanzahl)>
-                                        alle Sportgeräte
-                                    </option>
-                                    @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
-                                        <option value="{{ $i }}"  @selected(old('sportgeraetanzahl') ?? $i == $sportgeraetanzahl)>
-                                            {{ $i }}
-                                        </option>
-                                    @endfor
-                                </select>
+                                <label for="sportgeraetanzahl" class="form-label">Anzahl der möglichen Teilnehmer der {{ $organiser->materialUeberschrift }}:</label>
+                                <input
+                                    type="number"
+                                    name="sportgeraetanzahl"
+                                    id="sportgeraetanzahl"
+                                    class="form-input {{ $errors->has('sportgeraetanzahl') ? 'is-invalid' : '' }}"
+                                    min="1"
+                                    max="{{ max(1, (int) $sportgeraetanzahlMax) }}"
+                                    value="{{ old('sportgeraetanzahl', $sportgeraetanzahl ?? 0) }}"
+                                >
+                                <label for="sportgeraetanzahl" class="form-label">(aktuell max. möglichen Teilnehmer {{ $sportgeraetanzahlMax }})</label>
+                                @if ($errors->has('sportgeraetanzahl'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('sportgeraetanzahl') }}</strong>
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="form-field">

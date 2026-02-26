@@ -198,15 +198,15 @@ class CourseParticipantController extends Controller
 
         $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
         if($courseParticipantBookedCount>0){
-            self::warning('Der Termin kann nicht bearbeitet werden, da bereits Teilnehmer gebucht sind. Es können aber bestimmt weiter Teilnehmer gebucht werden.');
+            self::warning('Der Zeit kann nicht bearbeitet werden, da bereits Teilnehmer gebucht sind. Es können aber  weiter Teilnehmer gebucht werden.');
             return redirect()->route('courseBooking.course.edit', $coursedate->id);
         }
 
         $coursedate->update(
             [
-               'kursstarttermin'         => $daten['kursstarttermin'],
-               'kursendtermin'           => $daten['kursendtermin'],
-               'kursstartvorschlagkunde' => $daten['kursstarttermin'],
+               'kursstarttermin'                 => $daten['kursstarttermin'],
+               'kursendtermin'                  => $daten['kursendtermin'],
+               'kursstartvorschlagkunde'  => $daten['kursstarttermin'],
                'kursendvorschlagkunde'   => $daten['kursendtermin'],
            ]
         );
