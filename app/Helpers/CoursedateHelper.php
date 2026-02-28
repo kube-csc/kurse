@@ -146,4 +146,16 @@ class CoursedateHelper
             ];
         })->values();
     }
+
+    public static function sportgeraetanzahlMax($id)
+    {
+        //ToDo: Auf Sportlerplätze umstellen ->sum('sportleranzahl');
+        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->where('organiser_sport_section.organiser_id' , $id)
+            ->count();
+
+        return $sportgeraetanzahlMax;
+    }
+
+
 }

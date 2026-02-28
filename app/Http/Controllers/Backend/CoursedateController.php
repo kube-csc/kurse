@@ -177,7 +177,7 @@ class CoursedateController extends Controller
             ->orderBy('kursName')
             ->get();
 
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id);
 
         $overlapRequiredBoatsSum=CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
 
@@ -511,11 +511,11 @@ class CoursedateController extends Controller
             $coursedate = Coursedate::find($coursedateId);
             $coursedate->update(
                 [
-                    'kursstarttermin'         => $coursedate->kursstartvorschlag,
-                    'kursendtermin'           => $coursedate->kursendvorschlag,
-                    'kursstartvorschlagkunde' => $coursedate->kursstartvorschlag,
+                    'kursstarttermin'                 => $coursedate->kursstartvorschlag,
+                    'kursendtermin'                  => $coursedate->kursendvorschlag,
+                    'kursstartvorschlagkunde'  => $coursedate->kursstartvorschlag,
                     'kursendvorschlagkunde'   => $coursedate->kursendvorschlag,
-                    'kursNichtDurchfuerbar'   => false
+                    'kursNichtDurchfuerbar'     => false
                 ]
             );
         }
@@ -580,16 +580,6 @@ class CoursedateController extends Controller
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
             ->where('coursedates.id', $id)
             ->orderBy('sport_equipment.sportgeraet')
-            ->count();
-
-        return $sportgeraetanzahlMax;
-    }
-
-    public function sportgeraetanzahlMax($id)
-    {
-        //ToDo: Auf Sportlerplätze umstellen ->sum('sportleranzahl');
-        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
-            ->where('organiser_sport_section.organiser_id' , $id)
             ->count();
 
         return $sportgeraetanzahlMax;

@@ -167,7 +167,7 @@
                                         </div>
 
                                         <div class="form-input-text" style="margin-top: 4px;">
-                                            max. Boote alles Überlappenden Termine= {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                            max. Boote aller überlappenden Termine = {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
                                         </div>
                                     </div>
                                 </div>

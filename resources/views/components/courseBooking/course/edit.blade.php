@@ -67,9 +67,9 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $maxReservierbarInput }} frei(e) Plätz(e):</label>
                             <div class="form-box">
-                                @if($sportgeraetanzahlMax>0 and ($courseBookes->count()+$courseBookedAlls->count()>0 or $timeMin==$timeMax))
+                                @if($maxReservierbarInput>0 and $timeMin==$timeMax)
                                     <a href="{{ route('courseBooking.course.book' ,
                                         [
                                            'coursedateId'     => $coursedate->id
@@ -78,6 +78,7 @@
                                         <box-icon name='user-plus'></box-icon> neuer Teilnehmer
                                     </a>
                                 @endif
+
                                 @foreach($courseBookes as $courseBook)
                                     <a href="{{ route('courseBooking.course.destroyBooked' ,
                                         [
@@ -91,6 +92,38 @@
                                     </a>
                                 @endforeach
                             </div>
+
+                            <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
+                                <button
+                                    type="button"
+                                    class="form-button"
+                                    style="padding: 6px 10px; font-size: 0.9em;"
+                                    @click="showEquipmentInfo = !showEquipmentInfo"
+                                    :aria-expanded="showEquipmentInfo.toString()"
+                                >
+                                    <span x-show="!showEquipmentInfo">Details anzeigen</span>
+                                    <span x-show="showEquipmentInfo" x-cloak>Details ausblenden</span>
+                                </button>
+
+                                <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        max. Boote (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                    </div>
+
+                                    <div class="form-input-text" style="margin-top: 4px;">
+                                        Gebuchte Boote = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
+                                    </div>
+
+                                    <div class="form-input-text" style="margin-top: 4px;">
+                                        max. Boote zu Reservieren = {{ $maxReservierbarInput ?? 'n/a' }}
+                                    </div>
+
+                                    <div class="form-input-text" style="margin-top: 4px;">
+                                        max. Boote aller überlappenden Termine = {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="form-field">

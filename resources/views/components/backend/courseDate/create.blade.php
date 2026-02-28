@@ -67,7 +67,7 @@
                                     max="{{ max(1, (int) $sportgeraetanzahlMax) }}"
                                     value="{{ old('sportgeraetanzahl', $sportgeraetanzahl ?? 0) }}"
                                 >
-                                <label for="sportgeraetanzahl" class="form-label">(aktuell max. möglichen Teilnehmer {{ $sportgeraetanzahlMax }})</label>
+                                <label for="sportgeraetanzahl" class="form-label">(aktuell max. mögliche Teilnehmeranzahl {{ $sportgeraetanzahlMax }})</label>
                                 @if ($errors->has('sportgeraetanzahl'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('sportgeraetanzahl') }}</strong>

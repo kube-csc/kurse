@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CourseBooking;
 
+use App\Helpers\CoursedateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateCourseParticipantRequest;
 use App\Models\Coursedate;
@@ -149,8 +150,8 @@ class CourseParticipantController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBbookeIds =  $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBbookeIds    = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
         $sportEquipments= $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipments= $sportEquipments->whereNotIn('id', $kursBbookeIds);
 
@@ -175,6 +176,22 @@ class CourseParticipantController extends Controller
         $courseLengthInMinutes = $courseLength->hour * 60 + $courseLength->minute;
         $timeMax = Carbon::parse($coursedate->kursendtermin)->subMinutes($courseLengthInMinutes)->format('H:i');
 
+        // Neu
+        $sportEquipmentBookedsForCoursedatesSum = $sportEquipmentKursBookeds->count();
+
+        $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
+        $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
+
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id);
+        $maxReservierbarInput =  $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
+        $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
+
+        if($maxParticipant > $coursedate->sportgeraetanzahl) {
+            $maxParticipant = $coursedate->sportgeraetanzahl;
+        }
+
+        $maxReservierbarInput = (max ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();;
+
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
                 'sportgeraetanzahlMax',
@@ -182,7 +199,12 @@ class CourseParticipantController extends Controller
                 'courseBookes',
                 'courseBookedAlls',
                 'timeMax',
-                'timeMin'
+                'timeMin',
+                // neu für Reservierung/Details
+                'maxParticipant',
+                'maxReservierbarInput',
+                'sportEquipmentBookedsForCoursedatesSum',
+                'needEquipmentProCourstimeSumme'
             ])
         );
     }
@@ -223,15 +245,31 @@ class CourseParticipantController extends Controller
     public function book($coursedateId)
     {
         $coursedate = Coursedate::find($coursedateId);
-        $bookedCount=$this->bookedCount($coursedate);
+        if (!$coursedate) {
+            self::warning('Der Termin wurde nicht gefunden oder ist nicht mehr verfügbar.');
+            return redirect()->route('courseBooking.course.index');
+        }
 
-        if($bookedCount['sportgeraetanzahlMax'] - $bookedCount['courseBookesCount'] >= 1) {
+        $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
+        $needEquipmentProCourstimeSumme = (int) $overlapStats->sum('max');
+
+        $sportgeraetanzahlMax = (int) (CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id) ?? 0);
+        $maxReservierbarInput = $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
+
+        $courseBookedAllCount = (int) CourseParticipantBooked::where('kurs_id', $coursedateId)->count();
+        $sportgeraetanzahl = (int) ($coursedate->sportgeraetanzahl ?? 0);
+
+        // Wenn sportgeraetanzahl == 0, interpretieren wir das als "kein fixes Teilnehmerlimit".
+        // Dann limitiert nur die Reservierbarkeit (Material/Überlappungen).
+        $hasFreeSlotInCoursedate = $sportgeraetanzahl === 0
+            ? true
+            : ($courseBookedAllCount < $sportgeraetanzahl);
+
+        if ($maxReservierbarInput > 0 && $hasFreeSlotInCoursedate) {
             $participantBook = new CourseParticipantBooked(
                 [
                     'participant_id' => Auth::user()->id,
                     'kurs_id' => $coursedateId,
-                    'updated_at' => Carbon::now(),
-                    'created_at' => Carbon::now()
                 ]
             );
 
@@ -239,19 +277,26 @@ class CourseParticipantController extends Controller
 
             // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
             $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
-            // Aktualisieren Sie die Kursleiternachricht für diese Benutzer auf 1
-            User::whereIn('id', $userIds)
+
+            // Kursleiter-Hinweis setzen
+            DB::table('users')
+                ->whereIn('id', $userIds)
                 ->where('trainernachricht', '')
                 ->update(['trainernachricht' => 1]);
 
-            CourseParticipant::where('id', Auth::user()->id)
+            // Teilnehmer-Hinweis setzen
+            DB::table('course_participants')
+                ->where('id', Auth::user()->id)
                 ->where('teilnehmernachricht', '')
                 ->update(['teilnehmernachricht' => 1]);
 
             self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
-        }
-        else {
-            self::warning('Die maximale Anzahl an Teilnehmer ist erreicht. Es können keine weiteren Teilnehmer gebucht werden.');
+        } else {
+            if ($maxReservierbarInput <= 0) {
+                self::warning('Für diesen Zeitraum sind keine weiteren Reservierungen möglich (Sportgeräte bereits vollständig verplant).');
+            } else {
+                self::warning('Die maximale Anzahl an Teilnehmer ist erreicht. Es können keine weiteren Teilnehmer gebucht werden.');
+            }
         }
 
         return redirect()->route('courseBooking.course.edit', $coursedateId);
@@ -342,4 +387,5 @@ class CourseParticipantController extends Controller
             'courseBookesCount'    => $courseBookes->count(),
         ];
     }
+
 }

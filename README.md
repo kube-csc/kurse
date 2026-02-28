@@ -21,6 +21,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
         <li><a href="https://jetstream.laravel.com/3.x/stacks/livewire.html">livewire</a></li>
     </ul>
   </li>
+  <li>benötigtes PHP 8.2</li>
   <li><a href="https://boxicons.com/">boxicons</a>(Frontend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
@@ -45,6 +46,25 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
 Es wird eine Lizenz für
 <a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
 benötigt.
+
+## Installation
+
+<ul>
+   <li>git clone https://github.com/kube-csc/kurse.git</li>
+   <li>cd kurse</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
+   <li>php artisan key:generate</li>
+   <li>curl -sS https://getcomposer.org/installer</li>
+   <li>php composer.phar</li>
+   <li>php composer.phar install</li>
+   <li>php artisan storage:link</li>
+   <li>die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
+      <ul>
+        <li>organisers</li>
+        <li>sportgeraete</li>
+      </ul>
+    </li>
+</ul>
 
 <h2>Frontend</h2>
 <ul>
@@ -100,19 +120,6 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
 Versendung von Emails an Teilnehmer die Kurse gebucht haben → [URL]/TeilnehmerMail
 Versendung von Emails an Trainer die gebuchte Teilnehmer haben → [URL]/TrainerMail
 Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt → [URL]/Training/Planung
-
-## Installation
-
-<ul>
-   <li>git clone https://github.com/kube-csc/kurse.git</li>
-   <li>cd kurse</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
-   <li>php artisan key:generate</li>
-   <li>curl -sS https://getcomposer.org/installer</li>
-   <li>php composer.phar</li>
-   <li>php composer.phar install</li>
-   <li>php artisan storage:link</li>
-</ul>
 
 ## Anleitung für die Kursbuchung
 <ul>
