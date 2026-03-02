@@ -19,11 +19,7 @@ class SportEquipmentController extends Controller
      */
     public function index()
     {
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            // Replace 'default' with the actual default Organiser ID or another query to fetch the default Organiser
-            $organiser = Organiser::find(1);
-        }
+        $organiser = $this->organiser();
 
         $sportEquipments = Organiser::where('organisers.id', $organiser->id)
             ->join('organiser_sport_section', 'organisers.id', '=', 'organiser_sport_section.organiser_id')
@@ -52,10 +48,7 @@ class SportEquipmentController extends Controller
      */
     public function create()
     {
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            $organiser = Organiser::find(1);
-        }
+        $organiser = $this->organiser();
 
         $sportSections = SportSection::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_sections.id')
             ->where('organiser_sport_section.organiser_id', $organiser->id)
@@ -119,10 +112,7 @@ class SportEquipmentController extends Controller
     {
         $sportEquipment = SportEquipment::find($sportEquipment->id);
 
-        $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
-        if ($organiser === null) {
-            $organiser = Organiser::find(1);
-        }
+        $organiser = $this->organiser();
 
         // Wenn wir aus der Verwaltungsansicht kommen, sollen alle Sportarten/Abteilungen auswählbar sein.
         $fromAll = request()->boolean('fromAll');

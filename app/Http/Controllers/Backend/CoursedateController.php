@@ -588,8 +588,10 @@ class CoursedateController extends Controller
     public function cronJobPlanung()
     {
         $currentDate = Carbon::now();
-        $currentYear = $currentDate->year; // Laufendes Jahr
-        $trainings   = Training::where('datumbis', '>=', Carbon::now()->format('Y-m-d'))->get();
+        $currentYear = $currentDate->year;
+        $trainings      = Training::where('datumbis', '>=', Carbon::now()->format('Y-m-d'))
+            ->whereNull('deleted_at')
+            ->get();
 
         foreach ($trainings as $training) {
             $courseDates = Coursedate::where('training_id', $training->id)
@@ -597,10 +599,10 @@ class CoursedateController extends Controller
                 ->orderBy('kursstartvorschlag')
                 ->get();
 
-            $newDate             = Carbon::parse($training->datumvon);
-            $kurslaenge          = Carbon::parse($training->zeitbis)->diff(Carbon::parse($training->zeitvon))->format('%H:%I:%S');
+            $newDate                   = Carbon::parse($training->datumvon);
+            $kurslaenge                = Carbon::parse($training->zeitbis)->diff(Carbon::parse($training->zeitvon))->format('%H:%I:%S');
             $wiederholungAktuell = 0;
-            $datumBerechnung     = Carbon::parse($training->datumAktuell);
+            $datumBerechnung    = Carbon::parse($training->datumAktuell);
 
             while ($newDate < $currentDate) {
                 $newDate->addDays($training->wiederholung);
@@ -626,6 +628,7 @@ class CoursedateController extends Controller
 
                         if ($courseDateTestCount == 0) {
                             $courseDate->update([
+                                'organiser_id' => $training->organiser_id,
                                 'course_id' => $training->course_id,
                                 'kursstarttermin' => $datumvon,
                                 'kursendtermin' => $datumbis,
@@ -637,11 +640,9 @@ class CoursedateController extends Controller
                                 'sportgeraetanzahl' => $training->sportgeraeteanzahl,
                                 'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                                 'bearbeiter_id' => $training->autor_id,
-                                'updated_at' => Carbon::now(),
                             ]);
                         }
                     }
-
                     $newDate->addDays($training->wiederholung);
                     $wiederholungAktuell = $wiederholungAktuell + $training->wiederholung;
                 }
@@ -653,7 +654,7 @@ class CoursedateController extends Controller
                 }
 
                 $datumvon = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitvon)->diffInSeconds(Carbon::parse('00:00:00')));
-                $datumbis = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
+                $datumbis  = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
 
                 $courseDateTestCount = Coursedate::where('kursstartvorschlag', $datumvon)
                     ->where('training_id', $training->id)
@@ -668,9 +669,9 @@ class CoursedateController extends Controller
                     if ($courseDateDelete) {
                         $courseDateDelete->restore();
                         $courseDateDelete->update([
+                            'organiser_id' => $training->organiser_id,
                             'course_id' => $training->course_id,
                             'training_id' => $training->id,
-
                             'kursstarttermin' => $datumvon,
                             'kursendtermin' => $datumbis,
                             'kursstartvorschlag' => $datumvon,
@@ -682,8 +683,6 @@ class CoursedateController extends Controller
                             'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
-
-                            'updated_at' => Carbon::now(),
                             'created_at' => Carbon::now()
                         ]);
                     }
@@ -692,7 +691,6 @@ class CoursedateController extends Controller
                             'organiser_id' => $training->organiser_id,
                             'training_id' => $training->id,
                             'course_id' => $training->course_id,
-
                             'kursstarttermin' => $datumvon,
                             'kursendtermin' => $datumbis,
                             'kursstartvorschlag' => $datumvon,
@@ -704,8 +702,6 @@ class CoursedateController extends Controller
                             'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
                         ]);
                     }
                 }
@@ -714,12 +710,8 @@ class CoursedateController extends Controller
                 $wiederholungAktuell += $training->wiederholung;
             }
 
-            $courseLetzte = Coursedate::where('training_id', $training->id)
-                ->orderBy('kursstartvorschlag', 'desc')
-                ->first();
-
             $training->update([
-                'datumAktuell' => $courseLetzte->kursstartvorschlag,
+                'datumAktuell' => $datumvon
             ]);
         }
     }
