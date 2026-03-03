@@ -6,10 +6,8 @@ use App\Helpers\CoursedateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateCourseParticipantRequest;
 use App\Models\Coursedate;
-use App\Models\CourseParticipant;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
-use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -155,20 +153,26 @@ class CourseParticipantController extends Controller
         $sportEquipments= $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipments= $sportEquipments->whereNotIn('id', $kursBbookeIds);
 
-        $freeSportEquipment =$sportEquipmentBookeds->count()-$teilnehmerKursBookeds->count();
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipments->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
+        $sportEquipmentBookedsSum = $sportEquipmentBookeds->sum('sportleranzahl');
+        $teilnehmerKursBookedsSum = $teilnehmerKursBookeds->count();
+
+        $freeSportEquipment = $sportEquipmentBookedsSum - $teilnehmerKursBookedsSum;
         if($freeSportEquipment>0){
             $freeSportEquipment=0;
         }
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipments->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count()-$courseBookedAlls->count()+$freeSportEquipment;
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count() - $courseBookedAlls->count() + $freeSportEquipment;
         }
         else {
-            if($sportEquipments->count()+$sportEquipmentKursBookeds->count()>$coursedate->sportgeraetanzahl) {
-                $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count()-$courseBookedAlls->count();
+            if($freeSportEquipmentSum + $kursBookedSum > $coursedate->sportgeraetanzahl) {
+                $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count() - $courseBookedAlls->count();
             }
             else {
-                $sportgeraetanzahlMax = $sportEquipments->count();
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
         }
         $timeMin=Carbon::parse($coursedate->kursstarttermin)->format('H:i');
@@ -176,8 +180,8 @@ class CourseParticipantController extends Controller
         $courseLengthInMinutes = $courseLength->hour * 60 + $courseLength->minute;
         $timeMax = Carbon::parse($coursedate->kursendtermin)->subMinutes($courseLengthInMinutes)->format('H:i');
 
-        // Neu
-        $sportEquipmentBookedsForCoursedatesSum = $sportEquipmentKursBookeds->count();
+        // Neu - mit sum('sportleranzahl')
+        $sportEquipmentBookedsForCoursedatesSum = $kursBookedSum;
 
         $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
         $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
@@ -190,7 +194,7 @@ class CourseParticipantController extends Controller
             $maxParticipant = $coursedate->sportgeraetanzahl;
         }
 
-        $maxReservierbarInput = (max ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();;
+        $maxReservierbarInput = (max ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -331,10 +335,10 @@ class CourseParticipantController extends Controller
 
     public function bookedCount($coursedate)
     {
-        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl')
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
         $courseBookes = CourseParticipantBooked::where('kurs_id', $coursedate->id)->get();
 
-        // Alle Sportgeräte
+        // Alle Sportgeräte - mit Sportleranzahl
         $sportEquipments = Coursedate::
         join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
@@ -371,15 +375,19 @@ class CourseParticipantController extends Controller
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
 
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
+
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count();
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum;
         }
         else {
-            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
-                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count();
+            if($sportgeraetanzahlMax > $freeSportEquipmentSum + $kursBookedSum) {
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
-            $sportgeraetanzahlMax=$sportgeraetanzahlMax+$courseBookes->count();
+            $sportgeraetanzahlMax = $sportgeraetanzahlMax + $courseBookes->count();
         }
 
         return [

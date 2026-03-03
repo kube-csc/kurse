@@ -11,7 +11,9 @@ class SportEquipmentBooked extends Model
 
     protected $fillable = [
         'sportgeraet_id',
-        'kurs_id'
+        'kurs_id',
+        'user_id',
+        'bearbeiter_id',
     ];
 
     protected $dates = [

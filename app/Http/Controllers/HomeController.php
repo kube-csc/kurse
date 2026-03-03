@@ -232,10 +232,10 @@ class HomeController extends Controller
 
     public function bookedCount($coursedate)
     {
-        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl');
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
         $courseBookes = CourseParticipantBooked::where('kurs_id', $coursedate->id)->get();
 
-        // Alle Sportgeräte
+        // Alle Sportgeräte - mit Sportleranzahl
         $sportEquipments = Coursedate::
               join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
@@ -272,15 +272,19 @@ class HomeController extends Controller
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
 
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
+
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count();
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum;
         }
         else {
-            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
-                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count();
+            if($sportgeraetanzahlMax > $freeSportEquipmentSum + $kursBookedSum) {
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
-            $sportgeraetanzahlMax=$sportgeraetanzahlMax+$courseBookes->count();
+            $sportgeraetanzahlMax = $sportgeraetanzahlMax + $courseBookes->count();
         }
 
         return [

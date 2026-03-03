@@ -123,7 +123,7 @@
 
                         @if($coursedate->training_id != Null)
                             <div class="form-field">
-                                <label for="sportgeraeteReserviert" class="form-label">Reservierte Sportgeräte:</label>
+                                <label for="sportgeraeteReserviert" class="form-label">Zu reservierende Plätze in {{ $organiser->materialUeberschrift }}:</label>
                                 <input
                                     type="number"
                                     name="sportgeraeteReserviert"
@@ -134,7 +134,7 @@
                                     value="{{ old('sportgeraeteReserviert', $coursedate->sportgeraeteReserviert ?? 0) }}"
                                 >
 
-                                <label for="sportgeraeteReserviert" class="form-label">(aktuell max. zu reservierende {{ $organiser->materialUeberschrift }}: {{ $maxReservierbarInput }})</label>
+                                <label for="sportgeraeteReserviert" class="form-label">(max. verfügbar Plätze: {{ $maxReservierbarInput }} in {{ $organiser->materialUeberschrift }})</label>
                                 @if ($errors->has('sportgeraeteReserviert'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('sportgeraeteReserviert') }}</strong>
@@ -155,19 +155,19 @@
 
                                     <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
                                         <div class="form-input-text" style="margin-top: 8px;">
-                                            max. Boote (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                            Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
                                         </div>
 
                                         <div class="form-input-text" style="margin-top: 4px;">
-                                            Gebuchte Boote = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
+                                            Gebuchte {{ $organiser->materialUeberschrift }} = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
                                         </div>
 
                                         <div class="form-input-text" style="margin-top: 4px;">
-                                            max. Boote zu Reservieren = {{ $maxReservierbarInput ?? 'n/a' }}
+                                            Max. zu reservierende {{ $organiser->materialUeberschrift }} = {{ $maxReservierbarInput ?? 'n/a' }}
                                         </div>
 
                                         <div class="form-input-text" style="margin-top: 4px;">
-                                            max. Boote aller überlappenden Termine = {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                            Max. Plätze aller überlappenden Termine = {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
                                         </div>
                                     </div>
                                 </div>

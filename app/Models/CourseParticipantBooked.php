@@ -15,8 +15,9 @@ class CourseParticipantBooked extends Model
         'mitglied_id',
         'participant_id',
         'regattaTeam_id',
-        'kurs_id'
-    ];
+        'kurs_id',
+        'user_id',
+        'bearbeiter_id',    ];
 
     protected $dates = [
         'deleted_at'

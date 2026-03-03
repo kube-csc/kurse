@@ -8,7 +8,6 @@ use App\Models\Coursedate;
 use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
 use App\Models\CourseParticipantBooked;
-use App\Models\Organiser;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
 use App\Models\Trainertable;
@@ -100,7 +99,7 @@ class CoursedateController extends Controller
 
         $course_id = 0;
         $sportgeraetanzahl = 0;
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($organiser->id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($organiser->id);
 
         return view('components.backend.courseDate.create' , compact([
             'kursstartterminDatum',
@@ -146,8 +145,6 @@ class CoursedateController extends Controller
                 'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
                 'autor_id'                => Auth::user()->id,
-                'updated_at'              => Carbon::now(),
-                'created_at'              => Carbon::now()
             ]
         );
         $coursedate->save();
@@ -278,7 +275,6 @@ class CoursedateController extends Controller
                 'kursInformation'              => $request->kursInformation,
                 'sportgeraeteReserviert'  => $sportgeraeteReserviertMin,
                 'bearbeiter_id'                  => Auth::user()->id,
-                'updated_at'                     => Carbon::now()
             ]
         );
 
@@ -297,7 +293,6 @@ class CoursedateController extends Controller
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
                 'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
             ]
         );
 
@@ -321,7 +316,6 @@ class CoursedateController extends Controller
                 'kursstarttermin'         => $daten['kursstarttermin'],
                 'kursendtermin'           => $daten['kursendtermin'],
                 'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
             ]
         );
 
@@ -402,17 +396,21 @@ class CoursedateController extends Controller
             ->get();
 
         $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBookedIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $kursBbookeIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookedIds);
+        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
+
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count();
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count();
         }
         else {
-            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
-                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count();
+            if($sportgeraetanzahlMax > $freeSportEquipmentSum + $kursBookedSum) {
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
         }
 
@@ -444,9 +442,7 @@ class CoursedateController extends Controller
                 'trainer_id'        => Auth::user()->id,
                 'kurs_id'           => $coursedateId,
                 'user_id'           => Auth::user()->id,
-                'bearbeiter_id'     => Auth::user()->id,
-                'updated_at'        => Carbon::now(),
-                'created_at'        => Carbon::now()
+                'bearbeiter_id'  => Auth::user()->id,
             ]
         );
 
@@ -469,11 +465,9 @@ class CoursedateController extends Controller
             $sportEquipmentBooked = new SportEquipmentBooked(
                 [
                     'sportgeraet_id'    => $sportequipmentId,
-                    'kurs_id'           => $coursedateId,
-                    'user_id'           => Auth::user()->id,
-                    'bearbeiter_id'     => Auth::user()->id,
-                    'updated_at'        => Carbon::now(),
-                    'created_at'        => Carbon::now()
+                    'kurs_id'                => $coursedateId,
+                    'user_id'                => Auth::user()->id,
+                    'bearbeiter_id'       => Auth::user()->id,
                 ]
             );
 
@@ -487,7 +481,6 @@ class CoursedateController extends Controller
                         [
                             'sportgeraetanzahl' => $sportEquipmentKursBookedCount,
                             'bearbeiter_id'     => Auth::user()->id,
-                            'updated_at'        => Carbon::now()
                         ]
                     );
                     self::success('Anzahl der möglichen Teilnehmer erhöht.');
@@ -527,9 +520,8 @@ class CoursedateController extends Controller
 
     public function equipmentBookedDestroy($coursedateId , $kursId , $sportgeraet)
     {
-        //ToDo: Es kann nicht direkt über die ID gelöscht werden, da die ID immer 1 ist.
-        $sportEquipmentBooked = SportEquipmentBooked::
-              join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+        //Es kann nicht direkt über die ID gelöscht werden, da die ID immer 1 ist.
+        SportEquipmentBooked::join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->where('kurs_id', $kursId)
             ->where('sportgeraet', $sportgeraet)
             ->delete();
@@ -575,12 +567,11 @@ class CoursedateController extends Controller
 
     public function sportgeraetanzahlMaxCourse($id)
     {
-        //ToDo: Auf Sportlerplätze umstellen ->sum('sportleranzahl');
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
         $sportgeraetanzahlMax=Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
             ->where('coursedates.id', $id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->count();
+            ->sum('sport_equipment.sportleranzahl');
 
         return $sportgeraetanzahlMax;
     }
@@ -648,6 +639,7 @@ class CoursedateController extends Controller
                 }
             }
 
+            $datumvon = now();
             while ($newDate <= Carbon::parse($training->datumbis)) {
                 if($wiederholungAktuell >= $training->vorschauTage){
                     break;

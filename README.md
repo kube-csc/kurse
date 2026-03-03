@@ -72,9 +72,10 @@ benötigt.
     <li>Leanding Page
          <ul>
           <li>Kurs / Termin / Trainings Angebot Beschreibung</li>
-          <li>Material</li>
+          <li>Sportgeräte</li>
           <li>Trainer / Kursleiter</li>
           <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten</li>
+          <li>FAQ Seite</li>
         </ul>
     </li>
     <li>Buchen</li>
@@ -96,6 +97,7 @@ benötigt.
     <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten anlegen, bearbeiten, löschen</li>
     <li>Trainer / Kursleiter zuordnen</li>
     <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
+    <li>Sportgeräte anlegen, bearbeiten, löschen</li>
     <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
 </ul>
 <h2>Installation</h2>

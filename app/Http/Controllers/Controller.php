@@ -295,24 +295,24 @@ class Controller extends BaseController
 
     public function bookedCountDate($coursedate, $kursstarttermin, $kursendtermin)
     {
-        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl')
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
 
         $courseBookedCount = CourseParticipantBooked::where('kurs_id', $coursedate->id)->count();
 
-        // Alle Sportgeräte
+        // Alle Sportgeräte - Summe der Sportlerplätze
         $sportEquipmentCount = Coursedate::
               join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
             ->where('coursedates.id', $coursedate->id)
-            ->count();
+            ->sum('sport_equipment.sportleranzahl');
 
-        // Belegte Boote
+        // Belegte Boote - Summe der Sportlerplätze
         $sportEquipmentBookedCount = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<', $kursendtermin)
             ->where('coursedates.kursendtermin', '>', $kursstarttermin)
-            ->count();
+            ->sum('sport_equipment.sportleranzahl');
 
         return $sportgeraetanzahlfree=$sportEquipmentCount-$sportEquipmentBookedCount-($courseBookedCount-$sportEquipmentBookedCount);
     }
