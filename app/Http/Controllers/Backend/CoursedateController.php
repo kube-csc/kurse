@@ -355,15 +355,7 @@ class CoursedateController extends Controller
 
         $courseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
 
-        $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
-            ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
-            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            //->where('course_participant_bookeds.trainer_id', '<>', 0)
-            ->where('course_participant_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-            ->get();
+        $teilnehmerKursBookeds = CoursedateHelper::getTeilnehmerKursBookedsForOtherCoursedates($coursedate);
 
         // Alle Sportgeräte
         $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
@@ -395,10 +387,10 @@ class CoursedateController extends Controller
             ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
-        $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBbookeIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $bookedIds                   = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBookeIds              = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
+        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
 
         // Berechnung mit sum('sportleranzahl') statt count()
         $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');

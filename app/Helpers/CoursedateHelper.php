@@ -157,5 +157,21 @@ class CoursedateHelper
         return $sportgeraetanzahlMax;
     }
 
+    /**
+     * Gibt alle CourseParticipantBooked-Datensätze zurück für Coursedates, die sich mit dem gegebenen $coursedate überschneiden
+     * (außer dem gleichen Coursedate).
+     */
+    public static function getTeilnehmerKursBookedsForOtherCoursedates($coursedate)
+    {
+        return CourseParticipantBooked::where('kurs_id', '<>', $coursedate->id)
+            ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
+            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
+            ->where('course_participant_bookeds.deleted_at', null)
+            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
+            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+            ->get();
+    }
+
 
 }

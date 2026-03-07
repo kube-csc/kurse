@@ -30,7 +30,7 @@ class ParticipantMailController extends Controller
        }
 
        CourseParticipant::where('teilnehmernachricht', '1')
-            ->update(['teilnehmernachricht' => '']);
+            ->update(['teilnehmernachricht' => '0']);
 
        self::success('Informationsmails wurden erfolgreich versendet.');
 
