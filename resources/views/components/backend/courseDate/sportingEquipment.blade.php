@@ -26,7 +26,7 @@
                                 <div class="form-input-text">
                                    {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 </div>
-                                @if($courseBookes->count()==0 and $timeMin!=$timeMax)
+                                @if($courseBookes->count() == 0 && $timeMin != $timeMax)
                                 <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date"
                                        value=
                                       @if(isset($kursstartterminTime))
@@ -39,7 +39,7 @@
                             </div>
                             <br>
                             <div class="form-field">
-                                 <label for="kurslaenge" class="form-label">Die Startzeit können im Zeitfenster geändert werden:</label>
+                                 <label for="kurslaenge" class="form-label">Die Startzeit kann im folgenden Zeitfenster geändert werden:</label>
                                  <div class="form-input-text">
                                       {{ $timeMin }} Uhr - {{ $timeMax }} Uhr
                                  </div>
@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="kursstarttermin" class="form-label">letztmögliches Ende::</label>
+                            <label for="kursstarttermin" class="form-label">Letztmögliches Ende:</label>
                             <div class="form-box">
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('d.m.Y') }}
                                 {{ Illuminate\Support\Carbon::parse($coursedate->kursendtermin)->format('H:i') }} Uhr
@@ -76,9 +76,20 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} belegt(e) Plätz(e) in Sportgerät(e) / {{ $sportgeraetanzahlMax }} frei(e) Plätz(e):</label>
+                            <label for="course_id" class="form-label">
+                                {{ $courseBookes->count() }}
+                                {{ $courseBookes->count() === 1 ? 'belegter Platz' : 'belegte Plätze' }}
+                                in
+                                {{ $organiser->materialUeberschrift }} /
+                                {{ $sportgeraetanzahlMax }}
+                                {{ $sportgeraetanzahlMax === 1 ? 'freier Platz' : 'freie Plätze' }}:
+                            </label>
                             <div class="form-box">
-                                @if($sportgeraetanzahlMax>0 and ($courseBookes->count()>0 or $timeMin==$timeMax))
+                                @php
+                                    $canBookParticipant = $sportgeraetanzahlMax > 0
+                                        && (($courseBookes->count() > 0 && $poolHasRemainingPlace) || $timeMin == $timeMax);
+                                @endphp
+                                @if($canBookParticipant)
                                     <a href="{{ route('backend.courseDate.book' ,
                                         [
                                            'coursedateId'     => $coursedate->id
@@ -110,7 +121,51 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentFrees->count() }} freie(s) Sportgerät(e):</label>
+                            <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
+                                <button
+                                    type="button"
+                                    class="form-button"
+                                    style="padding: 6px 10px; font-size: 0.9em;"
+                                    @click="showEquipmentInfo = !showEquipmentInfo"
+                                    :aria-expanded="showEquipmentInfo.toString()"
+                                >
+                                    <span x-show="!showEquipmentInfo">Details anzeigen</span>
+                                    <span x-show="showEquipmentInfo" x-cloak>Details ausblenden</span>
+                                </button>
+
+                                <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
+
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        maximale Plätze vom Termin = {{ $coursedate->sportgeraetanzahl ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Reservierte Plätze = {{ $coursedate->sportgeraeteReserviert ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportEquipmentFrees->count()  ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Verfügbare Plätze (Pool) = {{ $freeSportEquipmentSum  ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Benötigte Plätze für gebuchte Teilnehmer = {{ $courseBookes->count()  ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Gebuchte {{ $organiser->materialUeberschrift }} = {{ $sportEquipmentKursBookeds->count()  ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Gebuchte Plätze in {{ $organiser->materialUeberschrift }} = {{ $kursBookedSum ?? 'n/a' }}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="course_id" class="form-label">
+                                {{ $sportEquipmentFrees->count() }}
+                                {{ $sportEquipmentFrees->count() === 1 ? 'freies' : 'freie' }} {{ $organiser->materialUeberschrift }}:
+                            </label>
                                 <div class="form-box">
                                    @foreach($sportEquipmentFrees as $sportEquipmentFree)
                                     <a href="{{ route('backend.courseDate.equipmentBooked' ,
@@ -129,7 +184,10 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentKursBookeds->count() }} belegt(e) Sportgerät(e) im Termin:</label>
+                            <label for="course_id" class="form-label">
+                                {{ $sportEquipmentKursBookeds->count() }}
+                                {{ $sportEquipmentKursBookeds->count() === 1 ? 'belegtes' : 'belegte' }} {{ $organiser->materialUeberschrift }} im Termin:
+                            </label>
                             <div class="form-box">
                                 @foreach($sportEquipmentKursBookeds as $sportEquipmentKursBooked)
                                     <a href="{{ route('backend.courseDate.equipmentBookedDestroy' ,
@@ -149,33 +207,69 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $sportEquipmentBookeds->count() }} belegt(e) Sportgerät(e) in anderen Termin:</label>
+                            <label for="course_id" class="form-label">
+                                {{ $sportEquipmentBookeds->count() }}
+                                {{ $sportEquipmentBookeds->count() === 1 ? 'belegtes' : 'belegte' }} {{ $organiser->materialUeberschrift }} in anderen Terminen:
+                            </label>
                             <div class="form-box">
-                                @php
-                                  $sporgeraeteIdVorher=0;
-                                @endphp
+                                @php $sporgeraeteIdVorher = 0; @endphp
                                 @foreach($sportEquipmentBookeds as $sportEquipmentBooked)
+                                    @php
+                                        $bookedVorname = $sportEquipmentBooked->vorname ?? 'ohne Trainer';
+                                        $bookedNachname = $sportEquipmentBooked->nachname ?? '';
+                                        $isNewEquipment = $sporgeraeteIdVorher != $sportEquipmentBooked->sportgeraet_id;
+                                    @endphp
                                     <span>
-                                        @php
-                                            $bookedVorname = $sportEquipmentBooked->vorname ?? 'ohne Trainer';
-                                            $bookedNachname = $sportEquipmentBooked->nachname ?? '';
-                                        @endphp
-                                        @if($sporgeraeteIdVorher<>$sportEquipmentBooked->sportgeraet_id)
-                                            {{ $sportEquipmentBooked->sportgeraet}} /
-                                            {{ trim($bookedVorname.' '.$bookedNachname) }}
+                                        @if($isNewEquipment)
+                                            {{ $sportEquipmentBooked->sportgeraet }} /
+                                            {{ trim($bookedVorname . ' ' . $bookedNachname) }}
                                         @else
-                                            und {{ trim($bookedVorname.' '.$bookedNachname) }}
+                                            und {{ trim($bookedVorname . ' ' . $bookedNachname) }}
                                         @endif
                                     </span><br>
-                                    @php
-                                        $sporgeraeteIdVorher=$sportEquipmentBooked->sportgeraet_id;
-                                    @endphp
+                                    @php $sporgeraeteIdVorher = $sportEquipmentBooked->sportgeraet_id; @endphp
                                 @endforeach
                             </div>
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $teilnehmerKursBookeds->count() }} Teilnehmer in andere Termin(e):</label>
+                            <label for="course_id" class="form-label">
+                                {{ $overlapingCoursedates->count() }}
+                                {{ $overlapingCoursedates->count() === 1 ? 'überlappender Termin' : 'überlappende Termine' }} (inkl. aktuellem Termin):
+                            </label>
+                            <div class="form-box">
+                                @foreach($overlapingCoursedatesWithParticipants as $overlap)
+                                    @php
+                                        $cd = $overlap['coursedate'] ?? null;
+                                    @endphp
+                                    <div style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                                        <strong>{{ $cd ? Illuminate\Support\Carbon::parse($cd->kursstarttermin)->format('d.m.Y H:i') : '-' }} - {{ $cd ? Illuminate\Support\Carbon::parse($cd->kursendtermin)->format('H:i') : '-' }} Uhr / {{ $cd && $cd->course ? $cd->course->kursName : 'Kurs' }}</strong><br>
+                                        Teilnehmer: {{ $overlap['teilnehmerCount'] ?? 0 }} / Reserviert: {{ $overlap['sportgeraeteReserviert'] ?? 0 }} / Maximale Teilnehmer: {{ $cd->sportgeraetanzahl ?? 0 }}<br>
+                                        Bedarf an Plätze: {{ $overlap['benoetigtePlaetzeMax'] ?? 0 }} /
+                                        Zugewiesen: {{ $overlap['zugewiesenePlaetze'] ?? 0 }} Plätze
+                                        ({{ $overlap['zugewieseneSportgeraeteAnzahl'] ?? 0 }} {{ $organiser->materialUeberschrift }})
+                                        @if(($overlap['fehlendePlaetze'] ?? 0) > 0)
+                                            / Fehlende Plätze: {{ $overlap['fehlendePlaetze'] }}
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="form-input-text" style="margin-top: 8px;">
+                                Pool Restplätze: {{ $poolRemainingPlaetze ?? 0 }} /
+                                Rest-{{ $organiser->materialUeberschrift }}: {{ $poolRemainingSportgeraete ?? 0 }} /
+                                @if(!empty($poolHasRemainingPlace))
+                                    Es ist noch mindestens ein Platz im Pool vorhanden.
+                                @else
+                                    Kein freier Platz mehr im Pool.
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="course_id" class="form-label">
+                                {{ $teilnehmerKursBookeds->count() }}
+                                {{ $teilnehmerKursBookeds->count() === 1 ? 'Teilnehmer in einem anderen Termin' : 'Teilnehmer in anderen Terminen' }}:
+                            </label>
                             <div class="form-box">
                                 @foreach($teilnehmerKursBookeds as $teilnehmerKursBooked)
                                     <span>
@@ -198,7 +292,7 @@
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                    @if($courseBookes->count()==0 and $timeMin<>$timeMax and $sportgeraetanzahlMax>0)
+                    @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && $poolHasRemainingPlace)
                         <button type="submit" class="form-button">
                             {{ __('main.save') }}
                         </button>

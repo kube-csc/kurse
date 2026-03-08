@@ -183,7 +183,7 @@ class CoursedateController extends Controller
         // Debug: neue Overlap-Stats (Counts + min/max)
         $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
 
-        /*
+
         // Variante A: als Array (gut lesbar)
         dump($overlapStats->map(function ($row) {
             return [
@@ -195,7 +195,7 @@ class CoursedateController extends Controller
                 'max' => $row['max'],
             ];
         })->all());
-       */
+
 
         // Summe aller "max"-Werte über alle überlappenden Datensätze
         $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
@@ -291,8 +291,8 @@ class CoursedateController extends Controller
         $coursedate->update(
             [
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
-                'kursInformation'         => $request->kursInformation,
-                'bearbeiter_id'           => Auth::user()->id,
+                'kursInformation'           => $request->kursInformation,
+                'bearbeiter_id'               => Auth::user()->id,
             ]
         );
 
@@ -392,6 +392,54 @@ class CoursedateController extends Controller
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
 
+        $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+        $overlapingCoursedates->push($coursedate);
+
+        // Bedarf je überlappendem Coursedate berechnen (unsortiert, nur für Berechnung)
+        $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
+
+        // Freie Sportgeräte aus dem Pool (größte Plätze zuerst) auf den Bedarf verteilen
+        // Nur der aktuelle Termin ($coursedate->id) bekommt Zuweisungen
+        $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+            $overlapingCoursedatesWithParticipants,
+            $sportEquipmentFrees,
+            $coursedate->id
+        );
+
+        // Sortierung nur für die Ausgabe: Werte bleiben per ID fest am richtigen Coursedate
+        $rowsByCoursedateId = collect($allocationResult['items'])->keyBy('coursedate_id');
+        $sortedForOutput = $overlapingCoursedates
+            ->sortBy(function ($cd) {
+                return $cd->kursstartvorschlag ?? $cd->kursstarttermin;
+            })
+            ->values();
+
+        $overlapingCoursedatesWithParticipants = $sortedForOutput
+            ->map(function ($cd) use ($rowsByCoursedateId) {
+                return $rowsByCoursedateId[$cd->id] ?? [
+                    'coursedate' => $cd,
+                    'coursedate_id' => $cd->id,
+                    'course_id' => $cd->course_id,
+                    'teilnehmerCount' => 0,
+                    'sportgeraeteReserviert' => 0,
+                    'maxTeilnehmer' => 0,
+                    'teilnehmerplaetzeGebuchteSportgeraete' => 0,
+                    'gebuchteSportgeraeteAnzahl' => 0,
+                    'benoetigtePlaetze' => 0,
+                    'benoetigtePlaetzeMax' => 0,
+                    'zugewieseneSportgeraeteAnzahl' => 0,
+                    'zugewiesenePlaetze' => 0,
+                    'fehlendePlaetze' => 0,
+                    'hatAllePlaetze' => true,
+                    'zugewieseneSportgeraete' => [],
+                ];
+            })
+            ->values();
+
+        $poolHasRemainingPlace = $allocationResult['poolHasRemainingPlace'];
+        $poolRemainingPlaetze = $allocationResult['poolRemainingPlaetze'];
+        $poolRemainingSportgeraete = $allocationResult['poolRemainingSportgeraete'];
+
         // Berechnung mit sum('sportleranzahl') statt count()
         $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');
         $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
@@ -416,34 +464,80 @@ class CoursedateController extends Controller
             'coursedate',
             'course',
             'sportEquipmentFrees',
+            'freeSportEquipmentSum',
             'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
             'courseBookes',
+            'kursBookedSum',
             'teilnehmerKursBookeds',
             'sportgeraetanzahlMax',
             'trainers',
             'timeMax',
-            'timeMin'
+            'timeMin',
+            'overlapingCoursedates',
+            'overlapingCoursedatesWithParticipants',
+            'poolHasRemainingPlace',
+            'poolRemainingPlaetze',
+            'poolRemainingSportgeraete'
         ]));
     }
 
     public function book($coursedateId)
     {
-        $sportEquipmentBooked = new CourseParticipantBooked(
-            [
-                'trainer_id'        => Auth::user()->id,
-                'kurs_id'           => $coursedateId,
-                'user_id'           => Auth::user()->id,
-                'bearbeiter_id'  => Auth::user()->id,
-            ]
+        $coursedate = Coursedate::find($coursedateId);
+
+        if (!$coursedate) {
+            self::warning('Termin wurde nicht gefunden.');
+            return redirect()->route('backend.courseDate.index');
+        }
+
+        // Freie Sportgeräte-Pooldaten wie in sportingEquipment() ermitteln
+        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
+            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
+            ->where('coursedates.id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->get();
+
+        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
+            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
+            ->get(['sport_equipment_bookeds.sportgeraet_id']);
+
+        $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
+
+        $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBookeIds = $sportEquipmentKursBookeds->pluck('id');
+        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
+
+        // Allocation berechnen und poolHasRemainingPlace als Gate verwenden
+        $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+        $overlapingCoursedates->push($coursedate);
+        $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
+
+        $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+            $overlapingCoursedatesWithParticipants,
+            $sportEquipmentFrees,
+            $coursedate->id
         );
 
+        if (empty($allocationResult['poolHasRemainingPlace'])) {
+            self::warning('Es sind keine freien Plätze im Sportgeräte-Pool vorhanden. Der Teilnehmer kann nicht gebucht werden.');
+            return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+        }
+
+        $sportEquipmentBooked = new CourseParticipantBooked([
+            'trainer_id' => Auth::user()->id,
+            'kurs_id' => $coursedateId,
+        ]);
         $sportEquipmentBooked->save();
 
-        // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
         $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
-        // Aktualisieren Sie die Kursleiternachricht für diese Benutzer auf 1
-        User::whereIn('id', $userIds)
+        DB::table('users')
+            ->whereIn('id', $userIds)
             ->where('trainernachricht', '')
             ->update(['trainernachricht' => 1]);
 
@@ -457,9 +551,7 @@ class CoursedateController extends Controller
             $sportEquipmentBooked = new SportEquipmentBooked(
                 [
                     'sportgeraet_id'    => $sportequipmentId,
-                    'kurs_id'                => $coursedateId,
-                    'user_id'                => Auth::user()->id,
-                    'bearbeiter_id'       => Auth::user()->id,
+                    'kurs_id'                => $coursedateId
                 ]
             );
 

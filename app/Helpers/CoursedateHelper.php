@@ -6,6 +6,7 @@ use App\Models\Coursedate;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
+use Illuminate\Support\Facades\DB;
 
 class CoursedateHelper
 {
@@ -19,6 +20,7 @@ class CoursedateHelper
         $otherCoursedates = Coursedate::where('id', '<>', $coursedate->id)
             ->where('kursstarttermin', '<', $coursedate->kursendtermin)
             ->where('kursendtermin', '>', $coursedate->kursstarttermin)
+            ->with('course')
             ->get();
 
         $thisStart = \Carbon\Carbon::parse($coursedate->kursstarttermin);
@@ -173,5 +175,189 @@ class CoursedateHelper
             ->get();
     }
 
+    /**
+     * Gibt die Teilnehmerzahlen für jeden überlappenden Coursedate zurück.
+     * Rückgabe: Collection mit Bedarf je Coursedate.
+     */
+    public static function getParticipantCountForOverlappingCoursedates($coursedates)
+    {
+        if ($coursedates->isEmpty()) {
+            return collect();
+        }
 
+        $ids = $coursedates->pluck('id')->values();
+
+        $teilnehmerCounts = CourseParticipantBooked::query()
+            ->whereIn('kurs_id', $ids)
+            ->whereNull('deleted_at')
+            ->selectRaw('kurs_id, COUNT(*) as cnt')
+            ->groupBy('kurs_id')
+            ->pluck('cnt', 'kurs_id');
+
+        $sportgeraeteTeilnehmerplaetze = SportEquipmentBooked::query()
+            ->join('sport_equipment', 'sport_equipment.id', '=', 'sport_equipment_bookeds.sportgeraet_id')
+            ->whereIn('sport_equipment_bookeds.kurs_id', $ids)
+            ->whereNull('sport_equipment_bookeds.deleted_at')
+            ->selectRaw('sport_equipment_bookeds.kurs_id, COALESCE(SUM(sport_equipment.sportleranzahl), 0) as plaetze')
+            ->groupBy('sport_equipment_bookeds.kurs_id')
+            ->pluck('plaetze', 'kurs_id');
+
+        $gebuchteSportgeraeteCounts = SportEquipmentBooked::query()
+            ->whereIn('kurs_id', $ids)
+            ->whereNull('deleted_at')
+            ->selectRaw('kurs_id, COUNT(*) as cnt')
+            ->groupBy('kurs_id')
+            ->pluck('cnt', 'kurs_id');
+
+        return $coursedates->map(function ($coursedate) use ($teilnehmerCounts, $sportgeraeteTeilnehmerplaetze, $gebuchteSportgeraeteCounts) {
+            $teilnehmerCount = (int) ($teilnehmerCounts[$coursedate->id] ?? 0);
+            $sportgeraeteReserviert = (int) ($coursedate->sportgeraeteReserviert ?? 0);
+            $gebuchteSportgeraetePlaetze = (int) ($sportgeraeteTeilnehmerplaetze[$coursedate->id] ?? 0);
+            $gebuchteSportgeraeteAnzahl = (int) ($gebuchteSportgeraeteCounts[$coursedate->id] ?? 0);
+            $maxTeilnehmer = max($teilnehmerCount, $sportgeraeteReserviert);
+            $benoetigtePlaetze = max($maxTeilnehmer - $gebuchteSportgeraetePlaetze, 0);
+
+            $sportgeraetanzahl = (int) ($coursedate->sportgeraetanzahl ?? 0);
+            if ($sportgeraetanzahl == 0) {
+                $benoetigtePlaetzeMax = $benoetigtePlaetze;
+            } else {
+                $benoetigtePlaetzeMax = min($benoetigtePlaetze, $sportgeraetanzahl);
+            }
+
+            return [
+                'coursedate' => $coursedate,
+                'coursedate_id' => $coursedate->id,
+                'course_id' => $coursedate->course_id,
+                'teilnehmerCount' => $teilnehmerCount,
+                'sportgeraeteReserviert' => $sportgeraeteReserviert,
+                'maxTeilnehmer' => $maxTeilnehmer,
+                'teilnehmerplaetzeGebuchteSportgeraete' => $gebuchteSportgeraetePlaetze,
+                'gebuchteSportgeraeteAnzahl' => $gebuchteSportgeraeteAnzahl,
+                'benoetigtePlaetze' => $benoetigtePlaetze,
+                'benoetigtePlaetzeMax' => $benoetigtePlaetzeMax,
+            ];
+        })->values();
+    }
+
+    /**
+     * Weist freie Sportgeräte pro Coursedate greedy zu (größte Plätze zuerst).
+     * Der Pool wird global über alle überlappenden Termine verbraucht,
+     * sodass ein Sportgerät nur einmal vergeben werden kann.
+     * Rückgabe: items + Pool-Information, ob noch Plätze übrig sind.
+     */
+    public static function allocateFreeSportEquipmentGreedy($overlapsWithParticipants, $freeSportEquipments, $currentCoursedateId)
+    {
+        $pool = $freeSportEquipments
+            ->sortByDesc(function ($equipment) {
+                return (int) ($equipment->sportleranzahl ?? 0);
+            })
+            ->values()
+            ->map(function ($equipment) {
+                return [
+                    'id' => $equipment->id,
+                    'sportgeraet' => $equipment->sportgeraet ?? null,
+                    'plaetze' => (int) ($equipment->sportleranzahl ?? 0),
+                ];
+            })
+            ->all();
+
+        $poolIndex = 0;
+        $allocations = [];
+
+        $sortedByDemand = $overlapsWithParticipants
+            ->sort(function ($a, $b) {
+                $demandA = (int) ($a['benoetigtePlaetzeMax'] ?? 0);
+                $demandB = (int) ($b['benoetigtePlaetzeMax'] ?? 0);
+                if ($demandA === $demandB) {
+                    return (int) ($a['coursedate_id'] ?? 0) <=> (int) ($b['coursedate_id'] ?? 0);
+                }
+                return $demandB <=> $demandA;
+            })
+            ->values();
+
+        foreach ($sortedByDemand as $row) {
+            $restbedarf = max(0, (int) ($row['benoetigtePlaetzeMax'] ?? 0));
+            $neuZugewiesenePlaetze = 0;
+            $neuZugewieseneSportgeraete = [];
+
+            while ($restbedarf > 0 && isset($pool[$poolIndex])) {
+                $geraet = $pool[$poolIndex];
+                $neuZugewieseneSportgeraete[] = $geraet;
+                $neuZugewiesenePlaetze += $geraet['plaetze'];
+                $restbedarf -= $geraet['plaetze'];
+                $poolIndex++;
+            }
+
+            $bereitsGebuchtePlaetze = (int) ($row['teilnehmerplaetzeGebuchteSportgeraete'] ?? 0);
+            $bereitsGebuchteAnzahl = (int) ($row['gebuchteSportgeraeteAnzahl'] ?? 0);
+
+            $allocations[$row['coursedate_id']] = [
+                // Für die Anzeige zählen gebuchte + neu zugewiesene Plätze/Geräte
+                'zugewieseneSportgeraeteAnzahl' => $bereitsGebuchteAnzahl + count($neuZugewieseneSportgeraete),
+                'zugewiesenePlaetze' => $bereitsGebuchtePlaetze + $neuZugewiesenePlaetze,
+                'fehlendePlaetze' => max($restbedarf, 0),
+                'hatAllePlaetze' => max($restbedarf, 0) === 0,
+                'zugewieseneSportgeraete' => $neuZugewieseneSportgeraete,
+            ];
+        }
+
+        $items = $overlapsWithParticipants->map(function ($row) use ($allocations) {
+            $coursedateId = (int) $row['coursedate_id'];
+
+            if (isset($allocations[$coursedateId])) {
+                return array_merge($row, $allocations[$coursedateId]);
+            }
+
+            return array_merge($row, [
+                'zugewieseneSportgeraeteAnzahl' => (int) ($row['gebuchteSportgeraeteAnzahl'] ?? 0),
+                'zugewiesenePlaetze' => (int) ($row['teilnehmerplaetzeGebuchteSportgeraete'] ?? 0),
+                'fehlendePlaetze' => (int) ($row['benoetigtePlaetzeMax'] ?? 0),
+                'hatAllePlaetze' => ((int) ($row['benoetigtePlaetzeMax'] ?? 0)) === 0,
+                'zugewieseneSportgeraete' => [],
+            ]);
+        });
+
+        $poolRest = array_slice($pool, $poolIndex);
+        $poolRemainingPlaetze = array_sum(array_map(function ($geraet) {
+            return (int) ($geraet['plaetze'] ?? 0);
+        }, $poolRest));
+
+        return [
+            'items' => $items,
+            'poolRemainingPlaetze' => $poolRemainingPlaetze,
+            'poolHasRemainingPlace' => $poolRemainingPlaetze > 0,
+            'poolRemainingSportgeraete' => count($poolRest),
+        ];
+    }
+
+    /**
+     * Gibt bereits gebuchte Sportgeräte für einen Coursedate zurück.
+     * Berücksichtigt alle überlappenden Termine.
+     */
+    public static function getSportEquipmentKursBookeds($coursedate)
+    {
+        $sportEquipmentKursBookeds = DB::table('sport_equipment')
+            ->join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
+            ->where('organiser_sport_section.organiser_id', $coursedate->organiser_id)
+            ->select('sport_equipment.*')
+            ->get();
+
+        return $sportEquipmentKursBookeds;
+    }
+
+    /**
+     * Ermittelt, wie viele Teilnehmer nur im gegebenen Coursedate eingetragen sind.
+     **/
+    public static function getTeilnehmerFuerCoursedateCount($coursedate)
+    {
+        $currentBookings = CourseParticipantBooked::query()
+            ->where('kurs_id', $coursedate->id)
+            ->whereNull('deleted_at')
+            ->get(['participant_id']);
+
+        return $currentBookings;
+    }
 }

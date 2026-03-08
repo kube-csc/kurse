@@ -121,7 +121,7 @@
                             @endif
                         </div>
 
-                        @if($coursedate->training_id != Null)
+                        @if($coursedate->training_id  != Null)
                             <div class="form-field">
                                 <label for="sportgeraeteReserviert" class="form-label">Zu reservierende Plätze in {{ $organiser->materialUeberschrift }}:</label>
                                 <input
