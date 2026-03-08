@@ -118,9 +118,7 @@
                                     </a>
                                 @endforeach
                             </div>
-                        </div>
 
-                        <div class="form-field">
                             <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
                                 <button
                                     type="button"
@@ -133,19 +131,12 @@
                                     <span x-show="showEquipmentInfo" x-cloak>Details ausblenden</span>
                                 </button>
 
-                                <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
-
+                                <div x-show="showEquipmentInfo" x-cloak x-transition.opacity style="margin-top: 8px;">
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         maximale Plätze vom Termin = {{ $coursedate->sportgeraetanzahl ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Reservierte Plätze = {{ $coursedate->sportgeraeteReserviert ?? 'n/a' }}
-                                    </div>
-                                    <div class="form-input-text" style="margin-top: 8px;">
-                                        Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportEquipmentFrees->count()  ?? 'n/a' }}
-                                    </div>
-                                    <div class="form-input-text" style="margin-top: 8px;">
-                                        Verfügbare Plätze (Pool) = {{ $freeSportEquipmentSum  ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Benötigte Plätze für gebuchte Teilnehmer = {{ $courseBookes->count()  ?? 'n/a' }}
@@ -155,6 +146,12 @@
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Gebuchte Plätze in {{ $organiser->materialUeberschrift }} = {{ $kursBookedSum ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportEquipmentFrees->count()  ?? 'n/a' }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Verfügbare Plätze (Pool) = {{ $freeSportEquipmentSum  ?? 'n/a' }}
                                     </div>
 
                                 </div>

@@ -186,7 +186,7 @@ class CourseParticipantController extends Controller
         $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
         $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
 
-        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id);
         $maxReservierbarInput =  $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
         $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
 
@@ -257,7 +257,7 @@ class CourseParticipantController extends Controller
         $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
         $needEquipmentProCourstimeSumme = (int) $overlapStats->sum('max');
 
-        $sportgeraetanzahlMax = (int) (CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id) ?? 0);
+        $sportgeraetanzahlMax = (int) (CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id) ?? 0);
         $maxReservierbarInput = $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
 
         $courseBookedAllCount = (int) CourseParticipantBooked::where('kurs_id', $coursedateId)->count();

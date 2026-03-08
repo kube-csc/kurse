@@ -149,15 +149,45 @@ class CoursedateHelper
         })->values();
     }
 
-    public static function sportgeraetanzahlMax($id)
+    public static function sportgeraetanzahlMaxPlaetze($id)
     {
         // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
-        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+        $sportgeraetanzahlMaxPlaetze = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
             ->where('organiser_sport_section.organiser_id' , $id)
             ->sum('sport_equipment.sportleranzahl');
 
-        return $sportgeraetanzahlMax;
+        return $sportgeraetanzahlMaxPlaetze;
     }
+
+    public static function getSportEquipments($coursedate)
+    {
+        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
+            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
+            ->where('coursedates.id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->get();
+
+        return $sportEquipments;
+    }
+
+    public static function getSportEquipmentBookeds($coursedate)
+    {
+        // Belegte Boote andere Kurse
+        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
+            ->leftJoin('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            ->leftJoin('users', 'users.id', '=', 'coursedate_user.user_id')
+            ->where('sport_equipment_bookeds.deleted_at', null)
+            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
+            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
+            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
+            ->orderBy('sport_equipment.sportgeraet')
+            ->selectRaw("sport_equipment.*, sport_equipment_bookeds.sportgeraet_id, sport_equipment_bookeds.kurs_id, COALESCE(users.vorname, 'ohne Trainer') as vorname, COALESCE(users.nachname, '') as nachname")
+            ->get();
+
+        return $sportEquipmentBookeds;
+    }
+
 
     /**
      * Gibt alle CourseParticipantBooked-Datensätze zurück für Coursedates, die sich mit dem gegebenen $coursedate überschneiden
@@ -336,13 +366,14 @@ class CoursedateHelper
      */
     public static function getSportEquipmentKursBookeds($coursedate)
     {
-        $sportEquipmentKursBookeds = DB::table('sport_equipment')
-            ->join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+        // Gebuchte Boote für den Kurs
+        $sportEquipmentKursBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
+            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->where('organiser_sport_section.organiser_id', $coursedate->organiser_id)
-            ->select('sport_equipment.*')
+            ->where('organiser_sport_section.organiser_id' , $coursedate->organiser_id)
+            ->orderBy('sport_equipment.sportgeraet')
             ->get();
 
         return $sportEquipmentKursBookeds;

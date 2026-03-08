@@ -99,7 +99,7 @@ class CoursedateController extends Controller
 
         $course_id = 0;
         $sportgeraetanzahl = 0;
-        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($organiser->id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($organiser->id);
 
         return view('components.backend.courseDate.create' , compact([
             'kursstartterminDatum',
@@ -174,7 +174,7 @@ class CoursedateController extends Controller
             ->orderBy('kursName')
             ->get();
 
-        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMax($coursedate->organiser_id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id);
 
         $overlapRequiredBoatsSum=CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
 
@@ -301,8 +301,6 @@ class CoursedateController extends Controller
 
     public function updateBookFirst(UpdateCoursedateRequest $request, Coursedate $coursedate)
     {
-        // ToDo: Validierung anpassen
-
         $daten=$this->kursendtermin($request, $coursedate);
 
         $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
@@ -313,8 +311,8 @@ class CoursedateController extends Controller
 
         $coursedate->update(
             [
-                'kursstarttermin'         => $daten['kursstarttermin'],
-                'kursendtermin'           => $daten['kursendtermin'],
+                'kursstarttermin'        => $daten['kursstarttermin'],
+                'kursendtermin'         => $daten['kursendtermin'],
                 'bearbeiter_id'           => Auth::user()->id,
             ]
         );
@@ -358,34 +356,13 @@ class CoursedateController extends Controller
         $teilnehmerKursBookeds = CoursedateHelper::getTeilnehmerKursBookedsForOtherCoursedates($coursedate);
 
         // Alle Sportgeräte
-        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
-            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
-            ->where('coursedates.id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        $sportEquipments= CoursedateHelper::getSportEquipments($coursedate);
 
-        // Belegte Boote andere Kurse
-        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->leftJoin('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->leftJoin('users', 'users.id', '=', 'coursedate_user.user_id')
-            ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->selectRaw("sport_equipment.*, sport_equipment_bookeds.sportgeraet_id, sport_equipment_bookeds.kurs_id, COALESCE(users.vorname, 'ohne Trainer') as vorname, COALESCE(users.nachname, '') as nachname")
-            ->get();
+        // Belegte Sportgeräte andere Kurse
+        $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
 
-        // Gebuchte Boote für den Kurs
-        $sportEquipmentKursBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
-            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->where('organiser_sport_section.organiser_id' , $this->organiserDomainId())
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        // Gebuchte Sportgeräte für den Kurs
+        $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
 
         $bookedIds                   = $sportEquipmentBookeds->pluck('sportgeraet_id');
         $kursBookeIds              = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
@@ -491,21 +468,13 @@ class CoursedateController extends Controller
             return redirect()->route('backend.courseDate.index');
         }
 
-        // Freie Sportgeräte-Pooldaten wie in sportingEquipment() ermitteln
-        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
-            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
-            ->where('coursedates.id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        // Alle Sportgeräte
+        $sportEquipments= CoursedateHelper::getSportEquipments($coursedate);
 
-        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->get(['sport_equipment_bookeds.sportgeraet_id']);
+        // Belegte Sportgeräte andere Kurse
+        $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
 
+        // Gebuchte Sportgeräte für den Kurs
         $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
 
         $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');

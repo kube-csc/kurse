@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('password_alt', 20)->nullable();
             $table->integer('webspace')->default(0);
             $table->integer('regattatrainer')->default(0);
-            $table->char('trainernachricht', 1)->default('');
+            $table->char('trainernachricht', 1)->default('0');
             $table->decimal('gewicht', 4, 1)->default(0.0);
             $table->integer('position')->default(0);
             $table->integer('seite')->default(0);
