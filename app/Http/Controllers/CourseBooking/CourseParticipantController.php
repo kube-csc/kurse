@@ -249,59 +249,75 @@ class CourseParticipantController extends Controller
     public function book($coursedateId)
     {
         $coursedate = Coursedate::find($coursedateId);
+
         if (!$coursedate) {
             self::warning('Der Termin wurde nicht gefunden oder ist nicht mehr verfügbar.');
             return redirect()->route('courseBooking.course.index');
         }
 
-        $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
-        $needEquipmentProCourstimeSumme = (int) $overlapStats->sum('max');
+        // Alle Sportgeräte
+        $sportEquipments= CoursedateHelper::getSportEquipments($coursedate);
 
-        $sportgeraetanzahlMax = (int) (CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id) ?? 0);
-        $maxReservierbarInput = $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
+        // Belegte Sportgeräte andere Kurse
+        $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
 
-        $courseBookedAllCount = (int) CourseParticipantBooked::where('kurs_id', $coursedateId)->count();
-        $sportgeraetanzahl = (int) ($coursedate->sportgeraetanzahl ?? 0);
+        // Gebuchte Sportgeräte für den Kurs
+        $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
 
-        // Wenn sportgeraetanzahl == 0, interpretieren wir das als "kein fixes Teilnehmerlimit".
-        // Dann limitiert nur die Reservierbarkeit (Material/Überlappungen).
-        $hasFreeSlotInCoursedate = $sportgeraetanzahl === 0
-            ? true
-            : ($courseBookedAllCount < $sportgeraetanzahl);
+        $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBookeIds = $sportEquipmentKursBookeds->pluck('id');
+        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
 
-        if ($maxReservierbarInput > 0 && $hasFreeSlotInCoursedate) {
-            $participantBook = new CourseParticipantBooked(
-                [
-                    'participant_id' => Auth::user()->id,
-                    'kurs_id' => $coursedateId,
-                ]
-            );
+        // Allocation berechnen und poolHasRemainingPlace als Gate verwenden
+        $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+        $overlapingCoursedates->push($coursedate);
+        $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
 
-            $participantBook->save();
+        $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+            $overlapingCoursedatesWithParticipants,
+            $sportEquipmentFrees,
+            $coursedate->id
+        );
 
-            // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
-            $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
-
-            // Kursleiter-Hinweis setzen
-            DB::table('users')
-                ->whereIn('id', $userIds)
-                ->where('trainernachricht', '')
-                ->update(['trainernachricht' => 1]);
-
-            // Teilnehmer-Hinweis setzen
-            DB::table('course_participants')
-                ->where('id', Auth::user()->id)
-                ->where('teilnehmernachricht', '')
-                ->update(['teilnehmernachricht' => 1]);
-
-            self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
-        } else {
-            if ($maxReservierbarInput <= 0) {
-                self::warning('Für diesen Zeitraum sind keine weiteren Reservierungen möglich (Sportgeräte bereits vollständig verplant).');
-            } else {
-                self::warning('Die maximale Anzahl an Teilnehmer ist erreicht. Es können keine weiteren Teilnehmer gebucht werden.');
-            }
+        if (empty($allocationResult['poolHasRemainingPlace'])) {
+            self::warning('Es sind keine freien Plätze im Sportgeräte-Pool vorhanden. Der Teilnehmer kann nicht gebucht werden.');
+            return redirect()->route('courseBooking.course.edit', $coursedateId);
         }
+
+        $participantBook = new CourseParticipantBooked(
+            [
+                'participant_id' => Auth::user()->id,
+                'kurs_id' => $coursedateId,
+            ]
+        );
+
+        $participantBook->save();
+
+        // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
+        $userIds = DB::table('coursedate_user')
+            ->where('coursedate_id', $coursedateId)
+            ->pluck('user_id');
+
+        // Kursleiter-Hinweis setzen
+        DB::table('users')
+            ->whereIn('id', $userIds)
+            ->where(function($query) {
+                $query->where('trainernachricht', '=', '0')
+                      ->orWhere('trainernachricht', '=', '');
+            })
+            ->update(['trainernachricht' => 1]);
+
+        // Teilnehmer-Hinweis setzen
+        DB::table('course_participants')
+            ->where('id', Auth::user()->id)
+            ->where(function($query) {
+                $query->where('teilnehmernachricht', '=', '0')
+                      ->orWhere('teilnehmernachricht', '=', '');
+            })
+            ->update(['teilnehmernachricht' => 1]);
+
+        self::success('Ein Teilnehmer wurde erfolgreich gebucht.');
 
         return redirect()->route('courseBooking.course.edit', $coursedateId);
     }
