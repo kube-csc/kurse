@@ -517,6 +517,78 @@ class CoursedateController extends Controller
 
     public function equipmentBooked($coursedateId , $sportequipmentId)
     {
+            $coursedate = Coursedate::find($coursedateId);
+            if (!$coursedate) {
+                self::warning('Termin wurde nicht gefunden.');
+                return redirect()->route('backend.courseDate.index');
+            }
+
+            // Alle Sportgeräte
+            $sportEquipments = CoursedateHelper::getSportEquipments($coursedate);
+
+            // Belegte Sportgeräte andere Kurse
+            $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
+
+            // Gebuchte Sportgeräte für den Kurs
+            $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
+
+            $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
+            $kursBookeIds = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+            $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
+            $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
+
+            $simulatedSportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $sportequipmentId)->values();
+
+            $selectedEquipment = $sportEquipmentFrees->firstWhere('id', (int) $sportequipmentId);
+            if (!$selectedEquipment) {
+                self::warning('Das gewählte Sportgerät ist nicht mehr frei verfügbar.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
+            $simulatedSportEquipmentKursBookeds = $sportEquipmentKursBookeds->push($selectedEquipment);
+            $simulatedKursBookedPlaetze = (int) $simulatedSportEquipmentKursBookeds->sum('sportleranzahl');
+            $simulatedKursBookedCount = (int) $simulatedSportEquipmentKursBookeds->count();
+
+            $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+            $overlapingCoursedates->push($coursedate);
+
+            $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates)
+                ->map(function ($row) use ($coursedate, $simulatedKursBookedPlaetze, $simulatedKursBookedCount) {
+                    if ((int) ($row['coursedate_id'] ?? 0) !== (int) $coursedate->id) {
+                        return $row;
+                    }
+
+                    $maxTeilnehmer = (int) ($row['maxTeilnehmer'] ?? 0);
+                    $benoetigtePlaetze = max($maxTeilnehmer - $simulatedKursBookedPlaetze, 0);
+                    $sportgeraetanzahl = (int) ($coursedate->sportgeraetanzahl ?? 0);
+                    $benoetigtePlaetzeMax = $sportgeraetanzahl === 0
+                        ? $benoetigtePlaetze
+                        : min($benoetigtePlaetze, $sportgeraetanzahl);
+
+                    $row['teilnehmerplaetzeGebuchteSportgeraete'] = $simulatedKursBookedPlaetze;
+                    $row['gebuchteSportgeraeteAnzahl'] = $simulatedKursBookedCount;
+                    $row['benoetigtePlaetze'] = $benoetigtePlaetze;
+                    $row['benoetigtePlaetzeMax'] = $benoetigtePlaetzeMax;
+
+                    return $row;
+                })
+                ->values();
+
+            $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+                $overlapingCoursedatesWithParticipants,
+                $simulatedSportEquipmentFrees,
+                $coursedate->id
+            );
+
+            $allocationItems = collect($allocationResult['items'] ?? []);
+            $currentCoursedateAllocation = $allocationItems->firstWhere('coursedate_id', $coursedate->id);
+            $allAllocationsHaveNoMissingPlaces = CoursedateHelper::allocationHasNoMissingPlaces($allocationResult);
+
+            if (!$currentCoursedateAllocation || !$allAllocationsHaveNoMissingPlaces) {
+                self::warning('Das Sportgerät kann im aktuellenTermin nicht zugebucht werden, weil es nicht genug Platz für alle Teilnehmer gibt.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
             $sportEquipmentBooked = new SportEquipmentBooked(
                 [
                     'sportgeraet_id'    => $sportequipmentId,
@@ -526,18 +598,18 @@ class CoursedateController extends Controller
 
             $sportEquipmentBooked->save();
 
-            $coursedate = Coursedate::find($coursedateId);
-            if($coursedate->sportgeraetanzahl != 0) {
-                $sportEquipmentKursBookedCount = SportEquipmentBooked::where('kurs_id', $coursedateId)->count();
-                if ($coursedate->sportgeraetanzahl < $sportEquipmentKursBookedCount) {
-                    $coursedate->update(
-                        [
-                            'sportgeraetanzahl' => $sportEquipmentKursBookedCount,
-                            'bearbeiter_id'     => Auth::user()->id,
-                        ]
-                    );
-                    self::success('Anzahl der möglichen Teilnehmer erhöht.');
-                }
+            $sportEquipmentKursBookedPlaetze = SportEquipmentBooked::join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+                ->where('sport_equipment_bookeds.kurs_id', $coursedateId)
+                ->sum('sport_equipment.sportleranzahl');
+
+            if ($coursedate->sportgeraetanzahl < $sportEquipmentKursBookedPlaetze) {
+                $coursedate->update(
+                    [
+                        'sportgeraetanzahl' => $sportEquipmentKursBookedPlaetze,
+                        'bearbeiter_id'     => Auth::user()->id,
+                    ]
+                );
+                self::success('Anzahl der möglichen Teilnehmer erhöht.');
             }
             self::success('Sportgerät wurde erfolgreich gebucht.');
 

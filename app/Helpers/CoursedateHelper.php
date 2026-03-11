@@ -6,6 +6,7 @@ use App\Models\Coursedate;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CoursedateHelper
@@ -358,6 +359,29 @@ class CoursedateHelper
             'poolHasRemainingPlace' => $poolRemainingPlaetze > 0,
             'poolRemainingSportgeraete' => count($poolRest),
         ];
+    }
+
+    public static function allocationHasNoMissingPlaces($allocationResult): bool
+    {
+        $items = [];
+
+        if (is_array($allocationResult)) {
+            $items = $allocationResult['items'] ?? [];
+        } elseif ($allocationResult instanceof Collection) {
+            $items = $allocationResult;
+        }
+
+        $items = $items instanceof Collection ? $items : collect($items);
+
+        if ($items->isEmpty()) {
+            return false;
+        }
+
+        return $items->every(function ($item) {
+            return is_array($item)
+                && array_key_exists('fehlendePlaetze', $item)
+                && (int) $item['fehlendePlaetze'] === 0;
+        });
     }
 
     /**
