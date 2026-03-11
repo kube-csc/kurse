@@ -478,7 +478,7 @@ class CoursedateController extends Controller
         $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
 
         $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBookeIds = $sportEquipmentKursBookeds->pluck('id');
+        $kursBookeIds = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
         $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
         $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
 
