@@ -279,8 +279,15 @@ class CoursedateHelper
     public static function allocateFreeSportEquipmentGreedy($overlapsWithParticipants, $freeSportEquipments, $currentCoursedateId)
     {
         $pool = $freeSportEquipments
-            ->sortByDesc(function ($equipment) {
-                return (int) ($equipment->sportleranzahl ?? 0);
+            ->sort(function ($a, $b) {
+                $plaetzeA = (int) ($a->sportleranzahl ?? 0);
+                $plaetzeB = (int) ($b->sportleranzahl ?? 0);
+
+                if ($plaetzeA === $plaetzeB) {
+                    return (int) ($a->id ?? 0) <=> (int) ($b->id ?? 0);
+                }
+
+                return $plaetzeB <=> $plaetzeA;
             })
             ->values()
             ->map(function ($equipment) {
@@ -292,43 +299,71 @@ class CoursedateHelper
             })
             ->all();
 
+        $state = [];
+        foreach ($overlapsWithParticipants as $row) {
+            $coursedateId = (int) ($row['coursedate_id'] ?? 0);
+            $state[$coursedateId] = [
+                'row' => $row,
+                'restbedarf' => max(0, (int) ($row['benoetigtePlaetzeMax'] ?? 0)),
+                'neuZugewiesenePlaetze' => 0,
+                'neuZugewieseneSportgeraete' => [],
+            ];
+        }
+
         $poolIndex = 0;
-        $allocations = [];
+        while (isset($pool[$poolIndex])) {
+            $targetCoursedateId = null;
 
-        $sortedByDemand = $overlapsWithParticipants
-            ->sort(function ($a, $b) {
-                $demandA = (int) ($a['benoetigtePlaetzeMax'] ?? 0);
-                $demandB = (int) ($b['benoetigtePlaetzeMax'] ?? 0);
-                if ($demandA === $demandB) {
-                    return (int) ($a['coursedate_id'] ?? 0) <=> (int) ($b['coursedate_id'] ?? 0);
+            foreach ($state as $coursedateId => $entry) {
+                $restbedarf = (int) ($entry['restbedarf'] ?? 0);
+                if ($restbedarf <= 0) {
+                    continue;
                 }
-                return $demandB <=> $demandA;
-            })
-            ->values();
 
-        foreach ($sortedByDemand as $row) {
-            $restbedarf = max(0, (int) ($row['benoetigtePlaetzeMax'] ?? 0));
-            $neuZugewiesenePlaetze = 0;
-            $neuZugewieseneSportgeraete = [];
+                if ($targetCoursedateId === null) {
+                    $targetCoursedateId = $coursedateId;
+                    continue;
+                }
 
-            while ($restbedarf > 0 && isset($pool[$poolIndex])) {
-                $geraet = $pool[$poolIndex];
-                $neuZugewieseneSportgeraete[] = $geraet;
-                $neuZugewiesenePlaetze += $geraet['plaetze'];
-                $restbedarf -= $geraet['plaetze'];
-                $poolIndex++;
+                $targetRestbedarf = (int) ($state[$targetCoursedateId]['restbedarf'] ?? 0);
+                if ($restbedarf > $targetRestbedarf) {
+                    $targetCoursedateId = $coursedateId;
+                    continue;
+                }
+
+                if ($restbedarf === $targetRestbedarf && $coursedateId < $targetCoursedateId) {
+                    $targetCoursedateId = $coursedateId;
+                }
             }
 
+            // Kein offener Bedarf mehr vorhanden.
+            if ($targetCoursedateId === null) {
+                break;
+            }
+
+            $geraet = $pool[$poolIndex];
+            $poolIndex++;
+
+            $state[$targetCoursedateId]['neuZugewieseneSportgeraete'][] = $geraet;
+            $state[$targetCoursedateId]['neuZugewiesenePlaetze'] += (int) ($geraet['plaetze'] ?? 0);
+            $state[$targetCoursedateId]['restbedarf'] = max(
+                0,
+                (int) $state[$targetCoursedateId]['restbedarf'] - (int) ($geraet['plaetze'] ?? 0)
+            );
+        }
+
+        $allocations = [];
+        foreach ($state as $coursedateId => $entry) {
+            $row = $entry['row'];
             $bereitsGebuchtePlaetze = (int) ($row['teilnehmerplaetzeGebuchteSportgeraete'] ?? 0);
             $bereitsGebuchteAnzahl = (int) ($row['gebuchteSportgeraeteAnzahl'] ?? 0);
 
-            $allocations[$row['coursedate_id']] = [
-                // Für die Anzeige zählen gebuchte + neu zugewiesene Plätze/Geräte
-                'zugewieseneSportgeraeteAnzahl' => $bereitsGebuchteAnzahl + count($neuZugewieseneSportgeraete),
-                'zugewiesenePlaetze' => $bereitsGebuchtePlaetze + $neuZugewiesenePlaetze,
-                'fehlendePlaetze' => max($restbedarf, 0),
-                'hatAllePlaetze' => max($restbedarf, 0) === 0,
-                'zugewieseneSportgeraete' => $neuZugewieseneSportgeraete,
+            $allocations[$coursedateId] = [
+                'zugewieseneSportgeraeteAnzahl' => $bereitsGebuchteAnzahl + count($entry['neuZugewieseneSportgeraete']),
+                'zugewiesenePlaetze' => $bereitsGebuchtePlaetze + (int) ($entry['neuZugewiesenePlaetze'] ?? 0),
+                'fehlendePlaetze' => max(0, (int) ($entry['restbedarf'] ?? 0)),
+                'hatAllePlaetze' => max(0, (int) ($entry['restbedarf'] ?? 0)) === 0,
+                'zugewieseneSportgeraete' => $entry['neuZugewieseneSportgeraete'],
             ];
         }
 

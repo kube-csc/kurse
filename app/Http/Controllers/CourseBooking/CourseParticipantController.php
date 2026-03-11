@@ -266,8 +266,8 @@ class CourseParticipantController extends Controller
 
         $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
         $kursBookeIds = $sportEquipmentKursBookeds->pluck('id');
-        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookeIds);
+        $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBookeIds);
 
         // Allocation berechnen und poolHasRemainingPlace als Gate verwenden
         $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
@@ -276,7 +276,7 @@ class CourseParticipantController extends Controller
 
         $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
             $overlapingCoursedatesWithParticipants,
-            $sportEquipmentFrees,
+            $sportEquipmentPool,
             $coursedate->id
         );
 
@@ -388,11 +388,11 @@ class CourseParticipantController extends Controller
 
         $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
         $kursBbookeIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
-        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
+        $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBbookeIds);
 
         // Berechnung mit sum('sportleranzahl') statt count()
-        $freeSportEquipmentSum = $sportEquipmentFrees->sum('sportleranzahl');
+        $freeSportEquipmentSum = $sportEquipmentPool->sum('sportleranzahl');
         $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
 
         if($coursedate->sportgeraetanzahl==0) {

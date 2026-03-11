@@ -136,7 +136,7 @@
                                         maximale Plätze vom Termin = {{ $coursedate->sportgeraetanzahl ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
-                                        Reservierte Plätze = {{ $coursedate->sportgeraeteReserviert ?? 'n/a' }}
+                                        Reservierte Plätze für den Termin = {{ $coursedate->sportgeraeteReserviert ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Benötigte Plätze für gebuchte Teilnehmer = {{ $courseBookes->count()  ?? 'n/a' }}
@@ -148,7 +148,7 @@
                                         Gebuchte Plätze in {{ $organiser->materialUeberschrift }} = {{ $kursBookedSum ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
-                                        Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportEquipmentFrees->count()  ?? 'n/a' }}
+                                        Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportEquipmentPool->count()  ?? 'n/a' }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Verfügbare Plätze (Pool) = {{ $freeSportEquipmentSum  ?? 'n/a' }}
@@ -160,11 +160,19 @@
 
                         <div class="form-field">
                             <label for="course_id" class="form-label">
-                                {{ $sportEquipmentFrees->count() }}
-                                {{ $sportEquipmentFrees->count() === 1 ? 'freies' : 'freie' }} {{ $organiser->materialUeberschrift }}:
+                                {{ $sportEquipmentPool->count() }}
+                                {{ $organiser->materialUeberschrift }} im Pool:
                             </label>
-                                <div class="form-box">
-                                   @foreach($sportEquipmentFrees as $sportEquipmentFree)
+                            <div class="form-box">
+                                @php $prevPoolSportleranzahl = null; @endphp
+                                @foreach($sportEquipmentPool->sortByDesc('sportleranzahl') as $sportEquipmentFree)
+                                    @if($prevPoolSportleranzahl !== $sportEquipmentFree->sportleranzahl)
+                                        <div class="font-bold mt-1.5">
+                                            {{ $sportEquipmentFree->sportleranzahl }}
+                                            {{ $sportEquipmentFree->sportleranzahl == 1 ? 'Platz' : 'Plätze' }}:
+                                        </div>
+                                        @php $prevPoolSportleranzahl = $sportEquipmentFree->sportleranzahl; @endphp
+                                    @endif
                                     <a href="{{ route('backend.courseDate.equipmentBooked' ,
                                     [
                                         'coursedateId'     => $coursedate->id,
@@ -176,8 +184,8 @@
                                             {{ $sportEquipmentFree->sportgeraet }}
                                         </span>
                                     </a>
-                                   @endforeach
-                               </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -186,7 +194,15 @@
                                 {{ $sportEquipmentKursBookeds->count() === 1 ? 'belegtes' : 'belegte' }} {{ $organiser->materialUeberschrift }} im Termin:
                             </label>
                             <div class="form-box">
-                                @foreach($sportEquipmentKursBookeds as $sportEquipmentKursBooked)
+                                @php $prevSportleranzahl = null; @endphp
+                                @foreach($sportEquipmentKursBookeds->sortBy('sportleranzahl')->sortByDesc('sportleranzahl') as $sportEquipmentKursBooked)
+                                    @if($prevSportleranzahl !== $sportEquipmentKursBooked->sportleranzahl)
+                                        <div class="font-bold mt-1.5">
+                                            {{ $sportEquipmentKursBooked->sportleranzahl }}
+                                            {{ $sportEquipmentKursBooked->sportleranzahl == 1 ? 'Platz' : 'Plätze' }}:
+                                        </div>
+                                        @php $prevSportleranzahl = $sportEquipmentKursBooked->sportleranzahl; @endphp
+                                    @endif
                                     <a href="{{ route('backend.courseDate.equipmentBookedDestroy' ,
                                     [
                                         'coursedateId'     => $coursedate->id,
@@ -196,7 +212,7 @@
                                     >
                                     <span class="form-button">
                                         <box-icon name='minus-circle'></box-icon>
-                                        {{ $sportEquipmentKursBooked->sportgeraet}}
+                                        {{ $sportEquipmentKursBooked->sportgeraet }}
                                     </span>
                                     </a>
                                 @endforeach
@@ -218,7 +234,9 @@
                                     @endphp
                                     <span>
                                         @if($isNewEquipment)
-                                            {{ $sportEquipmentBooked->sportgeraet }} /
+                                            {{ $sportEquipmentBooked->sportgeraet }}
+                                            ({{ $sportEquipmentBooked->sportleranzahl }}
+                                            {{ $sportEquipmentBooked->sportleranzahl == 1 ? 'Platz' : 'Plätze' }}) /
                                             {{ trim($bookedVorname . ' ' . $bookedNachname) }}
                                         @else
                                             und {{ trim($bookedVorname . ' ' . $bookedNachname) }}
