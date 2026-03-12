@@ -36,9 +36,21 @@ Anzahl Sportgeräte: Hier wählst du die Anzahl der Sportgeräte für den Kurs a
 Nachdem du alle Felder ausgefüllt hast, klickst du auf den Eintragen Button, um die Daten zu speichern.',
     'Course' => 'Beschreibung der Kurse / Fahrt',
     'Course Edit' => 'Beschreibung Kurs / Termin bearbeiten',
-    'Course Edit Help' => 'Kursname: Hier gibst du den Namen und Beschreibung des Kurs / Fahrt / Training  ein.',
+    'Course Edit Help' => 'Kursname: Hier gibst du den Namen und Beschreibung des Kurs / Fahrt / Training ein.<br><br>
+<strong>Trainer ist erforderlich:</strong><br>
+Legt fest, ob für diesen Kurs zwingend ein Trainer benötigt wird.<br>
+<ul>
+    <li><strong>Aktiviert (✓):</strong> Der Kurs erscheint in der Terminplanung <em>nur</em> für Benutzer mit Trainer-Rolle. Ein Trainer muss dem Termin zugewiesen werden.</li>
+    <li><strong>Deaktiviert:</strong> Der Kurs ist für alle Benutzer in der Terminplanung sichtbar – kein Trainer erforderlich.</li>
+</ul>',
+    'Course Create Help' => 'Hier legst du ein neues Kurs / Fahrt / Training an.<br><br>
+<strong>Trainer ist erforderlich:</strong><br>
+Legt fest, ob für diesen Kurs zwingend ein Trainer benötigt wird.<br>
+<ul>
+    <li><strong>Aktiviert (✓):</strong> Der Kurs erscheint in der Terminplanung <em>nur</em> für Benutzer mit Trainer-Rolle. Ein Trainer muss dem Termin zugewiesen werden.</li>
+    <li><strong>Deaktiviert:</strong> Der Kurs ist für alle Benutzer in der Terminplanung sichtbar – kein Trainer erforderlich.</li>
+</ul>',
     'Course Create' => 'Kurs / Fahrt / Training erstellen',
-    'Course Create Help' => 'Hier legst du ein neues Kurs / Fahrt / Training  an.',
     'Sport Equipment' => 'Sportgeräte',
     'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
     'Sport Equipment Edit Help' => 'Sportgeräte bearbeiten Hilfe',
