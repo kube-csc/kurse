@@ -27,6 +27,9 @@ class HomeController extends Controller
 
         $coursedates = Coursedate::where('organiser_id', $organiser->id)
                                  ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+                                 ->whereHas('course', function ($q) {
+                                     $q->where('hide_from_booking', 0);
+                                 })
                                  ->orderBy('kursstarttermin')
                                  ->get();
 
@@ -36,6 +39,7 @@ class HomeController extends Controller
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiser->id)
             ->where('coursedates.kursNichtDurchfuerbar', 0)
+            ->where('courses.hide_from_booking', 0)
             ->groupBy('courses.kursName')
             ->get();
 
@@ -152,12 +156,13 @@ class HomeController extends Controller
     {
         $organiserDomainId=$this->organiserDomainId();
 
-        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->get();
+        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->where('hide_from_booking', 0)->get();
         $yearAgo = Carbon::now()->subDays(365);
         $coursesYearago = Course::select('courses.id')
             ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiserDomainId)
+            ->where('courses.hide_from_booking', 0)
             ->groupBy('courses.id')
             ->get();
         $courses = $courseAlls->intersect($coursesYearago)->unique('id');

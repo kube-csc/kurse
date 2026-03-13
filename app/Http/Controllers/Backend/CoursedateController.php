@@ -46,7 +46,9 @@ class CoursedateController extends Controller
     {
         $organiser = $this->organiser();
 
-        $coursedates = Coursedate::where('organiser_id', $organiser->id)
+        $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
+            ->join('courses', 'courses.id', '=', 'coursedates.course_id')
+            ->select('coursedates.*', 'courses.hide_from_booking as kurs_hide_from_booking')
             ->leftJoin('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             //->whereNull('course_participant_bookeds.deleted_at')
@@ -185,6 +187,7 @@ class CoursedateController extends Controller
 
 
         // Variante A: als Array (gut lesbar)
+        /*
         dump($overlapStats->map(function ($row) {
             return [
                 'coursedate_id' => $row['coursedate_id'],
@@ -195,7 +198,7 @@ class CoursedateController extends Controller
                 'max' => $row['max'],
             ];
         })->all());
-
+        */
 
         // Summe aller "max"-Werte über alle überlappenden Datensätze
         $needEquipmentProCourstimeSumme = $overlapStats->sum('max');

@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <div class="form-card" x-data="{ kursstatterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}', kursendterminDatum: '{{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('Y-m-d') }}' }">
                           <div class="form-field">
-                            <label for="sportgeraetanzahl" class="form-label">Anzahl der möglichen Teilnehmer der {{ $organiser->materialUeberschrift }}:</label>
+                            <label for="sportgeraetanzahl" class="form-label">Höchstzahl der möglichen Teilnehmer für diesen Termin:</label>
                             <select name="sportgeraetanzahl">
                                 <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
                                     maximale Teilnehmer

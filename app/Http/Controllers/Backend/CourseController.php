@@ -43,10 +43,11 @@ class CourseController extends Controller
         //$data = $request->validated();
 
         $data = $request->validate([
-            'kursName'         => 'required',
-            'kursBeschreibung' => 'nullable',
-            'trainer'          => 'in:0,1',
-            'schnupperkurs'    => 'in:0,1'
+            'kursName'             => 'required',
+            'kursBeschreibung'     => 'nullable',
+            'trainer'              => 'in:0,1',
+            'schnupperkurs'        => 'in:0,1',
+            'hide_from_booking'    => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -57,6 +58,10 @@ class CourseController extends Controller
             $data['schnupperkurs'] = 0;
         }
 
+        if(!isset($data['hide_from_booking'])){
+            $data['hide_from_booking'] = 0;
+        }
+
         $course = new course(
             [
                 'organiser_id'            => $this->organiserDomainId(),
@@ -64,6 +69,7 @@ class CourseController extends Controller
                 'kursBeschreibung'        => $request->kursBeschreibung,
                 'trainer'                 => $data['trainer'],
                 'schnupperkurs'           => $data['schnupperkurs'],
+                'hide_from_booking'       => $data['hide_from_booking'],
                 'bearbeiter_id'           => Auth::user()->id,
                 'autor_id'                => Auth::user()->id,
                 'updated_at'              => Carbon::now(),
@@ -122,10 +128,11 @@ class CourseController extends Controller
         //$data = $request->validated();
 
         $data = $request->validate([
-            'kursName'         => 'required',
-            'kursBeschreibung' => 'nullable',
-            'trainer'          => 'in:0,1',
-            'schnupperkurs'    => 'in:0,1'
+            'kursName'             => 'required',
+            'kursBeschreibung'     => 'nullable',
+            'trainer'              => 'in:0,1',
+            'schnupperkurs'        => 'in:0,1',
+            'hide_from_booking'    => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -134,6 +141,10 @@ class CourseController extends Controller
 
         if(!isset($data['schnupperkurs'])){
             $data['schnupperkurs'] = 0;
+        }
+
+        if(!isset($data['hide_from_booking'])){
+            $data['hide_from_booking'] = 0;
         }
 
         $data['bearbeiter_id'] = Auth::user()->id;
