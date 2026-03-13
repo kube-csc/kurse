@@ -55,6 +55,12 @@
                                 <input type="checkbox" name="schnupperkurs" value="1" @if(old('schnupperkurs')==1) checked @endif>
                                 Ja
                             </span>
+                            <br>
+                            <label class="form-label">Von Buchungsangebot ausblenden:</label>
+                            <span class="form-label">
+                                <input type="checkbox" name="hide_from_booking" value="1" @if(old('hide_from_booking')==1) checked @endif>
+                                Ja
+                            </span>
                         </div>
 
                         <div class="form-field">

@@ -103,7 +103,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="sportgeraetanzahl" class="form-label">Anzahl der möglichen Teilnehmer der {{ $organiser->materialUeberschrift }}:</label>
+                            <label for="sportgeraetanzahl" class="form-label">Höchstzahl der möglichen Teilnehmer für diesen Termin:</label>
                             <input
                                 type="number"
                                 name="sportgeraetanzahl"
@@ -121,9 +121,8 @@
                             @endif
                         </div>
 
-                        @if($coursedate->training_id  != Null)
-                            <div class="form-field">
-                                <label for="sportgeraeteReserviert" class="form-label">Zu reservierende Plätze in {{ $organiser->materialUeberschrift }}:</label>
+                        <div class="form-field">
+                                <label for="sportgeraeteReserviert" class="form-label">Reservierte Plätze für diesen Termin:</label>
                                 <input
                                     type="number"
                                     name="sportgeraeteReserviert"
@@ -173,7 +172,6 @@
                                 </div>
 
                             </div>
-                        @endif
 
                         <div class="form-field">
                                 <label class="form-label">Information zum Termin:</label>
