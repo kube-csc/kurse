@@ -48,7 +48,7 @@ class CoursedateController extends Controller
 
         $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
             ->join('courses', 'courses.id', '=', 'coursedates.course_id')
-            ->select('coursedates.*', 'courses.hide_from_booking as kurs_hide_from_booking')
+            ->select('coursedates.*', 'courses.nicht_anmeldebar as kurs_nicht_anmeldebar')
             ->leftJoin('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             //->whereNull('course_participant_bookeds.deleted_at')

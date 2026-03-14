@@ -106,7 +106,7 @@
                         <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
                         {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
                         <label class="label">Von Buchungsangebot ausblenden:</label>
-                        {{ $coursedate->kurs_hide_from_booking == 1 ? 'Ja' : 'Nein' }}
+                        {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
                     </div>

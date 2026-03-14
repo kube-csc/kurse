@@ -96,7 +96,7 @@
                             <br>
                             <label class="form-label">Von Buchungsangebot ausblenden:</label>
                             <span class="form-label">
-                                <input type="checkbox" name="hide_from_booking" value="1" @if(old('hide_from_booking', $course->hide_from_booking)==1) checked @endif>
+                                <input type="checkbox" name="nicht_anmeldebar" value="1" @if(old('nicht_anmeldebar', $course->nicht_anmeldebar)==1) checked @endif>
                                 Ja
                             </span>
                         </div>

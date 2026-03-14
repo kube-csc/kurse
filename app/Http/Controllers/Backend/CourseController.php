@@ -47,7 +47,7 @@ class CourseController extends Controller
             'kursBeschreibung'     => 'nullable',
             'trainer'              => 'in:0,1',
             'schnupperkurs'        => 'in:0,1',
-            'hide_from_booking'    => 'in:0,1'
+            'nicht_anmeldebar'     => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -58,8 +58,8 @@ class CourseController extends Controller
             $data['schnupperkurs'] = 0;
         }
 
-        if(!isset($data['hide_from_booking'])){
-            $data['hide_from_booking'] = 0;
+        if(!isset($data['nicht_anmeldebar'])){
+            $data['nicht_anmeldebar'] = 0;
         }
 
         $course = new course(
@@ -69,11 +69,9 @@ class CourseController extends Controller
                 'kursBeschreibung'        => $request->kursBeschreibung,
                 'trainer'                 => $data['trainer'],
                 'schnupperkurs'           => $data['schnupperkurs'],
-                'hide_from_booking'       => $data['hide_from_booking'],
+                'nicht_anmeldebar'        => $data['nicht_anmeldebar'],
                 'bearbeiter_id'           => Auth::user()->id,
-                'autor_id'                => Auth::user()->id,
-                'updated_at'              => Carbon::now(),
-                'created_at'              => Carbon::now()
+                'autor_id'                => Auth::user()->id
             ]
         );
         $course->save();
@@ -132,7 +130,7 @@ class CourseController extends Controller
             'kursBeschreibung'     => 'nullable',
             'trainer'              => 'in:0,1',
             'schnupperkurs'        => 'in:0,1',
-            'hide_from_booking'    => 'in:0,1'
+            'nicht_anmeldebar'     => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -143,8 +141,8 @@ class CourseController extends Controller
             $data['schnupperkurs'] = 0;
         }
 
-        if(!isset($data['hide_from_booking'])){
-            $data['hide_from_booking'] = 0;
+        if(!isset($data['nicht_anmeldebar'])){
+            $data['nicht_anmeldebar'] = 0;
         }
 
         $data['bearbeiter_id'] = Auth::user()->id;
