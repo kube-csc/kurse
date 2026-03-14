@@ -113,14 +113,48 @@
                         <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
                         {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
                         <label class="label">Von Buchungsangebot ausblenden:</label>
-                        {{ $coursedate->kurs_hide_from_booking == 1 ? 'Ja' : 'Nein' }}
+                        {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
+                        <label class="label">Link zu Buchung:</label>
+                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer">
+                              https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
+                        </a>
+                        <button type="button" class="dasboard-iconbox-a" title="Link kopieren" aria-label="Link kopieren" onclick="copyBookingLink(@js('https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id), this)">
+                            <box-icon name='copy' size=xs'></box-icon>
+                        </button>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+    <script>
+        function copyBookingLink(url, button) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(function () {
+                    button.title = 'Kopiert';
+                    setTimeout(function () {
+                        button.title = 'Link kopieren';
+                    }, 1200);
+                });
+                return;
+            }
+
+            var textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            button.title = 'Kopiert';
+            setTimeout(function () {
+                button.title = 'Link kopieren';
+            }, 1200);
+        }
+    </script>
 </x-app-layout>
 
 
