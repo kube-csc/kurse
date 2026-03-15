@@ -14,6 +14,12 @@
     <div class="main-box">
         <div class="dashboard-flexbox">
             @php
+                if (!isset($organiser) || !$organiser) {
+                    $host = $_SERVER['HTTP_HOST'] ?? request()->getHost();
+                    $organiser = \App\Models\Organiser::where('veranstaltungDomain', $host)->first()
+                        ?? \App\Models\Organiser::find(1);
+                }
+
                 if (!setlocale(LC_TIME, 'de_DE.UTF-8')) {
                     setlocale(LC_TIME, 'German_Germany.1252'); // Für Windows
                 }
@@ -116,6 +122,8 @@
                         {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
+                        <label class="label">Link zu Buchung:</label>
+                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank">https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}</a>
                     </div>
                 </div>
             @endforeach

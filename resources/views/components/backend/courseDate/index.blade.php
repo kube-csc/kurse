@@ -109,6 +109,8 @@
                             {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                             <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                             {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
+                            <label class="label">Link zu Buchung:</label>
+                            <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank">https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}</a>
                         </div>
                     </div>
                 @endif
