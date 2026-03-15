@@ -35,6 +35,11 @@ class Coursedate extends Model
         'deleted_at'
     ];
 
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
     public function getCousename(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');

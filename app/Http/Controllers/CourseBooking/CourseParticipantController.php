@@ -36,6 +36,9 @@ class CourseParticipantController extends Controller
             ->withCount(['courseParticipantBookeds as bookedSelf_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', Auth::user()->id);
             }])
+            ->whereHas('course', function ($q) {
+                $q->where('nicht_anmeldebar', 0);
+            })
             ->orderBy('kursstarttermin')
             //->paginate(20);
             ->get();

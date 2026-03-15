@@ -20,6 +20,7 @@ class Course extends Model
              'visible',
              'trainer',
              'schnupperkurs',
+             'nicht_anmeldebar',
              'autor_id',
              'bearbeiter_id'
    ];

@@ -11,9 +11,6 @@ use App\Models\SportEquipment;
 use Auth;
 use Illuminate\Support\Carbon;
 
-// ToDo: Wird es noch benötigt?
-// use Illuminate\Http\Request;
-
 class HomeController extends Controller
 {
     /**
@@ -26,9 +23,12 @@ class HomeController extends Controller
         $organiser = $this->organiser();
 
         $coursedates = Coursedate::where('organiser_id', $organiser->id)
-                                 ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-                                 ->orderBy('kursstarttermin')
-                                 ->get();
+            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+            ->whereHas('course', function ($q) {
+                $q->where('nicht_anmeldebar', 0);
+            })
+            ->orderBy('kursstarttermin')
+            ->get();
 
         $yearAgo = Carbon::now()->subDays(365);
         $courses = Course::select('courses.kursName')
@@ -36,6 +36,7 @@ class HomeController extends Controller
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiser->id)
             ->where('coursedates.kursNichtDurchfuerbar', 0)
+            ->where('courses.nicht_anmeldebar', 0)
             ->groupBy('courses.kursName')
             ->get();
 
@@ -152,12 +153,13 @@ class HomeController extends Controller
     {
         $organiserDomainId=$this->organiserDomainId();
 
-        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->get();
+        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->where('nicht_anmeldebar', 0)->get();
         $yearAgo = Carbon::now()->subDays(365);
         $coursesYearago = Course::select('courses.id')
             ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiserDomainId)
+            ->where('courses.nicht_anmeldebar', 0)
             ->groupBy('courses.id')
             ->get();
         $courses = $courseAlls->intersect($coursesYearago)->unique('id');

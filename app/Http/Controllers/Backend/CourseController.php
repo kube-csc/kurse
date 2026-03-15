@@ -17,13 +17,13 @@ class CourseController extends Controller
      */
     public function index()
     {
-       $organiser = $this->organiser();
+        $organiser = $this->organiser();
 
-       $courses = Course::where('organiser_id', $organiser->id)
-              ->orderBy('kursName')
-              ->get();
+        $courses = Course::where('organiser_id', $organiser->id)
+            ->orderBy('kursName')
+            ->get();
 
-       return view('components.backend.course.index', compact('courses'));
+        return view('components.backend.course.index', compact('courses'));
     }
 
     /**
@@ -43,10 +43,11 @@ class CourseController extends Controller
         //$data = $request->validated();
 
         $data = $request->validate([
-            'kursName'         => 'required',
-            'kursBeschreibung' => 'nullable',
-            'trainer'          => 'in:0,1',
-            'schnupperkurs'    => 'in:0,1'
+            'kursName'             => 'required',
+            'kursBeschreibung'     => 'nullable',
+            'trainer'              => 'in:0,1',
+            'schnupperkurs'        => 'in:0,1',
+            'nicht_anmeldebar'     => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -57,6 +58,10 @@ class CourseController extends Controller
             $data['schnupperkurs'] = 0;
         }
 
+        if(!isset($data['nicht_anmeldebar'])){
+            $data['nicht_anmeldebar'] = 0;
+        }
+
         $course = new course(
             [
                 'organiser_id'            => $this->organiserDomainId(),
@@ -64,10 +69,9 @@ class CourseController extends Controller
                 'kursBeschreibung'        => $request->kursBeschreibung,
                 'trainer'                 => $data['trainer'],
                 'schnupperkurs'           => $data['schnupperkurs'],
+                'nicht_anmeldebar'        => $data['nicht_anmeldebar'],
                 'bearbeiter_id'           => Auth::user()->id,
-                'autor_id'                => Auth::user()->id,
-                'updated_at'              => Carbon::now(),
-                'created_at'              => Carbon::now()
+                'autor_id'                => Auth::user()->id
             ]
         );
         $course->save();
@@ -122,10 +126,11 @@ class CourseController extends Controller
         //$data = $request->validated();
 
         $data = $request->validate([
-            'kursName'         => 'required',
-            'kursBeschreibung' => 'nullable',
-            'trainer'          => 'in:0,1',
-            'schnupperkurs'    => 'in:0,1'
+            'kursName'             => 'required',
+            'kursBeschreibung'     => 'nullable',
+            'trainer'              => 'in:0,1',
+            'schnupperkurs'        => 'in:0,1',
+            'nicht_anmeldebar'     => 'in:0,1'
         ]);
 
         if(!isset($data['trainer'])){
@@ -134,6 +139,10 @@ class CourseController extends Controller
 
         if(!isset($data['schnupperkurs'])){
             $data['schnupperkurs'] = 0;
+        }
+
+        if(!isset($data['nicht_anmeldebar'])){
+            $data['nicht_anmeldebar'] = 0;
         }
 
         $data['bearbeiter_id'] = Auth::user()->id;
