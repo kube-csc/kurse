@@ -3,7 +3,7 @@
         <div class="flex items-center">
             <h2 class="header-h2">
                 {{ __('backend.Course Dates All') }}
-             </h2>
+            </h2>
             <div class="dasboard-iconbox w-12 ml-4">
                 <a href="{{ route('backend.courseDate.create') }}">
                     <box-icon name='calendar-plus'></box-icon>
@@ -112,12 +112,13 @@
                         @endif
                         <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
                         {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        <label class="label">Von Buchungsangebot ausblenden:</label>
+                        {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
+                        {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
 </x-app-layout>
-
-
