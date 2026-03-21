@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateCoursedateRequest;
 use App\Models\CourseParticipantBooked;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
-use App\Models\Trainertable;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -77,29 +76,18 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $trainer = Trainertable::where('user_id', Auth::user()->id)
-                               ->where('organiser_id', $organiser->id)
-                               ->get();
+        $courses = Course::query()
+            ->assignableToUserInOrganiser($organiser->id, Auth::id())
+            ->orderBy('kursName')
+            ->get();
 
-        if($trainer->count()>0){
-        $courses = Course::where('organiser_id', $organiser->id)
-                         ->orderBy('kursName')
-                         ->get();
-        }
-        else{
-        $courses = Course::where('organiser_id', $organiser->id)
-                         ->where('trainer', 0)
-                         ->orderBy('kursName')
-                         ->get();
-        }
-
-        if($courses->count()==0){
+        if($courses->isEmpty()){
             self::warning('Es kann kein Kein Kurs / Fahrt angelegt werden, weil es hierfür keine Vorlage angelegt wurde.');
 
             return redirect()->back();
         }
 
-        $course_id = 0;
+        $course_id = (int) old('course_id', $courses->first()->id);
         $sportgeraetanzahl = 0;
         $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($organiser->id);
 

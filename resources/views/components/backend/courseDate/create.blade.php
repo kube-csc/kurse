@@ -49,7 +49,7 @@
                                 <label for="course_id" class="form-label">Name:</label>
                                 <select name="course_id">
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}"  @selected(old('couse_id') ?? $course->id  == $course_id)>
+                                        <option value="{{ $course->id }}" @selected((int) old('course_id', $course_id) === (int) $course->id)>
                                             {{ $course->kursName }}
                                         </option>
                                     @endforeach
