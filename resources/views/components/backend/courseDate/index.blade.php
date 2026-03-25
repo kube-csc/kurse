@@ -103,19 +103,19 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
-                        <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
+                        <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
                         {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
                         <label class="label">Von Buchungsangebot ausblenden:</label>
                         {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
                         {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">Link zu Buchung:</label>
-                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer">
-                            https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
-                        </a>
                         <button type="button" class="dasboard-iconbox-a" title="Link kopieren" aria-label="Link kopieren" onclick="copyBookingLink(@js('https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id), this)">
                             <box-icon name='copy' size=xs'></box-icon>
                         </button>
+                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer">
+                            https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
+                        </a>
                     </div>
                     </div>
                 </div>
