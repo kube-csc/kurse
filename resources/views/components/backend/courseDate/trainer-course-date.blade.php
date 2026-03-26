@@ -26,6 +26,30 @@
             Es sind {{ $courseDateCount }} Termin(e) eingestellt.
         </div>
     </div>
+    <div class="dashboard-flexbox-b1-2">
+        <div class="dashboard-flexbox-text">
+            <h2 class="dasboard-iconbox-h2">Fahrtenbuch alle Termine</h2>
+            <div class="dasboard-iconbox">
+                <a class="dasboard-iconbox-a" href="{{ route('backend.tripDistance.index', ['all_courses' => 1]) }}">
+                    <box-icon name='line-chart'></box-icon>
+                </a>
+            </div>
+            <br>
+            Kursdistanz pflegen und individuelle km für Teilnehmer sowie Trainer anpassen.
+        </div>
+    </div>
+    <div class="dashboard-flexbox-b1-2">
+        <div class="dashboard-flexbox-text">
+            <h2 class="dasboard-iconbox-h2">Fahrtenbuch meine Termine</h2>
+            <div class="dasboard-iconbox">
+                <a class="dasboard-iconbox-a" href="{{ route('backend.tripDistance.index') }}">
+                    <box-icon name='line-chart'></box-icon>
+                </a>
+            </div>
+            <br>
+            Kursdistanz pflegen und individuelle km für Teilnehmer sowie Trainer anpassen.
+        </div>
+    </div>
     {{--ToDo: Flexboxen  überprüfen sehen irgenwie unterschiedlich aus --}}
     <div class="dashboard-flexbox-b1-2">
         <div class="dashboard-flexbox-text">

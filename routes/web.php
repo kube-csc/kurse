@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
+use App\Http\Controllers\Backend\TripDistanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\TrainerMailController;
 use App\Http\Controllers\CourseBooking\CourseParticipantController;
@@ -115,6 +116,12 @@ Route::middleware([
     Route::get('/backend/CourseDateTrainerPick{coursedateId}', [CoursedateController::class, 'trainerRegister'])->name('backend.courseDate.trainerRegister');
     Route::get('/backend/CourseDateTrainerDestroy/{coursedateId}', [CoursedateController::class, 'trainerDestroy'])->name('backend.courseDate.trainerDestroy');
     Route::get('/backend/CourseBockedInformation/{coursedate}', [CoursedateController::class, 'CourseBockedInformation'])->name('backend.courseDate.CourseBockedInformation');
+
+    Route::get('/backend/TripDistance', [TripDistanceController::class, 'index'])->name('backend.tripDistance.index');
+    Route::get('/backend/TripDistance/{coursedate}', [TripDistanceController::class, 'show'])->name('backend.tripDistance.show');
+    Route::put('/backend/TripDistance/Coursedate/{coursedate}', [TripDistanceController::class, 'updateCoursedateDistance'])->name('backend.tripDistance.updateCoursedateDistance');
+    Route::put('/backend/TripDistance/Participant/{courseParticipantBooked}', [TripDistanceController::class, 'updateParticipantDistance'])->name('backend.tripDistance.updateParticipantDistance');
+    Route::put('/backend/TripDistance/Trainer/{coursedate}/{userId}', [TripDistanceController::class, 'updateTrainerDistance'])->name('backend.tripDistance.updateTrainerDistance');
 
     Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
     Route::get('/backend/SportgeraeteAlle', [SportEquipmentController::class, 'indexAll'])->name('backend.sportEquipment.indexAll');
