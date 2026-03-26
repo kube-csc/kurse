@@ -5,8 +5,9 @@
         </h2>
         <div class="dasboard-iconbox">
             <a class="dasboard-iconbox-a"
-               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0]) }}"
-               title="Zurück zur Kursauswahl">
+               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year]) }}"
+               title="Zurück zur Kursauswahl"
+               aria-label="Zurück zur Kursauswahl">
                 <box-icon name='arrow-back'></box-icon>
             </a>
         </div>
@@ -20,6 +21,8 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="all_courses" value="{{ $showAll ? 1 : 0 }}">
+                <input type="hidden" name="month" value="{{ $month }}">
+                <input type="hidden" name="year" value="{{ $year }}">
 
                 <div class="form-group">
                     <div class="form-card">
@@ -128,7 +131,7 @@
                 </div>
 
                 <div class="form-footer">
-                    <a href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0]) }}"
+                    <a href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year]) }}"
                        class="form-button">
                         {{ __('main.back') }}
                     </a>
@@ -155,6 +158,8 @@
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="all_courses" value="{{ $showAll ? 1 : 0 }}">
+                            <input type="hidden" name="month" value="{{ $month }}">
+                            <input type="hidden" name="year" value="{{ $year }}">
                             <div class="flex items-center gap-4 py-2 border-b border-gray-100 dark:border-gray-700">
                                 <span class="text-sm text-gray-700 dark:text-gray-200 w-48 shrink-0">
                                     {{ $trainer->vorname }} {{ $trainer->nachname }}
@@ -195,6 +200,8 @@
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="all_courses" value="{{ $showAll ? 1 : 0 }}">
+                            <input type="hidden" name="month" value="{{ $month }}">
+                            <input type="hidden" name="year" value="{{ $year }}">
                             <div class="flex items-center gap-4 py-2 border-b border-gray-100 dark:border-gray-700">
                                 <span class="text-sm text-gray-700 dark:text-gray-200 w-48 shrink-0">
                                     {{ $pName }}

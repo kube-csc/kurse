@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Coursedate;
 use App\Models\CourseParticipantBooked;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -21,28 +23,68 @@ class TripDistanceController extends Controller
         $organiser  = $this->organiser();
         $showAll    = $request->boolean('all_courses');
         $authUserId = Auth::id();
+        $hasExplicitMonthYear = $request->filled('month') || $request->filled('year');
+        [$month, $year] = $this->resolveMonthYear($request);
 
-        $query = Coursedate::query()
+        $baseQuery = Coursedate::query()
             ->where('organiser_id', $organiser->id)
-            ->where('kursendtermin', '>=', date('Y-m-d'))
-            ->with(['course:id,kursName'])
-            ->orderBy('kursstarttermin');
+            ->with(['course:id,kursName']);
 
         if (!$showAll) {
-            $query->where(function ($q) use ($authUserId) {
+            $baseQuery->where(function ($q) use ($authUserId) {
                 $q->whereHas('users', function ($u) use ($authUserId) {
                     $u->where('users.id', $authUserId);
                 })->orWhereHas('courseParticipantBookeds', function ($b) use ($authUserId) {
                     $b->where('participant_id', $authUserId)
-                      ->orWhere('mitglied_id', $authUserId)
-                      ->orWhere('trainer_id', $authUserId);
+                        ->orWhere('mitglied_id', $authUserId)
+                        ->orWhere('trainer_id', $authUserId);
                 });
             });
         }
 
+        $availableMonths = $this->getAvailableMonths($baseQuery);
+
+        if (!$hasExplicitMonthYear && $availableMonths->isNotEmpty()) {
+            $initialMonth = Carbon::create($year, $month, 1, 0, 0, 0);
+            $hasCurrentMonthEntries = $availableMonths->contains(function (Carbon $availableMonth) use ($initialMonth) {
+                return $availableMonth->isSameMonth($initialMonth);
+            });
+
+            if (!$hasCurrentMonthEntries) {
+                $lastDate = $availableMonths->last();
+                if ($lastDate instanceof Carbon) {
+                    $month = $lastDate->month;
+                    $year = $lastDate->year;
+                }
+            }
+        }
+
+        $selectedMonth = Carbon::create($year, $month, 1, 0, 0, 0);
+        $monthStart = $selectedMonth->copy()->startOfMonth();
+        $monthEnd = $selectedMonth->copy()->endOfMonth();
+        $prevMonth = $this->findPreviousAvailableMonth($availableMonths, $selectedMonth);
+        $nextMonth = $this->findNextAvailableMonth($availableMonths, $selectedMonth);
+        $prevYear = $this->findPreviousAvailableYear($availableMonths, $selectedMonth);
+        $nextYear = $this->findNextAvailableYear($availableMonths, $selectedMonth);
+
+        $query = (clone $baseQuery)
+            ->whereBetween('kursstarttermin', [$monthStart->toDateTimeString(), $monthEnd->toDateTimeString()])
+            ->orderBy('kursstarttermin');
+
+
         $coursedates = $query->get();
 
-        return view('components.backend.tripDistance.index', compact('coursedates', 'showAll'));
+        return view('components.backend.tripDistance.index', [
+            'coursedates' => $coursedates,
+            'showAll' => $showAll,
+            'month' => $month,
+            'year' => $year,
+            'currentMonthLabel' => $selectedMonth->format('m.Y'),
+            'prevMonth' => $this->toNavigationPayload($prevMonth),
+            'nextMonth' => $this->toNavigationPayload($nextMonth),
+            'prevYear' => $this->toNavigationPayload($prevYear),
+            'nextYear' => $this->toNavigationPayload($nextYear),
+        ]);
     }
 
     /**
@@ -57,6 +99,7 @@ class TripDistanceController extends Controller
         }
 
         $showAll = $request->boolean('all_courses');
+        [$month, $year] = $this->resolveMonthYear($request);
 
         $coursedate->load([
             'course:id,kursName',
@@ -90,7 +133,7 @@ class TripDistanceController extends Controller
         $organiser = $this->organiser();
 
         return view('components.backend.tripDistance.show',
-            compact('coursedate', 'showAll', 'organiser', 'uniqueBookings'));
+            compact('coursedate', 'showAll', 'organiser', 'uniqueBookings', 'month', 'year'));
     }
 
     /**
@@ -136,6 +179,8 @@ class TripDistanceController extends Controller
         return redirect()->route('backend.tripDistance.show', [
             'coursedate'  => $coursedate->id,
             'all_courses' => $request->boolean('all_courses') ? 1 : 0,
+            'month' => $request->input('month'),
+            'year' => $request->input('year'),
         ]);
     }
 
@@ -161,6 +206,8 @@ class TripDistanceController extends Controller
         return redirect()->route('backend.tripDistance.show', [
             'coursedate'  => $courseParticipantBooked->kurs_id,
             'all_courses' => $request->boolean('all_courses') ? 1 : 0,
+            'month' => $request->input('month'),
+            'year' => $request->input('year'),
         ]);
     }
 
@@ -194,7 +241,122 @@ class TripDistanceController extends Controller
         return redirect()->route('backend.tripDistance.show', [
             'coursedate'  => $coursedate->id,
             'all_courses' => $request->boolean('all_courses') ? 1 : 0,
+            'month' => $request->input('month'),
+            'year' => $request->input('year'),
         ]);
+    }
+
+    private function resolveMonthYear(Request $request): array
+    {
+        $month = (int) $request->input('month', date('n'));
+        $year = (int) $request->input('year', date('Y'));
+
+        if ($month < 1 || $month > 12) {
+            $month = (int) date('n');
+        }
+
+        if ($year < 2000 || $year > 2100) {
+            $year = (int) date('Y');
+        }
+
+        return [$month, $year];
+    }
+
+    private function getAvailableMonths($baseQuery): Collection
+    {
+        return (clone $baseQuery)
+            ->orderBy('kursstarttermin')
+            ->pluck('kursstarttermin')
+            ->map(function ($date) {
+                return Carbon::parse($date)->startOfMonth();
+            })
+            ->unique(function (Carbon $date) {
+                return $date->format('Y-m');
+            })
+            ->values();
+    }
+
+    private function findPreviousAvailableMonth(Collection $availableMonths, Carbon $selectedMonth): ?Carbon
+    {
+        $previous = null;
+
+        foreach ($availableMonths as $month) {
+            if ($month instanceof Carbon && $month->lt($selectedMonth)) {
+                $previous = $month;
+            }
+        }
+
+        return $previous;
+    }
+
+    private function findNextAvailableMonth(Collection $availableMonths, Carbon $selectedMonth): ?Carbon
+    {
+        foreach ($availableMonths as $month) {
+            if ($month instanceof Carbon && $month->gt($selectedMonth)) {
+                return $month;
+            }
+        }
+
+        return null;
+    }
+
+    private function findPreviousAvailableYear(Collection $availableMonths, Carbon $selectedMonth): ?Carbon
+    {
+        $previousYear = $availableMonths
+            ->pluck('year')
+            ->unique()
+            ->filter(function (int $year) use ($selectedMonth) {
+                return $year < $selectedMonth->year;
+            })
+            ->last();
+
+        if ($previousYear === null) {
+            return null;
+        }
+
+        return $this->pickClosestMonthForYear($availableMonths, (int) $previousYear, (int) $selectedMonth->month);
+    }
+
+    private function findNextAvailableYear(Collection $availableMonths, Carbon $selectedMonth): ?Carbon
+    {
+        $nextYear = $availableMonths
+            ->pluck('year')
+            ->unique()
+            ->first(function (int $year) use ($selectedMonth) {
+                return $year > $selectedMonth->year;
+            });
+
+        if ($nextYear === null) {
+            return null;
+        }
+
+        return $this->pickClosestMonthForYear($availableMonths, (int) $nextYear, (int) $selectedMonth->month);
+    }
+
+    private function pickClosestMonthForYear(Collection $availableMonths, int $year, int $preferredMonth): ?Carbon
+    {
+        $monthsInYear = $availableMonths
+            ->filter(function (Carbon $month) use ($year) {
+                return $month->year === $year;
+            })
+            ->sortBy(function (Carbon $month) use ($preferredMonth) {
+                return (abs($month->month - $preferredMonth) * 100) + $month->month;
+            })
+            ->values();
+
+        return $monthsInYear->first();
+    }
+
+    private function toNavigationPayload(?Carbon $date): ?array
+    {
+        if ($date === null) {
+            return null;
+        }
+
+        return [
+            'month' => $date->month,
+            'year' => $date->year,
+        ];
     }
 
     private function belongsToCurrentOrganiser(Coursedate $coursedate): bool
