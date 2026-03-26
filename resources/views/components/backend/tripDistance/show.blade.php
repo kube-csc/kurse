@@ -39,7 +39,7 @@
 
                         <div class="form-field">
                             <label for="kursFahrtenlaenge" class="form-label">
-                                Kursdistanz (km)
+                                Distanz (km)
                             </label>
                             <input id="kursFahrtenlaenge"
                                    type="text"

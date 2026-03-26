@@ -99,18 +99,26 @@
                                     </a>
                                 @endif
                                 @foreach($courseBookes as $courseBook)
+                                    @php
+                                        $participantFullName = trim(
+                                            (($courseBook->participant->vorname ?? '') . ' ' . ($courseBook->participant->nachname ?? ''))
+                                        );
+                                        if ($participantFullName === '' && isset($courseBook->participant)) {
+                                            $participantFullName = $courseBook->participant->name ?? 'Teilnehmer';
+                                        }
+                                    @endphp
                                     <a href="{{ route('backend.courseDate.destroyBooked' ,
                                         [
                                             'courseBookId'  => $courseBook->id,
                                             'coursedateId'  => $coursedate->id
                                         ]
                                         ) }}"
-                                       onclick="return confirm('Sind Sie sicher, dass Sie diesen {{ $courseBook->participant_id > 0 ? $courseBook->participant->name : 'Teilnehmer'}} löschen möchten?')"
+                                       onclick="return confirm('Sind Sie sicher, dass Sie diesen {{ $courseBook->participant_id > 0 ? $participantFullName : 'Teilnehmer' }} löschen möchten?')"
                                     >
                                       <span class="form-button"><box-icon name='user-minus'></box-icon>
                                           {{ $loop->iteration }}
                                           @if($courseBook->participant_id > 0)
-                                             {{ $courseBook->participant->name}}
+                                             {{ $participantFullName }}
                                           @else
                                              Teilnehmer
                                           @endif

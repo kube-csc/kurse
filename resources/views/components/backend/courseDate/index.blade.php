@@ -4,8 +4,8 @@
             <h2 class="header-h2">
                 {{ __('backend.Course Dates') }}
             </h2>
-            <div class="dasboard-iconbox w-12 ml-4">
-                <a href="{{ route('backend.courseDate.create') }}">
+            <div class="dasboard-iconbox ml-4">
+                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.create') }}" title="Kurstermin erstellen" aria-label="Kurstermin erstellen">
                     <box-icon name='calendar-plus'></box-icon>
                 </a>
             </div>
@@ -34,28 +34,34 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             @if($coursedate->booked_count==0)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}" title="Termin bearbeiten" aria-label="Termin bearbeiten">
                                     <box-icon name='calendar-edit'></box-icon>
                                 </a>
                             @else
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.editBooked', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.editBooked', $coursedate->id) }}" title="Termin bearbeiten" aria-label="Termin bearbeiten">
                                     <box-icon name='calendar-edit'></box-icon>
                                 </a>
                             @endif
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}" title="Teilnehmer und Material verwalten" aria-label="Teilnehmer und Material verwalten">
                                     <box-icon name='user'></box-icon>
                                 </a>
+                                <a class="dasboard-iconbox-a"
+                                   href="{{ route('backend.tripDistance.show', ['coursedate' => $coursedate->id, 'all_courses' => 0]) }}"
+                                   title="Fahrtenbuch öffnen"
+                                   aria-label="Fahrtenbuch öffnen">
+                                    <box-icon name='line-chart'></box-icon>
+                                </a>
                             @if($coursedate->booked_count==0)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" title="Termin löschen" aria-label="Termin löschen" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                     <box-icon name='trash'></box-icon>
                                 </a>
                             @else
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}" title="Buchungsinformationen anzeigen" aria-label="Buchungsinformationen anzeigen">
                                    <box-icon name='info-square'></box-icon>
                                 </a>
                             @endif
                             @if($coursedate->users->count() > 1)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}" title="Trainer vom Termin entfernen" aria-label="Trainer vom Termin entfernen">
                                     <box-icon name='minus'></box-icon>
                                 </a>
                            @endif
