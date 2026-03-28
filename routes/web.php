@@ -118,6 +118,7 @@ Route::middleware([
     Route::get('/backend/CourseBockedInformation/{coursedate}', [CoursedateController::class, 'CourseBockedInformation'])->name('backend.courseDate.CourseBockedInformation');
 
     Route::get('/backend/TripDistance', [TripDistanceController::class, 'index'])->name('backend.tripDistance.index');
+    Route::get('/backend/TripDistance/Report', [TripDistanceController::class, 'report'])->name('backend.tripDistance.report');
     Route::get('/backend/TripDistance/{coursedate}', [TripDistanceController::class, 'show'])->name('backend.tripDistance.show');
     Route::put('/backend/TripDistance/Coursedate/{coursedate}', [TripDistanceController::class, 'updateCoursedateDistance'])->name('backend.tripDistance.updateCoursedateDistance');
     Route::put('/backend/TripDistance/Participant/{courseParticipantBooked}', [TripDistanceController::class, 'updateParticipantDistance'])->name('backend.tripDistance.updateParticipantDistance');

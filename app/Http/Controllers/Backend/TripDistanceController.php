@@ -23,8 +23,8 @@ class TripDistanceController extends Controller
         $organiser  = $this->organiser();
         $showAll    = $request->boolean('all_courses');
         $authUserId = Auth::id();
-        $hasExplicitMonthYear = $request->filled('month') || $request->filled('year');
-        [$month, $year] = $this->resolveMonthYear($request);
+        $useRequestedMonthYear = $this->shouldUseRequestedMonthYear($request);
+        [$month, $year] = $this->resolveMonthYear($request, $useRequestedMonthYear);
 
         $baseQuery = Coursedate::query()
             ->where('organiser_id', $organiser->id)
@@ -43,21 +43,6 @@ class TripDistanceController extends Controller
         }
 
         $availableMonths = $this->getAvailableMonths($baseQuery);
-
-        if (!$hasExplicitMonthYear && $availableMonths->isNotEmpty()) {
-            $initialMonth = Carbon::create($year, $month, 1, 0, 0, 0);
-            $hasCurrentMonthEntries = $availableMonths->contains(function (Carbon $availableMonth) use ($initialMonth) {
-                return $availableMonth->isSameMonth($initialMonth);
-            });
-
-            if (!$hasCurrentMonthEntries) {
-                $lastDate = $availableMonths->last();
-                if ($lastDate instanceof Carbon) {
-                    $month = $lastDate->month;
-                    $year = $lastDate->year;
-                }
-            }
-        }
 
         $selectedMonth = Carbon::create($year, $month, 1, 0, 0, 0);
         $monthStart = $selectedMonth->copy()->startOfMonth();
@@ -84,6 +69,66 @@ class TripDistanceController extends Controller
             'nextMonth' => $this->toNavigationPayload($nextMonth),
             'prevYear' => $this->toNavigationPayload($prevYear),
             'nextYear' => $this->toNavigationPayload($nextYear),
+        ]);
+    }
+
+    /**
+     * Aktivitaetsuebersicht fuer Trainer-Fahrleistung (Monat + Jahr).
+     */
+    public function report(Request $request): View
+    {
+        $organiser  = $this->organiser();
+        $showAll    = $request->boolean('all_courses');
+        $authUserId = Auth::id();
+        $useRequestedMonthYear = $this->shouldUseRequestedMonthYear($request);
+        [$month, $year] = $this->resolveMonthYear($request, $useRequestedMonthYear);
+
+        $baseQuery = Coursedate::query()
+            ->where('organiser_id', $organiser->id)
+            ->with(['course:id,kursName', 'users:id,vorname,nachname']);
+
+        if (!$showAll) {
+            $baseQuery->whereHas('users', function ($u) use ($authUserId) {
+                $u->where('users.id', $authUserId);
+            });
+        }
+
+        $availableMonths = $this->getAvailableTripMonths($baseQuery);
+        $requestedMonth = Carbon::create($year, $month, 1, 0, 0, 0);
+        $selectedMonth = $this->resolveClosestOlderAvailableMonth($availableMonths, $requestedMonth);
+        $month = $selectedMonth->month;
+        $year = $selectedMonth->year;
+        $monthStart = $selectedMonth->copy()->startOfMonth();
+        $monthEnd = $selectedMonth->copy()->endOfMonth();
+        $prevMonth = $this->findPreviousAvailableMonth($availableMonths, $selectedMonth);
+        $nextMonth = $this->findNextAvailableMonth($availableMonths, $selectedMonth);
+        $prevYear = $this->findPreviousAvailableYear($availableMonths, $selectedMonth);
+        $nextYear = $this->findNextAvailableYear($availableMonths, $selectedMonth);
+
+        $monthlyCoursedates = (clone $baseQuery)
+            ->whereBetween('kursstarttermin', [$monthStart->toDateTimeString(), $monthEnd->toDateTimeString()])
+            ->orderBy('kursstarttermin')
+            ->get();
+
+        $yearStart = Carbon::create($year, 1, 1, 0, 0, 0)->startOfYear();
+        $yearEnd = $yearStart->copy()->endOfYear();
+
+        $yearlyCoursedates = (clone $baseQuery)
+            ->whereBetween('kursstarttermin', [$yearStart->toDateTimeString(), $yearEnd->toDateTimeString()])
+            ->orderBy('kursstarttermin')
+            ->get();
+
+        return view('components.backend.visualization.activitiesOverview', [
+            'showAll' => $showAll,
+            'month' => $month,
+            'year' => $year,
+            'currentMonthLabel' => $selectedMonth->format('m.Y'),
+            'prevMonth' => $this->toNavigationPayload($prevMonth),
+            'nextMonth' => $this->toNavigationPayload($nextMonth),
+            'prevYear' => $this->toNavigationPayload($prevYear),
+            'nextYear' => $this->toNavigationPayload($nextYear),
+            'monthlyStats' => $this->buildTrainerStats($monthlyCoursedates),
+            'yearlyStats' => $this->buildYearlyTrainerStats($yearlyCoursedates),
         ]);
     }
 
@@ -246,10 +291,14 @@ class TripDistanceController extends Controller
         ]);
     }
 
-    private function resolveMonthYear(Request $request): array
+    private function resolveMonthYear(Request $request, bool $useRequestedMonthYear = true): array
     {
-        $month = (int) $request->input('month', date('n'));
-        $year = (int) $request->input('year', date('Y'));
+        $month = $useRequestedMonthYear
+            ? (int) $request->input('month', date('n'))
+            : (int) date('n');
+        $year = $useRequestedMonthYear
+            ? (int) $request->input('year', date('Y'))
+            : (int) date('Y');
 
         if ($month < 1 || $month > 12) {
             $month = (int) date('n');
@@ -260,6 +309,11 @@ class TripDistanceController extends Controller
         }
 
         return [$month, $year];
+    }
+
+    private function shouldUseRequestedMonthYear(Request $request): bool
+    {
+        return $request->boolean('nav');
     }
 
     private function getAvailableMonths($baseQuery): Collection
@@ -274,6 +328,57 @@ class TripDistanceController extends Controller
                 return $date->format('Y-m');
             })
             ->values();
+    }
+
+    private function getAvailableTripMonths($baseQuery): Collection
+    {
+        return (clone $baseQuery)
+            ->orderBy('kursstarttermin')
+            ->get()
+            ->filter(function (Coursedate $coursedate) {
+                return $this->hasTripDistance($coursedate);
+            })
+            ->pluck('kursstarttermin')
+            ->map(function ($date) {
+                return Carbon::parse($date)->startOfMonth();
+            })
+            ->unique(function (Carbon $date) {
+                return $date->format('Y-m');
+            })
+            ->values();
+    }
+
+    private function hasTripDistance(Coursedate $coursedate): bool
+    {
+        foreach ($coursedate->users as $trainer) {
+            if (round((float) ($trainer->pivot->trainerFahrtenlaenge ?? 0), 2) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function resolveClosestOlderAvailableMonth(Collection $availableMonths, Carbon $requestedMonth): Carbon
+    {
+        if ($availableMonths->isEmpty()) {
+            return $requestedMonth;
+        }
+
+        $hasRequestedMonth = $availableMonths->contains(function (Carbon $availableMonth) use ($requestedMonth) {
+            return $availableMonth->isSameMonth($requestedMonth);
+        });
+
+        if ($hasRequestedMonth) {
+            return $requestedMonth;
+        }
+
+        $previousMonth = $this->findPreviousAvailableMonth($availableMonths, $requestedMonth);
+        if ($previousMonth instanceof Carbon) {
+            return $previousMonth;
+        }
+
+        return $availableMonths->first();
     }
 
     private function findPreviousAvailableMonth(Collection $availableMonths, Carbon $selectedMonth): ?Carbon
@@ -356,6 +461,96 @@ class TripDistanceController extends Controller
         return [
             'month' => $date->month,
             'year' => $date->year,
+        ];
+    }
+
+    private function buildTrainerStats(Collection $coursedates): array
+    {
+        $trainers = [];
+        $tripCount = 0;
+        $totalDistance = 0.0;
+
+        foreach ($coursedates as $coursedate) {
+            $tripDistance = 0.0;
+
+            foreach ($coursedate->users as $trainer) {
+                $distance = round((float) ($trainer->pivot->trainerFahrtenlaenge ?? 0), 2);
+
+                if ($distance <= 0) {
+                    continue;
+                }
+
+                $tripDistance += $distance;
+                $totalDistance += $distance;
+
+                if (!isset($trainers[$trainer->id])) {
+                    $trainers[$trainer->id] = [
+                        'id' => $trainer->id,
+                        'name' => trim(($trainer->vorname ?? '') . ' ' . ($trainer->nachname ?? '')),
+                        'distance' => 0.0,
+                        'rides' => 0,
+                    ];
+                }
+
+                $trainers[$trainer->id]['distance'] += $distance;
+                $trainers[$trainer->id]['rides']++;
+            }
+
+            if ($tripDistance > 0) {
+                $tripCount++;
+            }
+        }
+
+        $trainerRows = collect($trainers)
+            ->map(function (array $trainer) {
+                $trainer['distance'] = round((float) $trainer['distance'], 2);
+                return $trainer;
+            })
+            ->sortByDesc('distance')
+            ->values()
+            ->all();
+
+        return [
+            'trip_count' => $tripCount,
+            'trainer_count' => count($trainerRows),
+            'total_distance' => round($totalDistance, 2),
+            'trainers' => $trainerRows,
+        ];
+    }
+
+    private function buildYearlyTrainerStats(Collection $coursedates): array
+    {
+        $stats = $this->buildTrainerStats($coursedates);
+        $trips = [];
+
+        foreach ($coursedates as $coursedate) {
+            $tripDistance = 0.0;
+
+            foreach ($coursedate->users as $trainer) {
+                $distance = round((float) ($trainer->pivot->trainerFahrtenlaenge ?? 0), 2);
+                if ($distance > 0) {
+                    $tripDistance += $distance;
+                }
+            }
+
+            if ($tripDistance <= 0) {
+                continue;
+            }
+
+            $trips[] = [
+                'date' => Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y H:i'),
+                'course' => $coursedate->course->kursName ?? '–',
+                'distance' => round($tripDistance, 2),
+            ];
+        }
+
+        return [
+            'trip_count' => $stats['trip_count'],
+            'trainer_count' => $stats['trainer_count'],
+            'yearly_distance' => $stats['total_distance'],
+            'total_distance' => $stats['total_distance'],
+            'trainers' => $stats['trainers'],
+            'trips' => $trips,
         ];
     }
 

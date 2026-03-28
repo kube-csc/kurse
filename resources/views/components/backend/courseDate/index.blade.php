@@ -123,7 +123,6 @@
                             https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
                         </a>
                     </div>
-                    </div>
                 </div>
                 @endif
             @endforeach

@@ -5,11 +5,26 @@
         </h2>
         <div class="dasboard-iconbox">
             <a class="dasboard-iconbox-a"
-               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year]) }}"
+               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
                title="Zurück zur Kursauswahl"
                aria-label="Zurück zur Kursauswahl">
                 <box-icon name='arrow-back'></box-icon>
             </a>
+            @if($showAll)
+                <a class="dasboard-iconbox-a"
+                   href="{{ route('backend.tripDistance.index', ['all_courses' => 0, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
+                   title="Auf meine Termine wechseln"
+                   aria-label="Auf meine Termine wechseln">
+                    <box-icon name='user'></box-icon>
+                </a>
+            @else
+                <a class="dasboard-iconbox-a"
+                   href="{{ route('backend.tripDistance.index', ['all_courses' => 1, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
+                   title="Auf alle Termine wechseln"
+                   aria-label="Auf alle Termine wechseln">
+                    <box-icon name='calendar-event'></box-icon>
+                </a>
+            @endif
         </div>
     </x-slot>
 
@@ -131,7 +146,7 @@
                 </div>
 
                 <div class="form-footer">
-                    <a href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year]) }}"
+                    <a href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
                        class="form-button">
                         {{ __('main.back') }}
                     </a>

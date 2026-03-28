@@ -1,5 +1,5 @@
 <h1>Internetauftritt von Kursangebote</h1>
-Version 00.02.00
+Version 00.02.01
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -99,12 +99,27 @@ benötigt.
     <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
     <li>Sportgeräte anlegen, bearbeiten, löschen</li>
     <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
+    <li>Fahrtenbuch: Distanz (km) je Termin erfassen, auf Trainer und Teilnehmer verteilen oder individuell überschreiben
+        <ul>
+            <li>Monats- und Jahresnavigation mit automatischem Überspringen leerer Monate</li>
+            <li>Umschaltung zwischen „meine Termine" und „alle Termine" per Icon</li>
+            <li>Direkteinstieg aus der Terminübersicht (CourseDate / CourseDateAll) je Termin</li>
+            <li>Dashboard-Einstiege: „Fahrtenbuch alle Termine" und „Fahrtenbuch meine Termine"</li>
+        </ul>
+    </li>
+    <li>Aktivitätsbericht: Auswertung der Trainer-Fahrleistung im gewählten Zeitraum
+        <ul>
+            <li>Aggregierte Fahrleistung (km) je Trainer für den gefilterten Monat/Jahr</li>
+            <li>Jahresstatistik mit Gesamtdistanz, Anzahl Fahrten und Trainer-Einzelauswertung</li>
+            <li>Dashboard-Einstieg „Aktivitätsbericht" direkt in der Dashboard-Übersicht</li>
+        </ul>
+    </li>
 </ul>
 <h2>Installation</h2>
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.01</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.03</a>
 </p>
 
 <h4>Demodaten</h4>

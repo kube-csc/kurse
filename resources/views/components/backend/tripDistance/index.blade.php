@@ -10,10 +10,11 @@
         <div class="dashboard-flexbox">
             <div class="dashboard-flexbox-b1-2">
                 <div class="dashboard-flexbox-text">
-                    <div class="dasboard-iconbox flex items-center gap-2 flex-wrap">
+                    <div class="dasboard-iconbox">
+                        <div class="flex items-center gap-2 flex-wrap">
                         @if($prevYear)
                             <a class="dasboard-iconbox-a"
-                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $prevYear['month'], 'year' => $prevYear['year']]) }}"
+                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $prevYear['month'], 'year' => $prevYear['year'], 'nav' => 1]) }}"
                                title="Ein Jahr zurück"
                                aria-label="Ein Jahr zurück">
                                 <box-icon name='chevrons-left'></box-icon>
@@ -26,7 +27,7 @@
 
                         @if($prevMonth)
                             <a class="dasboard-iconbox-a"
-                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $prevMonth['month'], 'year' => $prevMonth['year']]) }}"
+                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $prevMonth['month'], 'year' => $prevMonth['year'], 'nav' => 1]) }}"
                                title="Ein Monat zurück"
                                aria-label="Ein Monat zurück">
                                 <box-icon name='chevron-left'></box-icon>
@@ -43,7 +44,7 @@
 
                         @if($nextMonth)
                             <a class="dasboard-iconbox-a"
-                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $nextMonth['month'], 'year' => $nextMonth['year']]) }}"
+                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $nextMonth['month'], 'year' => $nextMonth['year'], 'nav' => 1]) }}"
                                title="Ein Monat vor"
                                aria-label="Ein Monat vor">
                                 <box-icon name='chevron-right'></box-icon>
@@ -56,7 +57,7 @@
 
                         @if($nextYear)
                             <a class="dasboard-iconbox-a"
-                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $nextYear['month'], 'year' => $nextYear['year']]) }}"
+                               href="{{ route('backend.tripDistance.index', ['all_courses' => $showAll ? 1 : 0, 'month' => $nextYear['month'], 'year' => $nextYear['year'], 'nav' => 1]) }}"
                                title="Ein Jahr vor"
                                aria-label="Ein Jahr vor">
                                 <box-icon name='chevrons-right'></box-icon>
@@ -66,6 +67,25 @@
                                 <box-icon name='chevrons-right'></box-icon>
                             </span>
                         @endif
+                        </div>
+
+                        <div class="mt-1 flex items-center">
+                            @if($showAll)
+                                <a class="dasboard-iconbox-a"
+                                   href="{{ route('backend.tripDistance.index', ['all_courses' => 0, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
+                                   title="Auf meine Termine wechseln"
+                                   aria-label="Auf meine Termine wechseln">
+                                    <box-icon name='user'></box-icon>
+                                </a>
+                            @else
+                                <a class="dasboard-iconbox-a"
+                                   href="{{ route('backend.tripDistance.index', ['all_courses' => 1, 'month' => $month, 'year' => $year, 'nav' => 1]) }}"
+                                   title="Auf alle Termine wechseln"
+                                   aria-label="Auf alle Termine wechseln">
+                                    <box-icon name='calendar-event'></box-icon>
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

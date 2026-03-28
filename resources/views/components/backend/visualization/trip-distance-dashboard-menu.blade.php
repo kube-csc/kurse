@@ -4,7 +4,7 @@
             <h2 class="dasboard-iconbox-h2">Aktivitaetsbericht</h2>
             <div class="dasboard-iconbox">
                 <a class="dasboard-iconbox-a"
-                   href="{{ route('backend.tripDistance.index', ['all_courses' => 1]) }}"
+                   href="{{ route('backend.tripDistance.report', ['all_courses' => 1]) }}"
                    title="Aktivitaetsbericht oeffnen"
                    aria-label="Aktivitaetsbericht oeffnen">
                     <box-icon name='bar-chart-alt-2'></box-icon>
