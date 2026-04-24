@@ -47,6 +47,7 @@ Route::get('/Trainer', [HomeController::class, 'trainer']);
 Route::get('/Sportgeraete', [HomeController::class, 'sportUnit']);
 Route::get('/Kurse', [HomeController::class, 'coursetype']);
 Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('frontend.course');
+Route::get('/Kurseangebot/{coursedate}/Kalender.ics', [CoursedateController::class, 'downloadIcs'])->name('frontend.course.downloadIcs');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
 Route::middleware([
@@ -116,6 +117,7 @@ Route::middleware([
     Route::get('/backend/CourseDateTrainerPick{coursedateId}', [CoursedateController::class, 'trainerRegister'])->name('backend.courseDate.trainerRegister');
     Route::get('/backend/CourseDateTrainerDestroy/{coursedateId}', [CoursedateController::class, 'trainerDestroy'])->name('backend.courseDate.trainerDestroy');
     Route::get('/backend/CourseBockedInformation/{coursedate}', [CoursedateController::class, 'CourseBockedInformation'])->name('backend.courseDate.CourseBockedInformation');
+    Route::get('/backend/CourseDateIcs/{coursedate}', [CoursedateController::class, 'downloadIcs'])->name('backend.courseDate.downloadIcs');
 
     Route::get('/backend/TripDistance', [TripDistanceController::class, 'index'])->name('backend.tripDistance.index');
     Route::get('/backend/TripDistance/Report', [TripDistanceController::class, 'report'])->name('backend.tripDistance.report');

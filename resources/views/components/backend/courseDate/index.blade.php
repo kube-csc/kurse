@@ -65,6 +65,9 @@
                                     <box-icon name='minus'></box-icon>
                                 </a>
                            @endif
+                           <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.downloadIcs', $coursedate->id) }}" title="Kalendereintrag herunterladen (ICS)" aria-label="Kalendereintrag herunterladen">
+                                <box-icon name='calendar-check'></box-icon>
+                           </a>
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
@@ -119,7 +122,7 @@
                         <button type="button" class="dasboard-iconbox-a" title="Link kopieren" aria-label="Link kopieren" onclick="copyBookingLink(@js('https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id), this)">
                             <box-icon name='copy' size=xs'></box-icon>
                         </button>
-                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer">
+                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer"  class="text-sm text-blue-600 hover:text-blue-800 break-all">
                             https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
                         </a>
                     </div>

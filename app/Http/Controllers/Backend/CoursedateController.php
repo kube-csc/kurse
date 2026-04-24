@@ -825,4 +825,110 @@ class CoursedateController extends Controller
             ]);
         }
     }
+
+    /**
+     * Download ICS calendar file for a coursedate.
+     */
+    public function downloadIcs(Coursedate $coursedate)
+    {
+        $organiser = $this->organiser();
+        $course    = $coursedate->getCousename;
+
+        $dtstart  = gmdate('Ymd\THis\Z', strtotime($coursedate->kursstarttermin));
+        $dtend    = gmdate('Ymd\THis\Z', strtotime($coursedate->kursendtermin));
+        $dtstamp  = gmdate('Ymd\THis\Z');
+        $uid      = 'coursedate-' . $coursedate->id . '@' . $organiser->veranstaltungDomain;
+        $summary  = $course ? $course->kursName : 'Kurstermin';
+        $location = $organiser->veranstaltungDomain ?? '';
+        $url      = 'https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id;
+        $impressumHtml = trim((string) view('textimport.mailImpressum')->render());
+
+        // Plain-Text-Beschreibung (HTML-Tags entfernen, Zeilenumbrueche fuer ICS escapen)
+        $plainInfo = '';
+        $htmlInfo  = '';
+        $sourceHtml = trim((string) ($coursedate->kursInformation ?? ''));
+        if ($impressumHtml !== '') {
+            $sourceHtml .= ($sourceHtml !== '' ? '<br><br>' : '') . $impressumHtml;
+        }
+
+        if ($sourceHtml !== '') {
+            // <br> als echte Textumbrueche behandeln, bevor HTML-Tags entfernt werden
+            $plainSource = preg_replace('/<\s*br\s*\/?\s*>/i', "\n", $sourceHtml);
+
+            $plainInfo = strip_tags(html_entity_decode($plainSource, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $plainInfo = str_replace(["\r\n", "\r"], "\n", $plainInfo);
+            $plainInfo = preg_replace('/[ \t]+/', ' ', $plainInfo);
+            $plainInfo = preg_replace("/\n{3,}/", "\n\n", $plainInfo);
+            $plainInfo = trim($plainInfo);
+            $plainInfo = str_replace(['\\', ';', ','], ['\\\\', '\\;', '\\,'], $plainInfo);
+            $plainInfo = str_replace(["\n"], '\\n', $plainInfo);
+
+            // HTML per DOMDocument parsen -> text nodes werden korrekt escaped
+            // (verhindert kaputtes HTML durch unescapte < > & in Texten)
+            $dom = new \DOMDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHTML(
+                '<html lang="de"><head><meta charset="UTF-8"></head><body>'
+                . $sourceHtml
+                . '</body></html>'
+            );
+            libxml_clear_errors();
+            $body = $dom->getElementsByTagName('body')->item(0);
+            $fixedHtml = '';
+            if ($body) {
+                foreach ($body->childNodes as $node) {
+                    $fixedHtml .= $dom->saveHTML($node);
+                }
+            }
+            // Zeilenumbrueche entfernen - ICS-Folding uebernimmt den Umbruch
+            $htmlInfo = trim(str_replace(["\r\n", "\r", "\n", "\t"], ' ', $fixedHtml));
+        }
+
+        $description     = $summary . ($plainInfo ? '\\n' . $plainInfo : '');
+        $descriptionHtml = '<html lang="de"><body><b>' . htmlspecialchars($summary, ENT_QUOTES, 'UTF-8') . '</b>'
+            . ($htmlInfo ? '<br>' . $htmlInfo : '')
+            . '</body></html>';
+
+        // RFC 5545: Zeilen auf max. 75 Oktets falten (Fortsetzung mit CRLF + Leerzeichen)
+        $fold = function (string $line): string {
+            $out    = '';
+            $bytes  = 0;
+            $chars  = mb_str_split($line, 1, 'UTF-8');
+            foreach ($chars as $char) {
+                $len = strlen($char); // Byte-Länge des UTF-8-Zeichens
+                if ($bytes + $len > 75) {
+                    $out   .= "\r\n ";
+                    $bytes  = 1; // das führende Leerzeichen zählt
+                }
+                $out   .= $char;
+                $bytes += $len;
+            }
+            return $out . "\r\n";
+        };
+
+        $ics = $fold("BEGIN:VCALENDAR")
+            . $fold("VERSION:2.0")
+            . $fold("PRODID:-//Kursverwaltung//DE")
+            . $fold("CALSCALE:GREGORIAN")
+            . $fold("METHOD:PUBLISH")
+            . $fold("BEGIN:VEVENT")
+            . $fold("UID:{$uid}")
+            . $fold("DTSTAMP:{$dtstamp}")
+            . $fold("DTSTART:{$dtstart}")
+            . $fold("DTEND:{$dtend}")
+            . $fold("SUMMARY:{$summary}")
+            . $fold("DESCRIPTION:{$description}")
+            . $fold("X-ALT-DESC;FMTTYPE=text/html:{$descriptionHtml}")
+            . $fold("LOCATION:{$location}")
+            . $fold("URL:{$url}")
+            . $fold("END:VEVENT")
+            . $fold("END:VCALENDAR");
+
+        $filename = 'Kurstermin-' . $coursedate->id . '.ics';
+
+        return response($ics, 200, [
+            'Content-Type'        => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
 }

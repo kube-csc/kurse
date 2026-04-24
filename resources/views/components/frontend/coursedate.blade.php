@@ -58,7 +58,15 @@
                 <br>
                 <b>Dauer:</b> {{ date('H:i', strtotime($coursedate->kurslaenge)) }} Stunde(n)<br>
                 <b>Teilnehmer:</b> {{ $teilnehmerKursBookeds }} von {{ $sportgeraetanzahlMax }}<br>
-                <br>
+
+                <a href="{{ route('frontend.course.downloadIcs', $coursedate->id) }}"
+                   class="btn btn-outline-primary btn-sm mt-2"
+                   title="Kalendereintrag herunterladen"
+                   aria-label="Kalendereintrag herunterladen">
+                    <i class="bx bx-calendar"></i>
+                    Zum Kalender hinzufügen (.ics)
+                </a>
+                <br><br>
                 @if(Auth::check())
                     @if (Auth::user()->getTable()=='course_participants')
                       <b>Deine gebuchten Teilnehmer:</b> {{ $courseBookedCount }}
