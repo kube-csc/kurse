@@ -23,7 +23,24 @@ class CourseParticipantController extends Controller
     {
         $organiser = $this->organiser();
 
-        $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
+        $courseIdsParam = request()->input('course_ids');
+
+        // Wenn im Request nicht vorhanden, versuche aus Session zu laden
+        if ($courseIdsParam === null && session()->has('course_embed_filter')) {
+            $courseIdsParam = session('course_embed_filter');
+        }
+
+        $filterCourseIds = [];
+        if ($courseIdsParam !== null) {
+            if (is_array($courseIdsParam)) {
+                $filterCourseIds = array_map('intval', $courseIdsParam);
+            } else {
+                $filterCourseIds = array_map('intval', explode(',', $courseIdsParam));
+            }
+            $filterCourseIds = array_filter($filterCourseIds);
+        }
+
+        $coursedatesQuery = Coursedate::where('coursedates.organiser_id', $organiser->id)
             // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Kursleiter zugeordnet sind
             // Aktuel wird das in der blade mit einer if Abfrage gemacht
             //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
@@ -34,10 +51,13 @@ class CourseParticipantController extends Controller
             }])
             ->withCount(['courseParticipantBookeds as bookedSelf_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', Auth::user()->id);
-            }])
-            ->orderBy('kursstarttermin')
-            //->paginate(20);
-            ->get();
+            }]);
+
+        if (!empty($filterCourseIds)) {
+            $coursedatesQuery->whereIn('coursedates.course_id', $filterCourseIds);
+        }
+
+        $coursedates = $coursedatesQuery->orderBy('kursstarttermin')->get();
 
         return view('components.courseBooking.course.index', compact('coursedates', 'organiser'));
     }
@@ -66,6 +86,83 @@ class CourseParticipantController extends Controller
             ->get();
 
         return view('components.courseBooking.course.indexParticipant', compact('coursedates', 'organiser'));
+    }
+
+    /**
+     * Öffentliche Einbettungsansicht für externe Webseiten.
+     */
+    public function embed()
+    {
+        $organiser = $this->organiser();
+        $debugUrl  = request()->fullUrl();
+        $showDebug = config('app.debug') && request()->boolean('debug');
+
+        $isCourseParticipantLoggedIn = Auth::check()
+            && method_exists(Auth::user(), 'getTable')
+            && Auth::user()->getTable() === 'course_participants';
+
+        // Optionaler Filter: ?course_ids=1,2,3  oder  ?course_ids[]=1&course_ids[]=2
+        $courseIdsParam = request()->input('course_ids');
+
+        // In Session speichern, falls im Request vorhanden
+        if (request()->has('course_ids')) {
+            session(['course_embed_filter' => $courseIdsParam]);
+        }
+
+        $filterCourseIds = [];
+        if ($courseIdsParam !== null) {
+            if (is_array($courseIdsParam)) {
+                $filterCourseIds = array_map('intval', $courseIdsParam);
+            } else {
+                $filterCourseIds = array_map('intval', explode(',', $courseIdsParam));
+            }
+            $filterCourseIds = array_filter($filterCourseIds); // 0-Werte entfernen
+        }
+
+        $coursedatesQuery = Coursedate::where('coursedates.organiser_id', $organiser->id)
+            ->where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')))
+            ->with(['getCousename', 'users'])
+            ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
+                $query->whereColumn('kurs_id', 'coursedates.id');
+            }])
+            ->orderBy('kursstarttermin');
+
+        // Kursfilterung anwenden (course_id = Kursvorlage, nicht Kurstermin-ID)
+        if (!empty($filterCourseIds)) {
+            $coursedatesQuery->whereIn('coursedates.course_id', $filterCourseIds);
+        }
+
+        if ($isCourseParticipantLoggedIn) {
+            $participantId = (int) Auth::id();
+            $coursedatesQuery->withCount(['courseParticipantBookeds as bookedSelf_count' => function ($query) use ($participantId) {
+                $query->whereColumn('kurs_id', 'coursedates.id')->where('participant_id', $participantId);
+            }]);
+        }
+
+        $coursedates = $coursedatesQuery->get();
+
+        if (!$isCourseParticipantLoggedIn) {
+            $coursedates->each(function ($coursedate) {
+                $coursedate->bookedSelf_count = 0;
+            });
+        }
+
+        if (request()->wantsJson() || request()->has('json')) {
+            return response()->json([
+                'coursedates' => $coursedates,
+                'isLoggedIn' => $isCourseParticipantLoggedIn,
+                'organiser' => $organiser
+            ]);
+        }
+
+        return view('components.embed.course.courseEmbed', compact(
+            'coursedates',
+            'organiser',
+            'isCourseParticipantLoggedIn',
+            'debugUrl',
+            'filterCourseIds',
+            'showDebug'
+        ));
     }
 
     /**

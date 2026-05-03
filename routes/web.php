@@ -50,6 +50,8 @@ Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('f
 Route::get('/Kurseangebot/{coursedate}/Kalender.ics', [CoursedateController::class, 'downloadIcs'])->name('frontend.course.downloadIcs');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
+Route::get('/Kursbuchung/Einbetten', [CourseParticipantController::class, 'embed'])->name('courseBooking.course.embed');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
