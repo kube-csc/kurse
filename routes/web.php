@@ -50,12 +50,13 @@ Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('f
 Route::get('/Kurseangebot/{coursedate}/Kalender.ics', [CoursedateController::class, 'downloadIcs'])->name('frontend.course.downloadIcs');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
-Route::get('/Kursbuchung/Einbetten', [CourseParticipantController::class, 'embed'])->name('courseBooking.course.embed');
+Route::get('/Kursbuchung/Einbetten', [CourseParticipantController::class, 'embed'])->name('courseBooking.course.embed')->middleware('allowIframes');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'allowIframes'
 ])->group(function () {
     Route::get('/dashboard', function () {
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
@@ -76,7 +77,7 @@ Route::middleware([
     Route::get('/Kursbuchung/stornieren/{coursedateId}/{courseBookId}', [CourseParticipantController::class, 'destroyBooked'])->name('courseBooking.course.destroyBooked');
 });
 
-Route::middleware('admin:admin')->group(function () {
+Route::middleware('admin:admin')->middleware('allowIframes')->group(function () {
     Route::get('admin/login', [AdminController::Class, 'loginForm']);
     Route::post('admin/login', [AdminController::Class, 'store'])->name('admin.login');
 });
@@ -84,7 +85,8 @@ Route::middleware('admin:admin')->group(function () {
 Route::middleware([
     'auth:sanctum,admin',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'allowIframes'
 ])->group(function () {
     Route::get('/admin/dashboard', function () {
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
