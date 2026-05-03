@@ -109,6 +109,9 @@ class CourseParticipantController extends Controller
             session(['course_embed_filter' => $courseIdsParam]);
         }
 
+        // Flag für IFrame-Modus setzen
+        session(['is_iframe_mode' => true]);
+
         $filterCourseIds = [];
         if ($courseIdsParam !== null) {
             if (is_array($courseIdsParam)) {

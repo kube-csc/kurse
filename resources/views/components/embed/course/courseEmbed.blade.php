@@ -129,9 +129,32 @@
                         @endif
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="course-embed-button">Zum Buchen einloggen</a>
+                    @php
+                        $loginUrl = route('login');
+                        if (!empty($filterCourseIds)) {
+                            $loginUrl .= '?course_ids=' . implode(',', $filterCourseIds);
+                        }
+                    @endphp
+                    <a href="{{ $loginUrl }}" class="course-embed-button">Zum Buchen einloggen</a>
                 @endif
             </div>
         @endforeach
     </div>
+    <script>
+        // Falls wir in einem IFrame sind, verstecken wir Navigations-Elemente,
+        // falls sie durch das Session-Flag noch nicht erfasst wurden oder
+        // falls statisches HTML geladen wird.
+        if (window.self !== window.top) {
+            document.querySelectorAll('a[href="{{ request()->getSchemeAndHttpHost() }}"]').forEach(function(el) {
+                el.style.display = 'none';
+            });
+            // Zusätzliche Logik für Links, die "Home" oder "Logo" enthalten könnten
+            document.querySelectorAll('.logo, .nav-menu li:first-child').forEach(function(el) {
+                // Nur wenn sie den Host-Link enthalten
+                if (el.querySelector('a[href="{{ request()->getSchemeAndHttpHost() }}"]')) {
+                    el.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </div>
