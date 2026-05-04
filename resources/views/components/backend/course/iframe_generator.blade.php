@@ -84,15 +84,15 @@
                     </div>
                 </div>
             </div>
-            <div class="form-footer flex flex-col sm:flex-row justify-between items-center gap-4">
-                <a href="{{ route('backend.course.index') }}" class="form-button w-full sm:w-auto text-center">
+            <div class="form-footer flex justify-between items-center">
+                <a href="{{ route('backend.course.index') }}" class="form-button">
                     {{ __('main.back') }}
                 </a>
-                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                    <span x-show="copied" x-transition.opacity class="text-green-600 font-bold order-2 sm:order-1">
+                <div x-data="{}" class="flex items-center gap-4">
+                    <span x-show="copied" x-transition.opacity class="text-green-600 font-bold">
                         {{ __('backend.IFrame Generator Copy Code Success') ?? __('Kopiert!') }}
                     </span>
-                    <button type="button" class="form-button w-full sm:w-auto order-1 sm:order-2" @click="copyCode()">
+                    <button type="button" class="form-button" @click="copyCode()">
                         {{ __('backend.IFrame Generator Copy Code') }}
                     </button>
                 </div>
