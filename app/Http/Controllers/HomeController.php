@@ -301,6 +301,10 @@ class HomeController extends Controller
     public function logout(){
         Auth::logout();
 
+        if (session()->has('embed_origin_url')) {
+            return redirect(session('embed_origin_url'));
+        }
+
         return redirect(url()->previous());
     }
 }

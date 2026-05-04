@@ -4,8 +4,16 @@
     <div class="container d-flex align-items-center">
 
         <div class="logo mr-auto">
-            @if(session('is_iframe_mode'))
-                <h1 class="text-light"><span>{{ $_SERVER['HTTP_HOST'] }}</span></h1>
+            @if(session('is_iframe_mode') || session('embed_origin_url'))
+                @php
+                    $homeUrl = session('embed_origin_url') ?: request()->getSchemeAndHttpHost();
+                    $isExternal = session()->has('embed_origin_url');
+                @endphp
+                <h1 class="text-light">
+                    <a href="{{ $homeUrl }}" @if($isExternal) target="_top" @endif>
+                        <span>{{ $_SERVER['HTTP_HOST'] }}</span>
+                    </a>
+                </h1>
             @else
                 <h1 class="text-light"><a href="{{ request()->getSchemeAndHttpHost() }}"><span>{{ $_SERVER['HTTP_HOST'] }}</span></a></h1>
             @endif
@@ -24,7 +32,9 @@
 
         <nav class="nav-menu d-none d-lg-block">
             <ul>
-                @if(!session('is_iframe_mode'))
+                @if(session('embed_origin_url'))
+                    <li><a href="{{ session('embed_origin_url') }}" target="_top">Home</a></li>
+                @elseif(!session('is_iframe_mode'))
                     <li class="active"><a href="{{ request()->getSchemeAndHttpHost() }}">Home</a></li>
                 @endif
 
