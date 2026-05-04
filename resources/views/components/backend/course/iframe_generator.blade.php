@@ -34,14 +34,29 @@
 </iframe>`;
         },
         copyCode() {
-            const textarea = document.createElement('textarea');
-            textarea.value = this.iframeCode;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            this.copied = true;
-            setTimeout(() => { this.copied = false }, 2000);
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(this.iframeCode).then(() => {
+                    this.copied = true;
+                    setTimeout(() => { this.copied = false }, 2000);
+                });
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = this.iframeCode;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    this.copied = true;
+                    setTimeout(() => { this.copied = false }, 2000);
+                } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
+                }
+                document.body.removeChild(textarea);
+            }
         }
     }">
         <div class="box">
@@ -51,15 +66,13 @@
                         <label class="form-label">{{ __('backend.IFrame Generator Select Courses') }}</label>
                         <div class="dashboard-flexbox">
                             @foreach($courses as $course)
-                                <div class="dashboard-flexbox-b1-2">
-                                    <div class="dashboard-flexbox-text">
-                                        <div class="flex justify-between items-start">
-                                            <div class="label">
-                                                {{ $course->kursName }}
-                                            </div>
-                                            <input type="checkbox" value="{{ $course->id }}" x-model="selectedIds" class="w-5 h-5">
-                                        </div>
-                                    </div>
+                                <div class="dashboard-flexbox-b1-2 mb-2">
+                                    <label class="dashboard-flexbox-text flex justify-between items-center cursor-pointer p-4 border rounded-md hover:bg-gray-50">
+                                        <span class="label mb-0">
+                                            {{ $course->kursName }}
+                                        </span>
+                                        <input type="checkbox" value="{{ $course->id }}" x-model="selectedIds" class="w-6 h-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    </label>
                                 </div>
                             @endforeach
                         </div>
@@ -71,15 +84,15 @@
                     </div>
                 </div>
             </div>
-            <div class="form-footer flex justify-between items-center">
-                <a href="{{ route('backend.course.index') }}" class="form-button">
+            <div class="form-footer flex flex-col sm:flex-row justify-between items-center gap-4">
+                <a href="{{ route('backend.course.index') }}" class="form-button w-full sm:w-auto text-center">
                     {{ __('main.back') }}
                 </a>
-                <div class="flex items-center gap-4">
-                    <span x-show="copied" x-transition.opacity class="text-green-600 font-bold">
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                    <span x-show="copied" x-transition.opacity class="text-green-600 font-bold order-2 sm:order-1">
                         {{ __('backend.IFrame Generator Copy Code Success') ?? __('Kopiert!') }}
                     </span>
-                    <button type="button" class="form-button" @click="copyCode()">
+                    <button type="button" class="form-button w-full sm:w-auto order-1 sm:order-2" @click="copyCode()">
                         {{ __('backend.IFrame Generator Copy Code') }}
                     </button>
                 </div>

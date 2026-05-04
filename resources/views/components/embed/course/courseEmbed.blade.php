@@ -77,8 +77,8 @@
                     $registerUrl .= $queryString;
                 }
             @endphp
-            <a href="{{ $loginUrl }}" class="course-embed-button">Login</a>
-            <a href="{{ $registerUrl }}" class="course-embed-button">Registrieren</a>
+            <a href="{{ $loginUrl }}" class="course-embed-button" target="_top">Login</a>
+            <a href="{{ $registerUrl }}" class="course-embed-button" target="_top">Registrieren</a>
         </div>
     @endif
 
@@ -135,7 +135,7 @@
                             $loginUrl .= '?course_ids=' . implode(',', $filterCourseIds);
                         }
                     @endphp
-                    <a href="{{ $loginUrl }}" class="course-embed-button">Zum Buchen einloggen</a>
+                    <a href="{{ $loginUrl }}" class="course-embed-button" target="_top">Zum Buchen einloggen</a>
                 @endif
             </div>
         @endforeach
