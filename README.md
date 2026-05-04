@@ -71,12 +71,18 @@ benötigt.
   ** Anfahrt kann in der .env aktiviert bzw. deaktiviert werden
 
 <h2>Backend</h2>
-<h3>Vereinsverwaltung</h3>
-<h4>Installation</h4>
+
+<ul>
+    <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten anlegen, bearbeiten, löschen</li>
+    <li>Trainer / Kursleiter zuordnen</li>
+    <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
+    <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
+</ul>
+<h2>Installation</h2>
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.09.01</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.01</a>
 </p>
 
 <h4>Demodaten</h4>

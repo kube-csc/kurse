@@ -13,6 +13,7 @@ class Organiser extends Model
         'veranstaltung',
         'veranstaltungDomain',
         'veranstaltungHeader',
+        'veranstaltungHeaderKlein',
         'sportartUeberschrift',
         'materialUeberschrift',
         'trainerUeberschrift',
