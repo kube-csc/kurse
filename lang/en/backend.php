@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Backend
@@ -44,6 +45,13 @@ Defines whether a trainer is mandatory for this course.<br>
     <li><strong>Enabled (checked):</strong> The course is shown in scheduling <em>only</em> for users with a trainer role. A trainer must be assigned to the date.</li>
     <li><strong>Disabled:</strong> The course is visible in scheduling for all users - no trainer required.</li>
 </ul>',
+    'Course Create' => 'Create Course / Trip / Training',
+    'IFrame Generator' => 'IFrame Generator for Course Bookings',
+    'IFrame Generator Help' => 'With this generator, you can create HTML code (IFrame) to embed the list of your bookable courses directly into your own website. Simply select the desired courses and copy the code.',
+    'IFrame Generator Select Courses' => 'Select Bookable Courses',
+    'IFrame Generator Generated Code' => 'Generated Code',
+    'IFrame Generator Copy Code' => 'Copy Code',
+    'IFrame Generator Copy Code Success' => 'Code copied!',
     'Sport Equipment' => 'Sport Equipment',
     'Sport Equipment Edit' => 'Sport Equipment Edit',
     'Sport Equipment Edit Help' => 'Sport Equipment Edit Help',

@@ -139,6 +139,7 @@ Route::middleware([
     Route::put('/backend/SportgeraeteBildDestroy/{sportEquipment}', [SportEquipmentController::class, 'destroyImage'])->name('backend.sportEquipment.destroyImage');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
+    Route::get('/backend/Course/IFrameGenerator', [CourseController::class, 'iframeGenerator'])->name('backend.course.iframe_generator');
     Route::get('/backend/CourseCreate', [CourseController::class, 'create'])->name('backend.course.create');
     Route::post('/backend/CourseStore', [CourseController::class, 'store'])->name('backend.course.store');
     Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
