@@ -34,11 +34,9 @@
                         </x-nav-link>
                     @endif
 
-                    @if(!session('is_iframe_mode'))
-                        <x-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
-                            {{ __('Homepage') }}
-                        </x-nav-link>
-                    @endif
+                    <x-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
+                        {{ __('Homepage') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -172,11 +170,9 @@
                     </x-responsive-nav-link>
                 @endif
 
-                @if(!session('is_iframe_mode'))
-                    <x-responsive-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
-                        {{ __('Homepage') }}
-                    </x-responsive-nav-link>
-                @endif
+                <x-responsive-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
+                    {{ __('Homepage') }}
+                </x-responsive-nav-link>
             </div>
 
         <!-- Responsive Settings Options -->

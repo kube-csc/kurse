@@ -3,37 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kursübersicht</title>
+    <title>Kursbuchung API Integration - Beispiel</title>
     <style>
-        .course-container { font-family: sans-serif; max-width: 800px; margin: auto; }
-        .course-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
-        .course-title { font-weight: bold; font-size: 1.2em; color: #2c3e50; }
-        .course-details { margin-top: 10px; font-size: 0.9em; color: #555; }
-        .btn { display: inline-block; padding: 8px 15px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px; }
-        .btn:hover { background: #2980b9; }
-        .login-info { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --bg-light: #f9f9f9;
+            --text-dark: #2c3e50;
+            --text-muted: #555;
+            --border-color: #ddd;
+            --white: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        header {
+            border-bottom: 2px solid var(--bg-light);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+        h1 { color: var(--primary-color); margin-top: 0; }
+        .intro-text {
+            background: #eef7fd;
+            padding: 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .course-card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .course-title {
+            font-weight: bold;
+            font-size: 1.15em;
+            margin-bottom: 10px;
+            min-height: 2.3em;
+        }
+        .course-details {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-secondary { background: #95a5a6; }
+        .btn-secondary:hover { background: #7f8c8d; }
+
+        .login-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-light);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #eee;
+        }
+        .login-status p { margin: 0; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-free { background: #2ecc71; color: white; }
+        .badge-full { background: #e74c3c; color: white; }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
 
-<div class="course-container">
-    <div id="auth-section" class="login-info">Lade...</div>
-    <div id="course-list">Lade Kurse...</div>
+<div class="container">
+    <header>
+        <h1>Kurs-Buchungssystem</h1>
+        <p>API-Integrationsbeispiel für Partner-Webseiten</p>
+    </header>
+
+    <div class="intro-text">
+        <strong>Information für Administratoren:</strong><br>
+        Dieses Beispiel zeigt, wie Sie Kursdaten per JavaScript (JSON-API) abrufen und in Ihr eigenes Website-Design integrieren können.
+        Kritische Aktionen wie Login und Buchung werden sicher auf der Hauptdomain durchgeführt (<code>target="_top"</code>).
+    </div>
+
+    <div id="auth-section" class="login-status">
+        <p>Prüfe Anmeldestatus...</p>
+    </div>
+
+    <section>
+        <h2>Verfügbare Kurse</h2>
+        <div id="course-list" class="course-grid">
+            <div class="loading-spinner">Kurse werden geladen...</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Technische Basis: Laravel Kursbuchungssystem | API-Version: 1.0</p>
+        <p><em>Hinweis: Damit die API funktioniert, muss die Domain dieser Seite in der <code>config/cors.php</code> des Buchungssystems freigegeben sein.</em></p>
+    </footer>
 </div>
 
 <script>
     // Konfiguration: Passen Sie die URL an Ihre Installation an
-    const API_URL = '/Kursbuchung/Einbetten?json=1&course_ids=14';
+    const API_URL = 'https://www.domain.de/Kursbuchung/Einbetten?json=1&course_ids=4';
+
+    // Basis-URL automatisch aus der API_URL extrahieren (z.B. https://wander1.kel-datteln.de)
+    let BASE_URL = '';
+    try {
+        BASE_URL = new URL(API_URL).origin;
+    } catch(e) {
+        console.error("Ungültige API_URL");
+    }
 
     async function loadCourses() {
         try {
             const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Netzwerk-Antwort war nicht ok');
+
             const data = await response.json();
 
             renderAuth(data.isLoggedIn, data.organiser);
             renderCourses(data.coursedates, data.isLoggedIn);
         } catch (error) {
-            document.getElementById('course-list').innerHTML = 'Fehler beim Laden der Kurse.';
+            document.getElementById('course-list').innerHTML = `
+                <div style="grid-column: 1/-1; color: #e74c3c; padding: 20px; border: 1px solid #ffcccc; background: #fff5f5; border-radius: 8px;">
+                    <strong>Fehler beim Laden:</strong> Bitte prüfen Sie die <code>API_URL</code> und die CORS-Einstellungen in Ihrem Laravel-System.
+                </div>`;
             console.error(error);
         }
     }
@@ -41,36 +196,65 @@
     function renderAuth(isLoggedIn, organiser) {
         const authSection = document.getElementById('auth-section');
         if (isLoggedIn) {
-            authSection.innerHTML = `<h3>Willkommen!</h3><p>Du bist eingeloggt und kannst Kurse buchen.</p>`;
+            authSection.innerHTML = `
+                <div>
+                    <strong>Angemeldet</strong><br>
+                    <span>Schön, dass du wieder da bist!</span>
+                </div>
+                <a href="${BASE_URL}/logout" class="btn btn-secondary" target="_top">Abmelden</a>
+            `;
         } else {
             authSection.innerHTML = `
-                <p>Melde dich an, um einen Kurs zu buchen:</p>
-                <a href="/login" class="btn">Login</a>
-                <a href="/register" class="btn">Registrieren</a>
+                <div>
+                    <strong>Nicht angemeldet</strong><br>
+                    <span>Logge dich ein, um Kurse zu buchen.</span>
+                </div>
+                <div>
+                    <a href="${BASE_URL}/login" class="btn" target="_top">Login</a>
+                    <a href="${BASE_URL}/register" class="btn btn-secondary" target="_top">Registrieren</a>
+                </div>
             `;
         }
     }
 
     function renderCourses(coursedates, isLoggedIn) {
         const listContainer = document.getElementById('course-list');
-        if (coursedates.length === 0) {
-            listContainer.innerHTML = 'Keine aktuellen Kurstermine gefunden.';
+        if (!coursedates || coursedates.length === 0) {
+            listContainer.innerHTML = '<p style="grid-column: 1/-1;">Aktuell sind keine Kurstermine zur Buchung verfügbar.</p>';
             return;
         }
 
-        listContainer.innerHTML = coursedates.map(date => `
-            <div class="course-card">
-                <div class="course-title">${date.get_cousename.kursName}</div>
-                <div class="course-details">
-                    <strong>Termin:</strong> ${new Date(date.kursstarttermin).toLocaleString('de-DE', {weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})} Uhr<br>
-                    <strong>Plätze:</strong> ${date.booked_count} ${date.sportgeraetanzahl > 0 ? 'von ' + date.sportgeraetanzahl : ''} belegt
+        listContainer.innerHTML = coursedates.map(date => {
+            const isFull = date.sportgeraetanzahl > 0 && date.booked_count >= date.sportgeraetanzahl;
+            const start = new Date(date.kursstarttermin).toLocaleString('de-DE', {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            return `
+                <div class="course-card">
+                    <div class="course-title">${date.get_cousename.kursName}</div>
+                    <div class="course-details">
+                        <strong>Datum:</strong> ${start} Uhr<br>
+                        <strong>Status:</strong>
+                        ${isFull ?
+                            '<span class="badge badge-full">Ausgebucht</span>' :
+                            `<span class="badge badge-free">Plätze frei (${date.booked_count} belegt)</span>`
+                        }
+                    </div>
+                    ${isLoggedIn ?
+                        `<a href="${BASE_URL}/Kursbuchung/edit/${date.id}" class="btn" target="_top">
+                            ${date.bookedSelf_count > 0 ? 'Buchung bearbeiten' : 'Jetzt buchen'}
+                        </a>` :
+                        `<a href="${BASE_URL}/login?course_ids=${date.id}" class="btn" target="_top">Einloggen zum Buchen</a>`
+                    }
                 </div>
-                ${isLoggedIn ?
-                    `<a href="/Kursbuchung/edit/${date.id}" class="btn">${date.bookedSelf_count > 0 ? 'Buchung bearbeiten' : 'Kurs buchen'}</a>` :
-                    `<a href="/login" class="btn">Zum Buchen einloggen</a>`
-                }
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     loadCourses();

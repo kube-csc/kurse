@@ -9,8 +9,6 @@
                 <box-icon name='home'></box-icon>
             </a>
         @endif
-            @if(!session('is_iframe_mode'))
-                <a href="{{ request()->getSchemeAndHttpHost() }}" class="dasboard-iconbox-a" target="_blank"><box-icon name='globe'></box-icon></a>
-            @endif
+            <a href="{{ request()->getSchemeAndHttpHost() }}" class="dasboard-iconbox-a" target="_blank"><box-icon name='globe'></box-icon></a>
     </div>
 </div>
