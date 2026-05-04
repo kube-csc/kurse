@@ -1,9 +1,17 @@
 ## Update Anleitung
 **Version V00.02.00**
 
+Es wird https://github.com/kube-csc/vereinsverwaltung  GitHub Projekt Vereinsverwaltung ab V00.10.02 benötigt
 - migration
 
 ***Neue Funktionen***
-- Anlegen von Kurse / Termine / Trainings / Schnupperkurse / Fahrten
+- FAQ
+- Header Bild unter Veranstaltung hochzuladen
+- Anlegen von Kursen / Termine / Trainings / Schnupperkurse / Fahrten
 - Trainingszeiten werden für Abteilungen / Mannschaften werden mit ein CronJop nach dem erstellten Trainingsplan angelegt
 
+**Version V00.01.02**
+
+**Version V00.01.01**
+
+**Version V00.01.00**
