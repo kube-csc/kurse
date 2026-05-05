@@ -1,14 +1,35 @@
-## Update Anleitung
-**Version V00.02.00**
+## Update-Anleitung
 
-Es wird https://github.com/kube-csc/vereinsverwaltung  GitHub Projekt Vereinsverwaltung ab V00.10.02 benötigt
-- migration
+**Version V00.02.01**
+
+Benötigt das GitHub-Projekt [Vereinsverwaltung](https://github.com/kube-csc/vereinsverwaltung) ab Version **V00.10.03**.
 
 ***Neue Funktionen***
-- FAQ
-- Header Bild unter Veranstaltung hochzuladen
-- Anlegen von Kursen / Termine / Trainings / Schnupperkurse / Fahrten
-- Trainingszeiten werden für Abteilungen / Mannschaften werden mit ein CronJop nach dem erstellten Trainingsplan angelegt
+- **Fahrtenbuch erweitert:** Dashboard-Einstiege, Distanzpflege sowie Filter- und Navigationslogik wurden umgesetzt.
+- **Aktivitätsbericht erweitert:** Dashboard-Einstieg, Trainer-Fahrleistungsaggregation und Jahresstatistik wurden umgesetzt.
+- ICS-Downloadfunktion für Kurstermine.
+- Umstellung von Sportgeräten mit mehreren Plätzen.
+
+**Was ist zu tun?**
+- `composer update`
+- `php artisan migrate`
+
+---
+
+**Version V00.02.00**
+
+Benötigt das GitHub-Projekt [Vereinsverwaltung](https://github.com/kube-csc/vereinsverwaltung) ab Version **V00.10.02**.
+
+***Neue Funktionen***
+- FAQ-Bereich hinzugefügt.
+- Header-Bild für Veranstaltungen kann nun hochgeladen werden.
+- Anlegen von Kursen, Terminen, Trainings, Schnupperkursen und Fahrten.
+- Trainingszeiten für Abteilungen und Mannschaften werden über einen Cronjob basierend auf dem erstellten Trainingsplan angelegt.
+
+**Was ist zu tun?**
+- `php artisan migrate`
+
+---
 
 **Version V00.01.02**
 
