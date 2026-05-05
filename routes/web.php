@@ -4,6 +4,7 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
+use App\Http\Controllers\Backend\TripDistanceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\TrainerMailController;
 use App\Http\Controllers\CourseBooking\CourseParticipantController;
@@ -46,6 +47,7 @@ Route::get('/Trainer', [HomeController::class, 'trainer']);
 Route::get('/Sportgeraete', [HomeController::class, 'sportUnit']);
 Route::get('/Kurse', [HomeController::class, 'coursetype']);
 Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('frontend.course');
+Route::get('/Kurseangebot/{coursedate}/Kalender.ics', [CoursedateController::class, 'downloadIcs'])->name('frontend.course.downloadIcs');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
 Route::middleware([
@@ -115,11 +117,22 @@ Route::middleware([
     Route::get('/backend/CourseDateTrainerPick{coursedateId}', [CoursedateController::class, 'trainerRegister'])->name('backend.courseDate.trainerRegister');
     Route::get('/backend/CourseDateTrainerDestroy/{coursedateId}', [CoursedateController::class, 'trainerDestroy'])->name('backend.courseDate.trainerDestroy');
     Route::get('/backend/CourseBockedInformation/{coursedate}', [CoursedateController::class, 'CourseBockedInformation'])->name('backend.courseDate.CourseBockedInformation');
+    Route::get('/backend/CourseDateIcs/{coursedate}', [CoursedateController::class, 'downloadIcs'])->name('backend.courseDate.downloadIcs');
+
+    Route::get('/backend/TripDistance', [TripDistanceController::class, 'index'])->name('backend.tripDistance.index');
+    Route::get('/backend/TripDistance/Report', [TripDistanceController::class, 'report'])->name('backend.tripDistance.report');
+    Route::get('/backend/TripDistance/{coursedate}', [TripDistanceController::class, 'show'])->name('backend.tripDistance.show');
+    Route::put('/backend/TripDistance/Coursedate/{coursedate}', [TripDistanceController::class, 'updateCoursedateDistance'])->name('backend.tripDistance.updateCoursedateDistance');
+    Route::put('/backend/TripDistance/Participant/{courseParticipantBooked}', [TripDistanceController::class, 'updateParticipantDistance'])->name('backend.tripDistance.updateParticipantDistance');
+    Route::put('/backend/TripDistance/Trainer/{coursedate}/{userId}', [TripDistanceController::class, 'updateTrainerDistance'])->name('backend.tripDistance.updateTrainerDistance');
 
     Route::get('/backend/Sportgeraete', [SportEquipmentController::class, 'index'])->name('backend.sportEquipment.index');
     Route::get('/backend/SportgeraeteAlle', [SportEquipmentController::class, 'indexAll'])->name('backend.sportEquipment.indexAll');
+    Route::get('/backend/SportgeraeteCreate', [SportEquipmentController::class, 'create'])->name('backend.sportEquipment.create');
+    Route::post('/backend/SportgeraeteStore', [SportEquipmentController::class, 'store'])->name('backend.sportEquipment.store');
     Route::get('/backend/SportgeraeteEdit/{sportEquipment}', [SportEquipmentController::class, 'edit'])->name('backend.sportEquipment.edit');
     Route::put('/backend/SportgeraeteUpdate/{sportEquipment}', [SportEquipmentController::class, 'update'])->name('backend.sportEquipment.update');
+    Route::put('/backend/SportgeraeteBildDestroy/{sportEquipment}', [SportEquipmentController::class, 'destroyImage'])->name('backend.sportEquipment.destroyImage');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
     Route::get('/backend/CourseCreate', [CourseController::class, 'create'])->name('backend.course.create');

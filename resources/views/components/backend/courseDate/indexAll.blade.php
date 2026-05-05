@@ -4,8 +4,8 @@
             <h2 class="header-h2">
                 {{ __('backend.Course Dates All') }}
              </h2>
-            <div class="dasboard-iconbox w-12 ml-4">
-                <a href="{{ route('backend.courseDate.create') }}">
+            <div class="dasboard-iconbox ml-4">
+                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.create') }}" title="Kurstermin erstellen" aria-label="Kurstermin erstellen">
                     <box-icon name='calendar-plus'></box-icon>
                 </a>
             </div>
@@ -27,15 +27,21 @@
                     <div class="dashboard-flexbox-text">
                         <div class="dasboard-iconbox">
                             @if($coursedate->booked_count==0)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.edit', $coursedate->id) }}" title="Termin bearbeiten" aria-label="Termin bearbeiten">
                                     <box-icon name='calendar-edit'></box-icon>
                                 </a>
                             @endif
-                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}">
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}" title="Teilnehmer und Material verwalten" aria-label="Teilnehmer und Material verwalten">
                                 <box-icon name='user'></box-icon>
                             </a>
+                            <a class="dasboard-iconbox-a"
+                               href="{{ route('backend.tripDistance.show', ['coursedate' => $coursedate->id, 'all_courses' => 1]) }}"
+                               title="Fahrtenbuch öffnen"
+                               aria-label="Fahrtenbuch öffnen">
+                                <box-icon name='line-chart'></box-icon>
+                            </a>
                             @if($coursedate->booked_count==0)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.destroy', $coursedate->id) }}" title="Termin löschen" aria-label="Termin löschen" onclick="return confirm('Wirklich den Kurs vam {{ date('d.m.Y H:i', strtotime($coursedate->kursstarttermin)) }} Uhr löschen?')">
                                     <box-icon name='trash'></box-icon>
                                 </a>
                             @endif
@@ -46,22 +52,24 @@
                                 @endif
                             @endforeach
                             @if($userIsInCourse == false)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerRegister', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerRegister', $coursedate->id) }}" title="Trainer zum Termin hinzufügen" aria-label="Trainer zum Termin hinzufügen">
                                     <box-icon name='plus'></box-icon>
                                 </a>
                             @else
                                 @if($coursedate->users->count() > 1)
-                                    <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}">
+                                    <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerDestroy', $coursedate->id) }}" title="Trainer vom Termin entfernen" aria-label="Trainer vom Termin entfernen">
                                         <box-icon name='minus'></box-icon>
                                     </a>
                                 @endif
                             @endif
                             @if($userIsInCourse == true && $coursedate->booked_count > 0)
-                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}">
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.CourseBockedInformation', $coursedate->id) }}" title="Buchungsinformationen anzeigen" aria-label="Buchungsinformationen anzeigen">
                                     <box-icon name='info-square'></box-icon>
                                 </a>
                             @endif
-                            {{ $coursedate->coursedate_id }}
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.downloadIcs', $coursedate->id) }}" title="Kalendereintrag herunterladen (ICS)" aria-label="Kalendereintrag herunterladen">
+                                <box-icon name='calendar-check'></box-icon>
+                            </a>
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>
@@ -91,6 +99,14 @@
                         @foreach($coursedate->users as $user)
                             {{ $user->vorname }} {{ $user->nachname }}<br>
                         @endforeach
+
+                        @if($coursedate->sportgeraeteReserviert !== null & $coursedate->sportgeraeteReserviert != 0)
+                            <div>
+                                <label class="label">Reservierte Sportgeräte:</label>
+                                {{ $coursedate->sportgeraeteReserviert }}
+                            </div>
+                        @endif
+
                         @if($coursedate->sportgeraetanzahl > 0)
                             <div>
                                 <label class="label">Teilnehmer:</label>
@@ -102,14 +118,51 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
-                        <label class="label">Termin ist im Terminangebot ausgeblendet:</label>
+                        <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
                         {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        <label class="label">Von Buchungsangebot ausblenden:</label>
+                        {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
+                        {{ $coursedate->getCousename->trainer == 1 ? 'Ja' : 'Nein' }}
+                        <label class="label">Link zu Buchung:</label>
+                        <button type="button" class="dasboard-iconbox-a" title="Link kopieren" aria-label="Link kopieren" onclick="copyBookingLink(@js('https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id), this)">
+                            <box-icon name='copy' size=xs'></box-icon>
+                        </button>
+                        <a href="https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:text-blue-800 break-all">
+                              https://{{ $organiser->veranstaltungDomain }}/Kurseangebot/{{ $coursedate->id }}
+                        </a>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+    <script>
+        function copyBookingLink(url, button) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(function () {
+                    button.title = 'Kopiert';
+                    setTimeout(function () {
+                        button.title = 'Link kopieren';
+                    }, 1200);
+                });
+                return;
+            }
+
+            var textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            button.title = 'Kopiert';
+            setTimeout(function () {
+                button.title = 'Link kopieren';
+            }, 1200);
+        }
+    </script>
 </x-app-layout>
 
 

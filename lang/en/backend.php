@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Backend
@@ -31,8 +30,20 @@ Please note that all actions you perform in this module have an impact on the da
     'Course Date Create Help' => 'Start Date: Here you enter the start date and start time of the course. There are two input fields, one for the date and one for the time.',
     'Course' => 'Courses / Trip Description',
     'Course Edit' => 'Course / Trip description edit',
-    'Course Create Help' => 'Course Name: Here you create a new course / trip / .',
-    'Course Edit Help' => 'Course Name: Here you enter the name and description of the course / trip',
+    'Course Create Help' => 'Here you create a new course / trip / training.<br><br>
+<strong>Trainer is required:</strong><br>
+Defines whether a trainer is mandatory for this course.<br>
+<ul>
+    <li><strong>Enabled (checked):</strong> The course is shown in scheduling <em>only</em> for users with a trainer role. A trainer must be assigned to the date.</li>
+    <li><strong>Disabled:</strong> The course is visible in scheduling for all users - no trainer required.</li>
+</ul>',
+    'Course Edit Help' => 'Course Name: Here you enter the name and description of the course / trip / training.<br><br>
+<strong>Trainer is required:</strong><br>
+Defines whether a trainer is mandatory for this course.<br>
+<ul>
+    <li><strong>Enabled (checked):</strong> The course is shown in scheduling <em>only</em> for users with a trainer role. A trainer must be assigned to the date.</li>
+    <li><strong>Disabled:</strong> The course is visible in scheduling for all users - no trainer required.</li>
+</ul>',
     'Sport Equipment' => 'Sport Equipment',
     'Sport Equipment Edit' => 'Sport Equipment Edit',
     'Sport Equipment Edit Help' => 'Sport Equipment Edit Help',

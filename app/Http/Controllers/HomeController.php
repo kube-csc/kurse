@@ -27,6 +27,9 @@ class HomeController extends Controller
 
         $coursedates = Coursedate::where('organiser_id', $organiser->id)
                                  ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
+                                 ->whereHas('course', function ($q) {
+                                     $q->where('nicht_anmeldebar', 0);
+                                 })
                                  ->orderBy('kursstarttermin')
                                  ->get();
 
@@ -36,6 +39,7 @@ class HomeController extends Controller
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiser->id)
             ->where('coursedates.kursNichtDurchfuerbar', 0)
+            ->where('courses.nicht_anmeldebar', 0)
             ->groupBy('courses.kursName')
             ->get();
 
@@ -152,12 +156,13 @@ class HomeController extends Controller
     {
         $organiserDomainId=$this->organiserDomainId();
 
-        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->get();
+        $courseAlls  = Course::where('organiser_id', $organiserDomainId)->where('nicht_anmeldebar', 0)->get();
         $yearAgo = Carbon::now()->subDays(365);
         $coursesYearago = Course::select('courses.id')
             ->join('coursedates', 'courses.id', '=', 'coursedates.course_id')
             ->where('coursedates.kursendtermin', '>=' , $yearAgo)
             ->where('courses.organiser_id', $organiserDomainId)
+            ->where('courses.nicht_anmeldebar', 0)
             ->groupBy('courses.id')
             ->get();
         $courses = $courseAlls->intersect($coursesYearago)->unique('id');
@@ -232,10 +237,10 @@ class HomeController extends Controller
 
     public function bookedCount($coursedate)
     {
-        //ToDo: Auf Sportplätze umstellen ->sum('sportleranzahl');
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
         $courseBookes = CourseParticipantBooked::where('kurs_id', $coursedate->id)->get();
 
-        // Alle Sportgeräte
+        // Alle Sportgeräte - mit Sportleranzahl
         $sportEquipments = Coursedate::
               join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
@@ -246,13 +251,14 @@ class HomeController extends Controller
         // Belegte Boote andere Kurse
         $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
+            ->leftJoin('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+            ->leftJoin('users', 'users.id', '=', 'coursedate_user.user_id')
             ->where('sport_equipment_bookeds.deleted_at', null)
             ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
             ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
             ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
             ->orderBy('sport_equipment.sportgeraet')
+            ->selectRaw("sport_equipment.*, sport_equipment_bookeds.sportgeraet_id, sport_equipment_bookeds.kurs_id, COALESCE(users.vorname, 'ohne Trainer') as vorname, COALESCE(users.nachname, '') as nachname")
             ->get();
 
         // Gebuchte Boote für den Kurs
@@ -268,18 +274,22 @@ class HomeController extends Controller
 
         $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
         $kursBbookeIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
-        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBbookeIds);
+        $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBbookeIds);
+
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipmentPool->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count();
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum;
         }
         else {
-            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
-                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count();
+            if($sportgeraetanzahlMax > $freeSportEquipmentSum + $kursBookedSum) {
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
-            $sportgeraetanzahlMax=$sportgeraetanzahlMax+$courseBookes->count();
+            $sportgeraetanzahlMax = $sportgeraetanzahlMax + $courseBookes->count();
         }
 
         return [

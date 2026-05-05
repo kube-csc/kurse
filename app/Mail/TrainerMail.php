@@ -56,10 +56,10 @@ class TrainerMail extends Mailable
                 ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
                 ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
                 ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-                ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-                ->join('users', 'users.id', '=', 'coursedate_user.user_id')
+                ->leftJoin('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
+                ->leftJoin('users', 'users.id', '=', 'coursedate_user.user_id')
                 ->orderBy('sport_equipment.sportgeraet')
-                //->distinct()
+                ->selectRaw("sport_equipment.*, sport_equipment_bookeds.sportgeraet_id, sport_equipment_bookeds.kurs_id, COALESCE(users.vorname, 'ohne Trainer') as vorname, COALESCE(users.nachname, '') as nachname")
                 ->get();
 
             // Gebuchte Sportgeräte für den Termine

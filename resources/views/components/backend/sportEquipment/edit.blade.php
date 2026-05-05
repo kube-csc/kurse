@@ -24,11 +24,39 @@
     </x-slot>
     <div class="main-box">
         <div class="box">
-            <form action="{{ route('backend.sportEquipment.update', $sportEquipment->id) }}" method="POST">
+            {{-- Separates Formular (nicht verschachtelt), damit HTML valide bleibt --}}
+            <form id="sportEquipmentImageDeleteForm" action="{{ route('backend.sportEquipment.destroyImage', $sportEquipment->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="fromAll" value="{{ isset($fromAll) && $fromAll ? 1 : 0 }}">
+            </form>
+
+            <form action="{{ route('backend.sportEquipment.update', $sportEquipment->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <input type="hidden" name="fromAll" value="{{ isset($fromAll) && $fromAll ? 1 : 0 }}">
+
                 <div class="form-group">
                     <div class="form-card">
+
+                        <div class="form-field">
+                            <label class="form-label">Abteilung / Sportart (Pflicht):</label>
+                            <select name="sportSection_id" class="form-input-text @if($errors->has('sportSection_id')) is-invalid @endif" required>
+                                <option value="">Bitte wählen…</option>
+                                @foreach(($sportSections ?? []) as $sportSection)
+                                    <option value="{{ $sportSection->id }}" @selected(old('sportSection_id', $sportEquipment->sportSection_id) == $sportSection->id)>
+                                        {{ $sportSection->abteilung }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('sportSection_id'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportSection_id') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
                         <div class="form-field">
                             <label class="form-label">Sportgerät:</label>
                             <input type="text" name="sportgeraet" class="form-input-text @if(isset($danger)) is-invalid @endif" value="{{ old('sportgeraet', $sportEquipment->sportgeraet) }}">
@@ -136,6 +164,39 @@
                             @if ($errors->has('typ'))
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $errors->first('typ') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">
+                                Aktuelles Bild:
+                                @if($sportEquipment->bild != null && $sportEquipment->bild !== '')
+                                    <button
+                                        type="submit"
+                                        form="sportEquipmentImageDeleteForm"
+                                        class="ml-2 inline-flex items-center justify-center p-1 rounded bg-red-600 border border-red-700 hover:bg-red-700"
+                                        onclick="return confirm('Bild wirklich löschen?')"
+                                        title="Bild löschen"
+                                        style="vertical-align: middle;"
+                                    >
+                                        <box-icon name='trash' color="#fff"></box-icon>
+                                    </button>
+                                @endif
+                            </label>
+                            @if($sportEquipment->bild != null && $sportEquipment->bild !== '')
+                                <img src="/storage/sportgeraete/{{ $sportEquipment->bild }}" width="100%" alt="{{ $sportEquipment->sportgeraet }}"/><br>
+                            @else
+                                <div class="form-input-text">(kein Bild hinterlegt)</div>
+                            @endif
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Bild ändern (optional):</label>
+                            <input type="file" name="bild" accept="image/*" class="form-input-text @if($errors->has('bild')) is-invalid @endif">
+                            @if ($errors->has('bild'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('bild') }}</strong>
                                 </span>
                             @endif
                         </div>

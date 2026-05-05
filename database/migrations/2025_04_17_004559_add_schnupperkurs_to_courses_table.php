@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             $table->boolean('schnupperkurs')->default('0')->after('trainer');
+            $table->boolean('hide_from_booking')->default(0)->after('schnupperkurs');
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             $table->dropColumn('schnupperkurs');
+            $table->dropColumn('hide_from_booking');
         });
     }
 };

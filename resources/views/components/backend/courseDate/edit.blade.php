@@ -103,24 +103,75 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="sportgeraetanzahl" class="form-label">Anzahl der möglichen Teilnehmer der {{ $organiser->materialUeberschrift }}:</label>
-                            <select name="sportgeraetanzahl">
-                                <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
-                                    maximale Teilnehmer
-                                </option>
-                                @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
-                                    <option value="{{ $i }}"
-                                            @if(isset($kursendtermin))
-                                                @selected(old('sportgeraetanzahl') ?? $i == $sportgeraetanzahl)
-                                            @else
-                                                @selected(old('sportgeraetanzahl') ?? $i == $coursedate->sportgeraetanzahl)
-                                           @endif
-                                    >
-                                        {{ $i }}
-                                    </option>
-                                @endfor
-                            </select>
+                            <label for="sportgeraetanzahl" class="form-label">Höchstzahl der möglichen Teilnehmer für diesen Termin:</label>
+                            <input
+                                type="number"
+                                name="sportgeraetanzahl"
+                                id="sportgeraetanzahl"
+                                class="form-input {{ $errors->has('sportgeraetanzahl') ? 'is-invalid' : '' }}"
+                                min="1"
+                                max="{{ max(1, (int) $sportgeraetanzahlMax) }}"
+                                value="{{ old('sportgeraetanzahl', $coursedate->sportgeraetanzahl ?? 0) }}"
+                            >
+                            <label for="sportgeraetanzahl" class="form-label">(aktuell max. möglichen Teilnehmer {{ $maxParticipant }})</label>
+                            @if ($errors->has('sportgeraetanzahl'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('sportgeraetanzahl') }}</strong>
+                                </span>
+                            @endif
                         </div>
+
+                        <div class="form-field">
+                                <label for="sportgeraeteReserviert" class="form-label">Reservierte Plätze für diesen Termin:</label>
+                                <input
+                                    type="number"
+                                    name="sportgeraeteReserviert"
+                                    id="sportgeraeteReserviert"
+                                    class="form-input {{ $errors->has('sportgeraeteReserviert') ? 'is-invalid' : '' }}"
+                                    min="0"
+                                    max="{{ $maxReservierbarInput }}"
+                                    value="{{ old('sportgeraeteReserviert', $coursedate->sportgeraeteReserviert ?? 0) }}"
+                                >
+
+                                <label for="sportgeraeteReserviert" class="form-label">(max. verfügbar Plätze: {{ $maxReservierbarInput }} in {{ $organiser->materialUeberschrift }})</label>
+                                @if ($errors->has('sportgeraeteReserviert'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('sportgeraeteReserviert') }}</strong>
+                                    </span>
+                                @endif
+
+                                <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
+                                    <button
+                                        type="button"
+                                        class="form-button"
+                                        style="padding: 6px 10px; font-size: 0.9em;"
+                                        @click="showEquipmentInfo = !showEquipmentInfo"
+                                        :aria-expanded="showEquipmentInfo.toString()"
+                                    >
+                                        <span x-show="!showEquipmentInfo">Details anzeigen</span>
+                                        <span x-show="showEquipmentInfo" x-cloak>Details ausblenden</span>
+                                    </button>
+
+                                    <div x-show="showEquipmentInfo" x-cloak x-transition.opacity>
+                                        <div class="form-input-text" style="margin-top: 8px;">
+                                            Verfügbare {{ $organiser->materialUeberschrift }} (Pool) = {{ $sportgeraetanzahlMax ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            Gebuchte {{ $organiser->materialUeberschrift }} = {{ $sportEquipmentBookedsForCoursedatesSum ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            Max. zu reservierende {{ $organiser->materialUeberschrift }} = {{ $maxReservierbarInput ?? 'n/a' }}
+                                        </div>
+
+                                        <div class="form-input-text" style="margin-top: 4px;">
+                                            Max. Plätze aller überlappenden Termine = {{ $needEquipmentProCourstimeSumme ?? 'n/a' }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
 
                         <div class="form-field">
                                 <label class="form-label">Information zum Termin:</label>

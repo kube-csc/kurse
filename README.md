@@ -1,5 +1,5 @@
 <h1>Internetauftritt von Kursangebote</h1>
-Version 00.02.00
+Version 00.02.01
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -21,6 +21,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
         <li><a href="https://jetstream.laravel.com/3.x/stacks/livewire.html">livewire</a></li>
     </ul>
   </li>
+  <li>benötigtes PHP 8.2</li>
   <li><a href="https://boxicons.com/">boxicons</a>(Frontend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
@@ -46,15 +47,35 @@ Es wird eine Lizenz für
 <a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
 benötigt.
 
+## Installation
+
+<ul>
+   <li>git clone https://github.com/kube-csc/kurse.git</li>
+   <li>cd kurse</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
+   <li>php artisan key:generate</li>
+   <li>curl -sS https://getcomposer.org/installer</li>
+   <li>php composer.phar</li>
+   <li>php composer.phar install</li>
+   <li>php artisan storage:link</li>
+   <li>die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
+      <ul>
+        <li>organisers</li>
+        <li>sportgeraete</li>
+      </ul>
+    </li>
+</ul>
+
 <h2>Frontend</h2>
 <ul>
     <li>Header ist abhängig von den Kurs / Temin / Trainings Angebot *</li>
     <li>Leanding Page
          <ul>
           <li>Kurs / Termin / Trainings Angebot Beschreibung</li>
-          <li>Material</li>
+          <li>Sportgeräte</li>
           <li>Trainer / Kursleiter</li>
           <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten</li>
+          <li>FAQ Seite</li>
         </ul>
     </li>
     <li>Buchen</li>
@@ -76,13 +97,29 @@ benötigt.
     <li>Kurse / Termine / Trainings / Schnupperkurse / Fahrten anlegen, bearbeiten, löschen</li>
     <li>Trainer / Kursleiter zuordnen</li>
     <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
+    <li>Sportgeräte anlegen, bearbeiten, löschen</li>
     <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
+    <li>Fahrtenbuch: Distanz (km) je Termin erfassen, auf Trainer und Teilnehmer verteilen oder individuell überschreiben
+        <ul>
+            <li>Monats- und Jahresnavigation mit automatischem Überspringen leerer Monate</li>
+            <li>Umschaltung zwischen „meine Termine" und „alle Termine" per Icon</li>
+            <li>Direkteinstieg aus der Terminübersicht (CourseDate / CourseDateAll) je Termin</li>
+            <li>Dashboard-Einstiege: „Fahrtenbuch alle Termine" und „Fahrtenbuch meine Termine"</li>
+        </ul>
+    </li>
+    <li>Aktivitätsbericht: Auswertung der Trainer-Fahrleistung im gewählten Zeitraum
+        <ul>
+            <li>Aggregierte Fahrleistung (km) je Trainer für den gefilterten Monat/Jahr</li>
+            <li>Jahresstatistik mit Gesamtdistanz, Anzahl Fahrten und Trainer-Einzelauswertung</li>
+            <li>Dashboard-Einstieg „Aktivitätsbericht" direkt in der Dashboard-Übersicht</li>
+        </ul>
+    </li>
 </ul>
 <h2>Installation</h2>
 <p>
 Die Verwaltung der Userdaten der Trainer / Kursleiter und Abteilungen muss die APP Vereinsverwaltung installiert werden.
 Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
-<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.01</a>
+<a href="https://github.com/kube-csc/vereinsverwaltung" target="_blank">zum GitHub Projekt Vereinsverwaltung ab V00.10.03</a>
 </p>
 
 <h4>Demodaten</h4>
@@ -100,19 +137,6 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
 Versendung von Emails an Teilnehmer die Kurse gebucht haben → [URL]/TeilnehmerMail
 Versendung von Emails an Trainer die gebuchte Teilnehmer haben → [URL]/TrainerMail
 Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt → [URL]/Training/Planung
-
-## Installation
-
-<ul>
-   <li>git clone https://github.com/kube-csc/kurse.git</li>
-   <li>cd kurse</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
-   <li>php artisan key:generate</li>
-   <li>curl -sS https://getcomposer.org/installer</li>
-   <li>php composer.phar</li>
-   <li>php composer.phar install</li>
-   <li>php artisan storage:link</li>
-</ul>
 
 ## Anleitung für die Kursbuchung
 <ul>

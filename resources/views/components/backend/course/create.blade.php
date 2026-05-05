@@ -3,7 +3,7 @@
         <h2 class="header-h2">
             {{ __('backend.Course Create') }}
         </h2>
-        <div x-data="{ open: false }" class="dasboard-iconbox">
+        <div x-data="{ open: false }" @open-trainer-help.window="open = true" class="dasboard-iconbox">
             <button class="dasboard-iconbox-a" @click="open = !open"><box-icon name='info-circle'></box-icon></button>
             <div class="help-box" x-show="open" @click.away="open = false">
                 <p class="help-text">
@@ -39,7 +39,12 @@
                             </div>
                             @enderror
                             <br><br>
-                            <label class="form-label">Trainer ist erforderlich:</label>
+                            <div x-data class="inline-flex items-center gap-1">
+                                <label class="form-label">Trainer ist erforderlich:</label>
+                                <button type="button" class="dasboard-iconbox-a" @click="$dispatch('open-trainer-help'); window.scrollTo({ top: 0, behavior: 'smooth' })">
+                                    <box-icon name='info-circle' color='#9ca3af'></box-icon>
+                                </button>
+                            </div>
                             <span class="form-label">
                             <input type="checkbox" name="trainer" value="1" @if(old('trainer')==1) checked @endif>
                             erforderlich
@@ -48,6 +53,12 @@
                             <label class="form-label">Schnupperkurs:</label>
                             <span class="form-label">
                                 <input type="checkbox" name="schnupperkurs" value="1" @if(old('schnupperkurs')==1) checked @endif>
+                                Ja
+                            </span>
+                            <br>
+                            <label class="form-label">Von Buchungsangebot ausblenden:</label>
+                            <span class="form-label">
+                                <input type="checkbox" name="nicht_anmeldebar" value="1" @if(old('nicht_anmeldebar')==1) checked @endif>
                                 Ja
                             </span>
                         </div>

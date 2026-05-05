@@ -24,7 +24,9 @@ class Coursedate extends Model
         'kursstartvorschlagkunde',
         'kursendvorschlagkunde',
         'kursNichtDurchfuerbar',
+        'kursFahrtenlaenge',
         'sportgeraetanzahl',
+        'sportgeraeteReserviert',
         'kursInformation',
         'autor_id',
         'bearbeiter_id'
@@ -34,6 +36,15 @@ class Coursedate extends Model
         'deleted_at'
     ];
 
+    protected $casts = [
+        'kursFahrtenlaenge' => 'float',
+    ];
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
     public function getCousename(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
@@ -41,17 +52,19 @@ class Coursedate extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'coursedate_user');
+        return $this->belongsToMany(User::class, 'coursedate_user')
+            ->withPivot(['trainerFahrtenlaenge'])
+            ->withTimestamps();
     }
 
-    public function courseParticipantBookeds(): HasMany|Coursedate
+    public function courseParticipantBookeds(): HasMany
     {
         return $this->hasMany(CourseParticipantBooked::class, 'kurs_id');
     }
 
     public function getOrganiserName(): BelongsTo
     {
-         return $this->belongsTo(Organiser::class, 'organiser_id');
+        return $this->belongsTo(Organiser::class, 'organiser_id');
     }
 
     public function training(): BelongsTo

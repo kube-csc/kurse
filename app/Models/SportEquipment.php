@@ -11,6 +11,10 @@ class SportEquipment extends Model
 
     protected $fillable = [
         'sportgeraet',
+        'sportSection_id',
+        'bild',
+        'pixx',
+        'pixy',
         'anschafdatum',
         'verschrottdatum',
         'sportleranzahl',
@@ -20,7 +24,10 @@ class SportEquipment extends Model
         'gewicht',
         'tragkraft',
         'typ',
-        'user_id',
+        'privat',
+        'mitgliedprivat_id',
+        'visible',
+        'autor_id',
         'bearbeiter_id'
     ];
 

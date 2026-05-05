@@ -28,6 +28,12 @@
                                     <box-icon name='bookmark-plus'></box-icon>Termin buchen
                                  @endif
                             </a>
+                            <a class="dasboard-iconbox-a"
+                               href="{{ route('frontend.course.downloadIcs', $coursedate->id) }}"
+                               title="Kalendereintrag herunterladen"
+                               aria-label="Kalendereintrag herunterladen">
+                                <box-icon name='calendar-check'></box-icon>
+                            </a>
                         </div>
                         <label class="label">Name:</label>
                         {{ $coursedate->getCousename->kursName }}<br>

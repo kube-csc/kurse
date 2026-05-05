@@ -8,15 +8,14 @@ use App\Models\Coursedate;
 use App\Http\Requests\StoreCoursedateRequest;
 use App\Http\Requests\UpdateCoursedateRequest;
 use App\Models\CourseParticipantBooked;
-use App\Models\Organiser;
 use App\Models\SportEquipment;
 use App\Models\SportEquipmentBooked;
-use App\Models\Trainertable;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\CoursedateHelper;
 
 class CoursedateController extends Controller
 {
@@ -46,10 +45,12 @@ class CoursedateController extends Controller
     {
         $organiser = $this->organiser();
 
-        $coursedates = Coursedate::where('organiser_id', $organiser->id)
+        $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
+            ->join('courses', 'courses.id', '=', 'coursedates.course_id')
+            ->select('coursedates.*', 'courses.nicht_anmeldebar as kurs_nicht_anmeldebar')
             ->leftJoin('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            ->whereNull('course_participant_bookeds.deleted_at')
+            //->whereNull('course_participant_bookeds.deleted_at')
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
             }])
@@ -75,31 +76,20 @@ class CoursedateController extends Controller
         $kursendterminDatum=$kursstartterminDatum;
         $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
 
-        $trainer = Trainertable::where('user_id', Auth::user()->id)
-                               ->where('organiser_id', $organiser->id)
-                               ->get();
+        $courses = Course::query()
+            ->assignableToUserInOrganiser($organiser->id, Auth::id())
+            ->orderBy('kursName')
+            ->get();
 
-        if($trainer->count()>0){
-        $courses = Course::where('organiser_id', $organiser->id)
-                         ->orderBy('kursName')
-                         ->get();
-        }
-        else{
-        $courses = Course::where('organiser_id', $organiser->id)
-                         ->where('trainer', 0)
-                         ->orderBy('kursName')
-                         ->get();
-        }
-
-        if($courses->count()==0){
+        if($courses->isEmpty()){
             self::warning('Es kann kein Kein Kurs / Fahrt angelegt werden, weil es hierfür keine Vorlage angelegt wurde.');
 
             return redirect()->back();
         }
 
-        $course_id = 0;
+        $course_id = (int) old('course_id', $courses->first()->id);
         $sportgeraetanzahl = 0;
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($organiser->id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($organiser->id);
 
         return view('components.backend.courseDate.create' , compact([
             'kursstartterminDatum',
@@ -145,8 +135,6 @@ class CoursedateController extends Controller
                 'kursInformation'         => $request->kursInformation,
                 'bearbeiter_id'           => Auth::user()->id,
                 'autor_id'                => Auth::user()->id,
-                'updated_at'              => Carbon::now(),
-                'created_at'              => Carbon::now()
             ]
         );
         $coursedate->save();
@@ -176,13 +164,49 @@ class CoursedateController extends Controller
             ->orderBy('kursName')
             ->get();
 
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
+        $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id);
+
+        $overlapRequiredBoatsSum=CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
+
+        $sportEquipmentBookedsForCoursedatesSum = CoursedateHelper::getSportEquipmentBookedsForCoursedates($coursedate)->count();
+
+        // Debug: neue Overlap-Stats (Counts + min/max)
+        $overlapStats = CoursedateHelper::getOverlapBookingStats($coursedate);
+
+
+        // Variante A: als Array (gut lesbar)
+        /*
+        dump($overlapStats->map(function ($row) {
+            return [
+                'coursedate_id' => $row['coursedate_id'],
+                'teilnehmerKursBookeds' => $row['teilnehmerKursBookeds'],
+                'sportEquipmentBookeds' => $row['sportEquipmentBookeds'],
+                'sportgeraeteReserviert' => $row['sportgeraeteReserviert'],
+                'min' => $row['min'],
+                'max' => $row['max'],
+            ];
+        })->all());
+        */
+
+        // Summe aller "max"-Werte über alle überlappenden Datensätze
+        $needEquipmentProCourstimeSumme = $overlapStats->sum('max');
+
+        $maxReservierbarInput = min(
+                                                        $coursedate->sportgeraetanzahl,
+                                                        $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme
+                                                    );
+        $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
 
         return view('components.backend.courseDate.edit', compact([
             'coursedate',
             'sportgeraetanzahlMax',
+            'maxParticipant',
             'courses',
-            'organiser'
+            'organiser',
+            'maxReservierbarInput',
+            'overlapRequiredBoatsSum',
+            'sportEquipmentBookedsForCoursedatesSum',
+             'needEquipmentProCourstimeSumme'
         ]));
     }
 
@@ -221,22 +245,27 @@ class CoursedateController extends Controller
             '1' => 'Der Termin wurde erfolgreich bearbeitet.',
             '2' => 'Der Endtermin wurde neu berechnet und der Termin erfolgreich gespeichert.'
         ];
+
         $daten=$this->kursendterminMin($request, $message);
+
+        $sportgeraeteReserviert       = (int) ($request->sportgeraeteReserviert ?? 0);
+        $sportgeraetanzahl               = (int) ($request->sportgeraetanzahl ?? 0);
+        $sportgeraeteReserviertMin = min($sportgeraetanzahl, $sportgeraeteReserviert);
 
         $coursedate->update(
             [
-                'course_id'               => $request->course_id,
-                'kurslaenge'              => $request->kurslaenge,
-                'kursstarttermin'         => $daten['kursstarttermin'],
-                'kursendtermin'           => $daten['kursendtermin'],
-                'kursstartvorschlag'      => $daten['kursstarttermin'],
-                'kursendvorschlag'        => $daten['kursendtermin'],
-                'kursstartvorschlagkunde' => $daten['kursstarttermin'],
-                'kursendvorschlagkunde'   => $daten['kursendtermin'],
-                'sportgeraetanzahl'       => $request->sportgeraetanzahl,
-                'kursInformation'         => $request->kursInformation,
-                'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
+                'course_id'                        => $request->course_id,
+                'kurslaenge'                      => $request->kurslaenge,
+                'kursstarttermin'               => $daten['kursstarttermin'],
+                'kursendtermin'                => $daten['kursendtermin'],
+                'kursstartvorschlag'          => $daten['kursstarttermin'],
+                'kursendvorschlag'           => $daten['kursendtermin'],
+                'kursstartvorschlagkunde'=> $daten['kursstarttermin'],
+                'kursendvorschlagkunde' => $daten['kursendtermin'],
+                'sportgeraetanzahl'          => $request->sportgeraetanzahl,
+                'kursInformation'              => $request->kursInformation,
+                'sportgeraeteReserviert'  => $sportgeraeteReserviertMin,
+                'bearbeiter_id'                  => Auth::user()->id,
             ]
         );
 
@@ -253,9 +282,8 @@ class CoursedateController extends Controller
         $coursedate->update(
             [
                 'sportgeraetanzahl'       => $request->sportgeraetanzahl,
-                'kursInformation'         => $request->kursInformation,
-                'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
+                'kursInformation'           => $request->kursInformation,
+                'bearbeiter_id'               => Auth::user()->id,
             ]
         );
 
@@ -264,8 +292,6 @@ class CoursedateController extends Controller
 
     public function updateBookFirst(UpdateCoursedateRequest $request, Coursedate $coursedate)
     {
-        // ToDo: Validierung anpassen
-
         $daten=$this->kursendtermin($request, $coursedate);
 
         $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
@@ -276,10 +302,9 @@ class CoursedateController extends Controller
 
         $coursedate->update(
             [
-                'kursstarttermin'         => $daten['kursstarttermin'],
-                'kursendtermin'           => $daten['kursendtermin'],
+                'kursstarttermin'        => $daten['kursstarttermin'],
+                'kursendtermin'         => $daten['kursendtermin'],
                 'bearbeiter_id'           => Auth::user()->id,
-                'updated_at'              => Carbon::now()
             ]
         );
 
@@ -319,57 +344,81 @@ class CoursedateController extends Controller
 
         $courseBookes = CourseParticipantBooked::where('kurs_id', $id)->get();
 
-        $teilnehmerKursBookeds = CourseParticipantBooked::where('kurs_id', '<>' , $id)
-            ->join('coursedates', 'coursedates.id', '=', 'course_participant_bookeds.kurs_id')
-            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            //->where('course_participant_bookeds.trainer_id', '<>', 0)
-            ->where('course_participant_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-            ->get();
+        $teilnehmerKursBookeds = CoursedateHelper::getTeilnehmerKursBookedsForOtherCoursedates($coursedate);
 
         // Alle Sportgeräte
-        $sportEquipments = Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
-            ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
-            ->where('coursedates.id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        $sportEquipments= CoursedateHelper::getSportEquipments($coursedate);
 
-        // Belegte Boote andere Kurse
-        $sportEquipmentBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            ->join('users', 'users.id', '=', 'coursedate_user.user_id')
-            ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('coursedates.kursstarttermin', '<', $coursedate->kursendtermin)
-            ->where('coursedates.kursendtermin', '>', $coursedate->kursstarttermin)
-            ->whereNot('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        // Belegte Sportgeräte andere Kurse
+        $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
 
-        // Gebuchte Boote für den Kurs
-        $sportEquipmentKursBookeds = SportEquipment::join('sport_equipment_bookeds', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
-            ->join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
-            ->join('coursedates', 'coursedates.id', '=', 'sport_equipment_bookeds.kurs_id')
-            ->where('sport_equipment_bookeds.deleted_at', null)
-            ->where('sport_equipment_bookeds.kurs_id', $coursedate->id)
-            ->where('organiser_sport_section.organiser_id' , $this->organiserDomainId())
-            ->orderBy('sport_equipment.sportgeraet')
-            ->get();
+        // Gebuchte Sportgeräte für den Kurs
+        $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
 
-        $bookedIds           = $sportEquipmentBookeds->pluck('sportgeraet_id');
-        $kursBookedIds       = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
-        $sportEquipmentFrees = $sportEquipments->whereNotIn('id', $bookedIds);
-        $sportEquipmentFrees = $sportEquipmentFrees->whereNotIn('id', $kursBookedIds);
+        $bookedIds                   = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBookeIds              = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBookeIds);
+
+        $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+        $overlapingCoursedates->push($coursedate);
+
+        // Bedarf je überlappendem Coursedate berechnen (unsortiert, nur für Berechnung)
+        $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
+
+        // Freie Sportgeräte aus dem Pool (größte Plätze zuerst) auf den Bedarf verteilen
+        // Nur der aktuelle Termin ($coursedate->id) bekommt Zuweisungen
+        $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+            $overlapingCoursedatesWithParticipants,
+            $sportEquipmentPool,
+            $coursedate->id
+        );
+
+        // Sortierung nur für die Ausgabe: Werte bleiben per ID fest am richtigen Coursedate
+        $rowsByCoursedateId = collect($allocationResult['items'])->keyBy('coursedate_id');
+        $sortedForOutput = $overlapingCoursedates
+            ->sortBy(function ($cd) {
+                return $cd->kursstartvorschlag ?? $cd->kursstarttermin;
+            })
+            ->values();
+
+        $overlapingCoursedatesWithParticipants = $sortedForOutput
+            ->map(function ($cd) use ($rowsByCoursedateId) {
+                return $rowsByCoursedateId[$cd->id] ?? [
+                    'coursedate' => $cd,
+                    'coursedate_id' => $cd->id,
+                    'course_id' => $cd->course_id,
+                    'teilnehmerCount' => 0,
+                    'sportgeraeteReserviert' => 0,
+                    'maxTeilnehmer' => 0,
+                    'teilnehmerplaetzeGebuchteSportgeraete' => 0,
+                    'gebuchteSportgeraeteAnzahl' => 0,
+                    'benoetigtePlaetze' => 0,
+                    'benoetigtePlaetzeMax' => 0,
+                    'zugewieseneSportgeraeteAnzahl' => 0,
+                    'zugewiesenePlaetze' => 0,
+                    'fehlendePlaetze' => 0,
+                    'hatAllePlaetze' => true,
+                    'zugewieseneSportgeraete' => [],
+                ];
+            })
+            ->values();
+
+        $poolHasRemainingPlace = $allocationResult['poolHasRemainingPlace'];
+        $poolRemainingPlaetze = $allocationResult['poolRemainingPlaetze'];
+        $poolRemainingSportgeraete = $allocationResult['poolRemainingSportgeraete'];
+
+        // Berechnung mit sum('sportleranzahl') statt count()
+        $freeSportEquipmentSum = $sportEquipmentPool->sum('sportleranzahl');
+        $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
 
         if($coursedate->sportgeraetanzahl==0) {
-            $sportgeraetanzahlMax = $sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()-$courseBookes->count();
+            $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count();
         }
         else {
-            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl-$courseBookes->count();
-            if($sportgeraetanzahlMax>$sportEquipmentFrees->count()+$sportEquipmentKursBookeds->count()) {
-                $sportgeraetanzahlMax = $sportEquipmentFrees->count();
+            $sportgeraetanzahlMax = $coursedate->sportgeraetanzahl - $courseBookes->count();
+            if($sportgeraetanzahlMax > $freeSportEquipmentSum + $kursBookedSum) {
+                $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
         }
 
@@ -382,37 +431,73 @@ class CoursedateController extends Controller
             'organiser',
             'coursedate',
             'course',
-            'sportEquipmentFrees',
+            'sportEquipmentPool',
+            'freeSportEquipmentSum',
             'sportEquipmentKursBookeds',
             'sportEquipmentBookeds',
             'courseBookes',
+            'kursBookedSum',
             'teilnehmerKursBookeds',
             'sportgeraetanzahlMax',
             'trainers',
             'timeMax',
-            'timeMin'
+            'timeMin',
+            'overlapingCoursedates',
+            'overlapingCoursedatesWithParticipants',
+            'poolHasRemainingPlace',
+            'poolRemainingPlaetze',
+            'poolRemainingSportgeraete'
         ]));
     }
 
     public function book($coursedateId)
     {
-        $sportEquipmentBooked = new CourseParticipantBooked(
-            [
-                'trainer_id'        => Auth::user()->id,
-                'kurs_id'           => $coursedateId,
-                'user_id'           => Auth::user()->id,
-                'bearbeiter_id'     => Auth::user()->id,
-                'updated_at'        => Carbon::now(),
-                'created_at'        => Carbon::now()
-            ]
+        $coursedate = Coursedate::find($coursedateId);
+
+        if (!$coursedate) {
+            self::warning('Termin wurde nicht gefunden.');
+            return redirect()->route('backend.courseDate.index');
+        }
+
+        // Alle Sportgeräte
+        $sportEquipments= CoursedateHelper::getSportEquipments($coursedate);
+
+        // Belegte Sportgeräte andere Kurse
+        $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
+
+        // Gebuchte Sportgeräte für den Kurs
+        $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
+
+        $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
+        $kursBookeIds = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+        $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+        $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBookeIds);
+
+        // Allocation berechnen und poolHasRemainingPlace als Gate verwenden
+        $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+        $overlapingCoursedates->push($coursedate);
+        $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
+
+        $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+            $overlapingCoursedatesWithParticipants,
+            $sportEquipmentPool,
+            $coursedate->id
         );
 
+        if (empty($allocationResult['poolHasRemainingPlace'])) {
+            self::warning('Es sind keine freien Plätze im Sportgeräte-Pool vorhanden. Der Teilnehmer kann nicht gebucht werden.');
+            return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+        }
+
+        $sportEquipmentBooked = new CourseParticipantBooked([
+            'trainer_id' => Auth::user()->id,
+            'kurs_id' => $coursedateId,
+        ]);
         $sportEquipmentBooked->save();
 
-        // Holen Sie sich alle Benutzer-IDs, die dem $coursedate zugeordnet sind
         $userIds = DB::table('coursedate_user')->where('coursedate_id', $coursedateId)->pluck('user_id');
-        // Aktualisieren Sie die Kursleiternachricht für diese Benutzer auf 1
-        User::whereIn('id', $userIds)
+        DB::table('users')
+            ->whereIn('id', $userIds)
             ->where('trainernachricht', '')
             ->update(['trainernachricht' => 1]);
 
@@ -423,32 +508,101 @@ class CoursedateController extends Controller
 
     public function equipmentBooked($coursedateId , $sportequipmentId)
     {
+            $coursedate = Coursedate::find($coursedateId);
+            if (!$coursedate) {
+                self::warning('Termin wurde nicht gefunden.');
+                return redirect()->route('backend.courseDate.index');
+            }
+
+            $organiser = $this->organiser();
+
+            // Alle Sportgeräte
+            $sportEquipments = CoursedateHelper::getSportEquipments($coursedate);
+
+            // Belegte Sportgeräte andere Kurse
+            $sportEquipmentBookeds = CoursedateHelper::getSportEquipmentBookeds($coursedate);
+
+            // Gebuchte Sportgeräte für den Kurs
+            $sportEquipmentKursBookeds = CoursedateHelper::getSportEquipmentKursBookeds($coursedate);
+
+            $bookedIds = $sportEquipmentBookeds->pluck('sportgeraet_id');
+            $kursBookeIds = $sportEquipmentKursBookeds->pluck('sportgeraet_id');
+            $sportEquipmentPool = $sportEquipments->whereNotIn('id', $bookedIds);
+            $sportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $kursBookeIds);
+
+            $simulatedSportEquipmentPool = $sportEquipmentPool->whereNotIn('id', $sportequipmentId)->values();
+
+            $selectedEquipment = $sportEquipmentPool->firstWhere('id', (int) $sportequipmentId);
+            if (!$selectedEquipment) {
+                self::warning('Das gewählte Sportgerät ist nicht mehr frei verfügbar.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
+            $simulatedSportEquipmentKursBookeds = $sportEquipmentKursBookeds->push($selectedEquipment);
+            $simulatedKursBookedPlaetze = (int) $simulatedSportEquipmentKursBookeds->sum('sportleranzahl');
+            $simulatedKursBookedCount = (int) $simulatedSportEquipmentKursBookeds->count();
+
+            $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+            $overlapingCoursedates->push($coursedate);
+
+            $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates)
+                ->map(function ($row) use ($coursedate, $simulatedKursBookedPlaetze, $simulatedKursBookedCount) {
+                    if ((int) ($row['coursedate_id'] ?? 0) !== (int) $coursedate->id) {
+                        return $row;
+                    }
+
+                    $maxTeilnehmer = (int) ($row['maxTeilnehmer'] ?? 0);
+                    $benoetigtePlaetze = max($maxTeilnehmer - $simulatedKursBookedPlaetze, 0);
+                    $sportgeraetanzahl = (int) ($coursedate->sportgeraetanzahl ?? 0);
+                    $benoetigtePlaetzeMax = $sportgeraetanzahl === 0
+                        ? $benoetigtePlaetze
+                        : min($benoetigtePlaetze, $sportgeraetanzahl);
+
+                    $row['teilnehmerplaetzeGebuchteSportgeraete'] = $simulatedKursBookedPlaetze;
+                    $row['gebuchteSportgeraeteAnzahl'] = $simulatedKursBookedCount;
+                    $row['benoetigtePlaetze'] = $benoetigtePlaetze;
+                    $row['benoetigtePlaetzeMax'] = $benoetigtePlaetzeMax;
+
+                    return $row;
+                })
+                ->values();
+
+            $allocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+                $overlapingCoursedatesWithParticipants,
+                $simulatedSportEquipmentPool,
+                $coursedate->id
+            );
+
+            $allocationItems = collect($allocationResult['items'] ?? []);
+            $currentCoursedateAllocation = $allocationItems->firstWhere('coursedate_id', $coursedate->id);
+            $allAllocationsHaveNoMissingPlaces = CoursedateHelper::allocationHasNoMissingPlaces($allocationResult);
+
+            if (!$currentCoursedateAllocation || !$allAllocationsHaveNoMissingPlaces) {
+                self::warning('Das '.$organiser->materialUeberschrift.' kann im aktuellen Termin nicht zugebucht werden, weil es nicht genug Platz für alle Teilnehmer gibt.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
             $sportEquipmentBooked = new SportEquipmentBooked(
                 [
                     'sportgeraet_id'    => $sportequipmentId,
-                    'kurs_id'           => $coursedateId,
-                    'user_id'           => Auth::user()->id,
-                    'bearbeiter_id'     => Auth::user()->id,
-                    'updated_at'        => Carbon::now(),
-                    'created_at'        => Carbon::now()
+                    'kurs_id'                => $coursedateId
                 ]
             );
 
             $sportEquipmentBooked->save();
 
-            $coursedate = Coursedate::find($coursedateId);
-            if($coursedate->sportgeraetanzahl != 0) {
-                $sportEquipmentKursBookedCount = SportEquipmentBooked::where('kurs_id', $coursedateId)->count();
-                if ($coursedate->sportgeraetanzahl < $sportEquipmentKursBookedCount) {
-                    $coursedate->update(
-                        [
-                            'sportgeraetanzahl' => $sportEquipmentKursBookedCount,
-                            'bearbeiter_id'     => Auth::user()->id,
-                            'updated_at'        => Carbon::now()
-                        ]
-                    );
-                    self::success('Anzahl der möglichen Teilnehmer erhöht.');
-                }
+            $sportEquipmentKursBookedPlaetze = SportEquipmentBooked::join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+                ->where('sport_equipment_bookeds.kurs_id', $coursedateId)
+                ->sum('sport_equipment.sportleranzahl');
+
+            if ($coursedate->sportgeraetanzahl < $sportEquipmentKursBookedPlaetze) {
+                $coursedate->update(
+                    [
+                        'sportgeraetanzahl' => $sportEquipmentKursBookedPlaetze,
+                        'bearbeiter_id'     => Auth::user()->id,
+                    ]
+                );
+                self::success('Anzahl der möglichen Teilnehmer erhöht.');
             }
             self::success('Sportgerät wurde erfolgreich gebucht.');
 
@@ -468,11 +622,11 @@ class CoursedateController extends Controller
             $coursedate = Coursedate::find($coursedateId);
             $coursedate->update(
                 [
-                    'kursstarttermin'         => $coursedate->kursstartvorschlag,
-                    'kursendtermin'           => $coursedate->kursendvorschlag,
-                    'kursstartvorschlagkunde' => $coursedate->kursstartvorschlag,
+                    'kursstarttermin'                 => $coursedate->kursstartvorschlag,
+                    'kursendtermin'                  => $coursedate->kursendvorschlag,
+                    'kursstartvorschlagkunde'  => $coursedate->kursstartvorschlag,
                     'kursendvorschlagkunde'   => $coursedate->kursendvorschlag,
-                    'kursNichtDurchfuerbar'   => false
+                    'kursNichtDurchfuerbar'     => false
                 ]
             );
         }
@@ -484,9 +638,8 @@ class CoursedateController extends Controller
 
     public function equipmentBookedDestroy($coursedateId , $kursId , $sportgeraet)
     {
-        //ToDo: Es kann nicht direkt über die ID gelöscht werden, da die ID immer 1 ist.
-        $sportEquipmentBooked = SportEquipmentBooked::
-              join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
+        //Es kann nicht direkt über die ID gelöscht werden, da die ID immer 1 ist.
+        SportEquipmentBooked::join('sport_equipment', 'sport_equipment_bookeds.sportgeraet_id', '=', 'sport_equipment.id')
             ->where('kurs_id', $kursId)
             ->where('sportgeraet', $sportgeraet)
             ->delete();
@@ -532,22 +685,11 @@ class CoursedateController extends Controller
 
     public function sportgeraetanzahlMaxCourse($id)
     {
-        //ToDo: Auf Sportlerplätze umstellen ->sum('sportleranzahl');
+        // Berechnung basierend auf Sportlerplätze - sum('sportleranzahl')
         $sportgeraetanzahlMax=Coursedate::join('course_sport_section', 'course_sport_section.course_id', '=', 'coursedates.course_id')
             ->join('sport_equipment', 'sport_equipment.sportSection_id', '=', 'course_sport_section.sport_section_id')
             ->where('coursedates.id', $id)
-            ->orderBy('sport_equipment.sportgeraet')
-            ->count();
-
-        return $sportgeraetanzahlMax;
-    }
-
-    public function sportgeraetanzahlMax($id)
-    {
-        //ToDo: Auf Sportlerplätze umstellen ->sum('sportleranzahl');
-        $sportgeraetanzahlMax = SportEquipment::join('organiser_sport_section', 'organiser_sport_section.sport_section_id', '=', 'sport_equipment.sportSection_id')
-            ->where('organiser_sport_section.organiser_id' , $id)
-            ->count();
+            ->sum('sport_equipment.sportleranzahl');
 
         return $sportgeraetanzahlMax;
     }
@@ -555,8 +697,10 @@ class CoursedateController extends Controller
     public function cronJobPlanung()
     {
         $currentDate = Carbon::now();
-        $currentYear = $currentDate->year; // Laufendes Jahr
-        $trainings   = Training::where('datumbis', '>=', Carbon::now()->format('Y-m-d'))->get();
+        $currentYear = $currentDate->year;
+        $trainings      = Training::where('datumbis', '>=', Carbon::now()->format('Y-m-d'))
+            ->whereNull('deleted_at')
+            ->get();
 
         foreach ($trainings as $training) {
             $courseDates = Coursedate::where('training_id', $training->id)
@@ -564,10 +708,10 @@ class CoursedateController extends Controller
                 ->orderBy('kursstartvorschlag')
                 ->get();
 
-            $newDate             = Carbon::parse($training->datumvon);
-            $kurslaenge          = Carbon::parse($training->zeitbis)->diff(Carbon::parse($training->zeitvon))->format('%H:%I:%S');
+            $newDate                   = Carbon::parse($training->datumvon);
+            $kurslaenge                = Carbon::parse($training->zeitbis)->diff(Carbon::parse($training->zeitvon))->format('%H:%I:%S');
             $wiederholungAktuell = 0;
-            $datumBerechnung     = Carbon::parse($training->datumAktuell);
+            $datumBerechnung    = Carbon::parse($training->datumAktuell);
 
             while ($newDate < $currentDate) {
                 $newDate->addDays($training->wiederholung);
@@ -593,6 +737,7 @@ class CoursedateController extends Controller
 
                         if ($courseDateTestCount == 0) {
                             $courseDate->update([
+                                'organiser_id' => $training->organiser_id,
                                 'course_id' => $training->course_id,
                                 'kursstarttermin' => $datumvon,
                                 'kursendtermin' => $datumbis,
@@ -602,26 +747,24 @@ class CoursedateController extends Controller
                                 'kursendvorschlagkunde' => $datumbis,
                                 'kurslaenge' => $kurslaenge,
                                 'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                                'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                                'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                                 'bearbeiter_id' => $training->autor_id,
-                                'updated_at' => Carbon::now(),
                             ]);
                         }
                     }
-
                     $newDate->addDays($training->wiederholung);
                     $wiederholungAktuell = $wiederholungAktuell + $training->wiederholung;
                 }
             }
 
+            $datumvon = now();
             while ($newDate <= Carbon::parse($training->datumbis)) {
                 if($wiederholungAktuell >= $training->vorschauTage){
                     break;
                 }
 
                 $datumvon = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitvon)->diffInSeconds(Carbon::parse('00:00:00')));
-                $datumbis = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
+                $datumbis  = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
 
                 $courseDateTestCount = Coursedate::where('kursstartvorschlag', $datumvon)
                     ->where('training_id', $training->id)
@@ -636,9 +779,9 @@ class CoursedateController extends Controller
                     if ($courseDateDelete) {
                         $courseDateDelete->restore();
                         $courseDateDelete->update([
+                            'organiser_id' => $training->organiser_id,
                             'course_id' => $training->course_id,
                             'training_id' => $training->id,
-
                             'kursstarttermin' => $datumvon,
                             'kursendtermin' => $datumbis,
                             'kursstartvorschlag' => $datumvon,
@@ -647,12 +790,9 @@ class CoursedateController extends Controller
                             'kursendvorschlagkunde' => $datumbis,
                             'kurslaenge' => $kurslaenge,
                             'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                            'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
-
-                            'updated_at' => Carbon::now(),
                             'created_at' => Carbon::now()
                         ]);
                     }
@@ -661,7 +801,6 @@ class CoursedateController extends Controller
                             'organiser_id' => $training->organiser_id,
                             'training_id' => $training->id,
                             'course_id' => $training->course_id,
-
                             'kursstarttermin' => $datumvon,
                             'kursendtermin' => $datumbis,
                             'kursstartvorschlag' => $datumvon,
@@ -670,12 +809,9 @@ class CoursedateController extends Controller
                             'kursendvorschlagkunde' => $datumbis,
                             'kurslaenge' => $kurslaenge,
                             'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
+                            'sportgeraeteReserviert' => $training->sportgeraeteReserviert,
                             'bearbeiter_id' => $training->bearbeiter_id,
                             'autor_id' => $training->bearbeiter_id,
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
                         ]);
                     }
                 }
@@ -684,13 +820,115 @@ class CoursedateController extends Controller
                 $wiederholungAktuell += $training->wiederholung;
             }
 
-            $courseLetzte = Coursedate::where('training_id', $training->id)
-                ->orderBy('kursstartvorschlag', 'desc')
-                ->first();
-
             $training->update([
-                'datumAktuell' => $courseLetzte->kursstartvorschlag,
+                'datumAktuell' => $datumvon
             ]);
         }
+    }
+
+    /**
+     * Download ICS calendar file for a coursedate.
+     */
+    public function downloadIcs(Coursedate $coursedate)
+    {
+        $organiser = $this->organiser();
+        $course    = $coursedate->getCousename;
+
+        $dtstart  = gmdate('Ymd\THis\Z', strtotime($coursedate->kursstarttermin));
+        $dtend    = gmdate('Ymd\THis\Z', strtotime($coursedate->kursendtermin));
+        $dtstamp  = gmdate('Ymd\THis\Z');
+        $uid      = 'coursedate-' . $coursedate->id . '@' . $organiser->veranstaltungDomain;
+        $summary  = $course ? $course->kursName : 'Kurstermin';
+        $location = $organiser->veranstaltungDomain ?? '';
+        $url      = 'https://' . $organiser->veranstaltungDomain . '/Kurseangebot/' . $coursedate->id;
+        $impressumHtml = trim((string) view('textimport.mailImpressum')->render());
+
+        // Plain-Text-Beschreibung (HTML-Tags entfernen, Zeilenumbrueche fuer ICS escapen)
+        $plainInfo = '';
+        $htmlInfo  = '';
+        $sourceHtml = trim((string) ($coursedate->kursInformation ?? ''));
+        if ($impressumHtml !== '') {
+            $sourceHtml .= ($sourceHtml !== '' ? '<br><br>' : '') . $impressumHtml;
+        }
+
+        if ($sourceHtml !== '') {
+            // <br> als echte Textumbrueche behandeln, bevor HTML-Tags entfernt werden
+            $plainSource = preg_replace('/<\s*br\s*\/?\s*>/i', "\n", $sourceHtml);
+
+            $plainInfo = strip_tags(html_entity_decode($plainSource, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $plainInfo = str_replace(["\r\n", "\r"], "\n", $plainInfo);
+            $plainInfo = preg_replace('/[ \t]+/', ' ', $plainInfo);
+            $plainInfo = preg_replace("/\n{3,}/", "\n\n", $plainInfo);
+            $plainInfo = trim($plainInfo);
+            $plainInfo = str_replace(['\\', ';', ','], ['\\\\', '\\;', '\\,'], $plainInfo);
+            $plainInfo = str_replace(["\n"], '\\n', $plainInfo);
+
+            // HTML per DOMDocument parsen -> text nodes werden korrekt escaped
+            // (verhindert kaputtes HTML durch unescapte < > & in Texten)
+            $dom = new \DOMDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHTML(
+                '<html lang="de"><head><meta charset="UTF-8"></head><body>'
+                . $sourceHtml
+                . '</body></html>'
+            );
+            libxml_clear_errors();
+            $body = $dom->getElementsByTagName('body')->item(0);
+            $fixedHtml = '';
+            if ($body) {
+                foreach ($body->childNodes as $node) {
+                    $fixedHtml .= $dom->saveHTML($node);
+                }
+            }
+            // Zeilenumbrueche entfernen - ICS-Folding uebernimmt den Umbruch
+            $htmlInfo = trim(str_replace(["\r\n", "\r", "\n", "\t"], ' ', $fixedHtml));
+        }
+
+        $description     = $summary . ($plainInfo ? '\\n' . $plainInfo : '');
+        $descriptionHtml = '<html lang="de"><body><b>' . htmlspecialchars($summary, ENT_QUOTES, 'UTF-8') . '</b>'
+            . ($htmlInfo ? '<br>' . $htmlInfo : '')
+            . '</body></html>';
+
+        // RFC 5545: Zeilen auf max. 75 Oktets falten (Fortsetzung mit CRLF + Leerzeichen)
+        $fold = function (string $line): string {
+            $out    = '';
+            $bytes  = 0;
+            $chars  = mb_str_split($line, 1, 'UTF-8');
+            foreach ($chars as $char) {
+                $len = strlen($char); // Byte-Länge des UTF-8-Zeichens
+                if ($bytes + $len > 75) {
+                    $out   .= "\r\n ";
+                    $bytes  = 1; // das führende Leerzeichen zählt
+                }
+                $out   .= $char;
+                $bytes += $len;
+            }
+            return $out . "\r\n";
+        };
+
+        $ics = $fold("BEGIN:VCALENDAR")
+            . $fold("VERSION:2.0")
+            . $fold("PRODID:-//Kursverwaltung//DE")
+            . $fold("CALSCALE:GREGORIAN")
+            . $fold("METHOD:PUBLISH")
+            . $fold("BEGIN:VEVENT")
+            . $fold("UID:{$uid}")
+            . $fold("DTSTAMP:{$dtstamp}")
+            . $fold("DTSTART:{$dtstart}")
+            . $fold("DTEND:{$dtend}")
+            . $fold("SUMMARY:{$summary}")
+            . $fold("DESCRIPTION:{$description}")
+            . $fold("X-ALT-DESC;FMTTYPE=text/html:{$descriptionHtml}")
+            . $fold("LOCATION:{$location}")
+            . $fold("URL:{$url}")
+            . $fold("END:VEVENT")
+            . $fold("END:VCALENDAR");
+
+        $filename = 'Kurstermin-' . $coursedate->id . '.ics';
+
+        return response($ics, 200, [
+            'Content-Type'        => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }
