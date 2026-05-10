@@ -152,7 +152,7 @@ class CourseParticipantController extends Controller
             }]);
         }
 
-        $coursedates = $coursedatesQuery->paginate(5);
+        $coursedates = $coursedatesQuery->paginate(5)->withQueryString();
 
         if (!$isCourseParticipantLoggedIn) {
             $coursedates->getCollection()->each(function ($coursedate) {

@@ -159,18 +159,21 @@
 
     <footer>
         <p>Technische Basis: Laravel Kursbuchungssystem | API-Version: 1.0</p>
-        <p><em>Hinweis: Damit die API funktioniert, muss die Domain dieser Seite in der <code>config/cors.php</code> des Buchungssystems freigegeben sein.</em></p>
+        <p><em>Hinweis: Damit die API funktioniert, muss die Domain dieser Seite in der <code>config/cors.php</code> des Buchungssystems (<code id="api-url-display">lädt...</code>) freigegeben sein.</em></p>
     </footer>
 </div>
 
 <script>
     // Konfiguration: Passen Sie die URL an Ihre Installation an
-    const API_URL = 'https://www.domain.de/Kursbuchung/Einbetten?json=1&course_ids=4';
+    const API_URL = 'https://www.domain.de/Kursbuchung/Einbetten?json=1&course_ids=2,3,1';
 
     // Basis-URL automatisch aus der API_URL extrahieren (z.B. https://wander1.kel-datteln.de)
     let BASE_URL = '';
     try {
         BASE_URL = new URL(API_URL).origin;
+        // URL im Footer anzeigen
+        const urlDisplay = document.getElementById('api-url-display');
+        if (urlDisplay) urlDisplay.textContent = BASE_URL;
     } catch(e) {
         console.error("Ungültige API_URL");
     }
@@ -242,16 +245,16 @@
                         <strong>Datum:</strong> ${start} Uhr<br>
                         <strong>Status:</strong>
                         ${isFull ?
-                            '<span class="badge badge-full">Ausgebucht</span>' :
-                            `<span class="badge badge-free">Plätze frei (${date.booked_count} belegt)</span>`
-                        }
+                '<span class="badge badge-full">Ausgebucht</span>' :
+                `<span class="badge badge-free">Plätze frei (${date.booked_count} belegt)</span>`
+            }
                     </div>
                     ${isLoggedIn ?
-                        `<a href="${BASE_URL}/Kursbuchung/edit/${date.id}" class="btn" target="_top">
+                `<a href="${BASE_URL}/Kursbuchung/edit/${date.id}" class="btn" target="_top">
                             ${date.bookedSelf_count > 0 ? 'Buchung bearbeiten' : 'Jetzt buchen'}
                         </a>` :
-                        `<a href="${BASE_URL}/login?course_ids=${date.id}" class="btn" target="_top">Einloggen zum Buchen</a>`
-                    }
+                `<a href="${BASE_URL}/login?course_ids=${date.id}" class="btn" target="_top">Einloggen zum Buchen</a>`
+            }
                 </div>
             `;
         }).join('');

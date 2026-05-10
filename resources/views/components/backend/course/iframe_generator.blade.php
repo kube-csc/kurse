@@ -27,7 +27,7 @@
             return `<iframe
     src='${url}'
     width='100%'
-    height='700'
+    height='1250'
     style='border:0; max-width:100%;'
     loading='lazy'
     title='Kursbuchung'>
