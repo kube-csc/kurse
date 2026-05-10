@@ -34,10 +34,16 @@
                         </x-nav-link>
                     @endif
 
-                    @if(!session('is_iframe_mode'))
-                        <x-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
-                            {{ __('Homepage') }}
-                        </x-nav-link>
+                    @if(!session('is_iframe_mode') || session('embed_origin_url'))
+                        @if(session('embed_origin_url'))
+                            <x-nav-link href="{{ session('embed_origin_url') }}" target="_top">
+                                {{ __('Homepage') }}
+                            </x-nav-link>
+                        @else
+                            <x-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
+                                {{ __('Homepage') }}
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -172,10 +178,16 @@
                     </x-responsive-nav-link>
                 @endif
 
-                @if(!session('is_iframe_mode'))
-                    <x-responsive-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
-                        {{ __('Homepage') }}
-                    </x-responsive-nav-link>
+                @if(!session('is_iframe_mode') || session('embed_origin_url'))
+                    @if(session('embed_origin_url'))
+                        <x-responsive-nav-link href="{{ session('embed_origin_url') }}" target="_top">
+                            {{ __('Homepage') }}
+                        </x-responsive-nav-link>
+                    @else
+                        <x-responsive-nav-link href="{{ request()->getSchemeAndHttpHost() }}" target="_blank">
+                            {{ __('Homepage') }}
+                        </x-responsive-nav-link>
+                    @endif
                 @endif
             </div>
 

@@ -112,6 +112,16 @@ class CourseParticipantController extends Controller
         // Flag für IFrame-Modus setzen
         session(['is_iframe_mode' => true]);
 
+        // Referer speichern, um später zurückzukehren
+        if (request()->headers->get('referer')) {
+            $referer = request()->headers->get('referer');
+            $host = request()->getHost();
+            // Nur speichern, wenn der Referer von einer anderen Domain kommt
+            if (parse_url($referer, PHP_URL_HOST) !== $host) {
+                session(['embed_origin_url' => $referer]);
+            }
+        }
+
         $filterCourseIds = [];
         if ($courseIdsParam !== null) {
             if (is_array($courseIdsParam)) {
