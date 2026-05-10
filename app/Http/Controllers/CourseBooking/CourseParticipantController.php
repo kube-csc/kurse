@@ -152,10 +152,10 @@ class CourseParticipantController extends Controller
             }]);
         }
 
-        $coursedates = $coursedatesQuery->get();
+        $coursedates = $coursedatesQuery->paginate(5);
 
         if (!$isCourseParticipantLoggedIn) {
-            $coursedates->each(function ($coursedate) {
+            $coursedates->getCollection()->each(function ($coursedate) {
                 $coursedate->bookedSelf_count = 0;
             });
         }

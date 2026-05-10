@@ -9,7 +9,6 @@
             background-color: #f8fafc;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            min-height: 100vh;
             box-sizing: border-box;
         }
         .course-embed-card {
@@ -140,6 +139,18 @@
             </div>
         @endforeach
     </div>
+
+    @if($coursedates->hasPages())
+        <div class="course-embed-pagination" style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.5rem;">
+            @if(!$coursedates->onFirstPage())
+                <a href="{{ $coursedates->previousPageUrl() }}" class="course-embed-button" style="margin-top: 0;">&laquo; Zurück</a>
+            @endif
+
+            @if($coursedates->hasMorePages())
+                <a href="{{ $coursedates->nextPageUrl() }}" class="course-embed-button" style="margin-top: 0;">Weiter &raquo;</a>
+            @endif
+        </div>
+    @endif
     <script>
         // Falls wir in einem IFrame sind, verstecken wir Navigations-Elemente,
         // falls sie durch das Session-Flag noch nicht erfasst wurden oder
