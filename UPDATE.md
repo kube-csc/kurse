@@ -1,8 +1,14 @@
-## Update-Anleitung
+## Update Anleitung
+**Version V00.02.02**
+
+***Neue Funktionen***
+Einbetten des Kursangebot ins fremden Webseiten über iFrame. oder  API-Kursangebot.
+Der Code zum einbetten in einer fremden Webseite kann im Dashboard erstellt werden.
+(Beispiele sind im Ordner Beispiele zu finden)
+
 
 **Version V00.02.01**
-
-Benötigt das GitHub-Projekt [Vereinsverwaltung](https://github.com/kube-csc/vereinsverwaltung) ab Version **V00.10.03**.
+Es wird https://github.com/kube-csc/vereinsverwaltung  GitHub Projekt Vereinsverwaltung ab V00.10.03 benötigt
 
 ***Neue Funktionen***
 - **Fahrtenbuch erweitert:** Dashboard-Einstiege, Distanzpflege sowie Filter- und Navigationslogik wurden umgesetzt.
@@ -18,7 +24,8 @@ Benötigt das GitHub-Projekt [Vereinsverwaltung](https://github.com/kube-csc/ver
 
 **Version V00.02.00**
 
-Benötigt das GitHub-Projekt [Vereinsverwaltung](https://github.com/kube-csc/vereinsverwaltung) ab Version **V00.10.02**.
+Es wird https://github.com/kube-csc/vereinsverwaltung  GitHub Projekt Vereinsverwaltung ab V00.10.02 benötigt
+composer update
 
 ***Neue Funktionen***
 - FAQ-Bereich hinzugefügt.
