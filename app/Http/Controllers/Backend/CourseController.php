@@ -155,6 +155,17 @@ class CourseController extends Controller
         return redirect()->route('backend.course.index');
     }
 
+    public function iframeGenerator()
+    {
+        $organiser = $this->organiser();
+
+        $courses = Course::where('organiser_id', $organiser->id)
+            ->orderBy('kursName')
+            ->get();
+
+        return view('components.backend.course.iframe_generator', compact('courses'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -51,6 +51,12 @@ Legt fest, ob für diesen Kurs zwingend ein Trainer benötigt wird.<br>
     <li><strong>Deaktiviert:</strong> Der Kurs ist für alle Benutzer in der Terminplanung sichtbar – kein Trainer erforderlich.</li>
 </ul>',
     'Course Create' => 'Kurs / Fahrt / Training erstellen',
+    'IFrame Generator' => 'IFrame-Generator für Kursbuchungen',
+    'IFrame Generator Help' => 'Mit diesem Generator kannst du einen HTML-Code (IFrame) erstellen, um die Liste deiner buchbaren Kurse direkt in deine eigene Webseite einzubinden. Wähle einfach die gewünschten Kurse aus und kopiere den Code.',
+    'IFrame Generator Select Courses' => 'Buchbare Kurse auswählen',
+    'IFrame Generator Generated Code' => 'Generierter Code',
+    'IFrame Generator Copy Code' => 'Code kopieren',
+    'IFrame Generator Copy Code Success' => 'Code wurde kopiert!',
     'Sport Equipment' => 'Sportgeräte',
     'Sport Equipment Edit' => 'Sportgeräte bearbeiten',
     'Sport Equipment Edit Help' => 'Sportgeräte bearbeiten Hilfe',

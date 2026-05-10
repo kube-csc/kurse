@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kursübersicht</title>
+    <style>
+        .course-container { font-family: sans-serif; max-width: 800px; margin: auto; }
+        .course-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+        .course-title { font-weight: bold; font-size: 1.2em; color: #2c3e50; }
+        .course-details { margin-top: 10px; font-size: 0.9em; color: #555; }
+        .btn { display: inline-block; padding: 8px 15px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px; }
+        .btn:hover { background: #2980b9; }
+        .login-info { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="course-container">
+    <div id="auth-section" class="login-info">Lade...</div>
+    <div id="course-list">Lade Kurse...</div>
+</div>
+
+<script>
+    // Konfiguration: Passen Sie die URL an Ihre Installation an
+    const API_URL = '/Kursbuchung/Einbetten?json=1&course_ids=14';
+
+    async function loadCourses() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+
+            renderAuth(data.isLoggedIn, data.organiser);
+            renderCourses(data.coursedates, data.isLoggedIn);
+        } catch (error) {
+            document.getElementById('course-list').innerHTML = 'Fehler beim Laden der Kurse.';
+            console.error(error);
+        }
+    }
+
+    function renderAuth(isLoggedIn, organiser) {
+        const authSection = document.getElementById('auth-section');
+        if (isLoggedIn) {
+            authSection.innerHTML = `<h3>Willkommen!</h3><p>Du bist eingeloggt und kannst Kurse buchen.</p>`;
+        } else {
+            authSection.innerHTML = `
+                <p>Melde dich an, um einen Kurs zu buchen:</p>
+                <a href="/login" class="btn">Login</a>
+                <a href="/register" class="btn">Registrieren</a>
+            `;
+        }
+    }
+
+    function renderCourses(coursedates, isLoggedIn) {
+        const listContainer = document.getElementById('course-list');
+        if (coursedates.length === 0) {
+            listContainer.innerHTML = 'Keine aktuellen Kurstermine gefunden.';
+            return;
+        }
+
+        listContainer.innerHTML = coursedates.map(date => `
+            <div class="course-card">
+                <div class="course-title">${date.get_cousename.kursName}</div>
+                <div class="course-details">
+                    <strong>Termin:</strong> ${new Date(date.kursstarttermin).toLocaleString('de-DE', {weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})} Uhr<br>
+                    <strong>Plätze:</strong> ${date.booked_count} ${date.sportgeraetanzahl > 0 ? 'von ' + date.sportgeraetanzahl : ''} belegt
+                </div>
+                ${isLoggedIn ?
+                    `<a href="/Kursbuchung/edit/${date.id}" class="btn">${date.bookedSelf_count > 0 ? 'Buchung bearbeiten' : 'Kurs buchen'}</a>` :
+                    `<a href="/login" class="btn">Zum Buchen einloggen</a>`
+                }
+            </div>
+        `).join('');
+    }
+
+    loadCourses();
+</script>
+
+</body>
+</html>

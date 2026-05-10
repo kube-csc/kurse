@@ -26,25 +26,47 @@ class Dashboard extends Component
     {
         $organiserId = $this->organiserDomain()->id;
 
-        $courseDateCount = Coursedate::where('coursedates.organiser_id', $organiserId)
+        $courseIdsParam = session('course_embed_filter');
+        $filterCourseIds = [];
+        if ($courseIdsParam !== null) {
+            if (is_array($courseIdsParam)) {
+                $filterCourseIds = array_map('intval', $courseIdsParam);
+            } else {
+                $filterCourseIds = array_map('intval', explode(',', $courseIdsParam));
+            }
+            $filterCourseIds = array_filter($filterCourseIds);
+        }
+
+        $courseDateCountQuery = Coursedate::where('coursedates.organiser_id', $organiserId)
             // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Trainer zugeordnet sind
-            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            ->count();
+            ->where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')));
 
-        $courseDateCountYou = Coursedate::where('coursedates.organiser_id', $organiserId)
+        if (!empty($filterCourseIds)) {
+            $courseDateCountQuery->whereIn('coursedates.course_id', $filterCourseIds);
+        }
+        $courseDateCount = $courseDateCountQuery->count();
+
+        $courseDateCountYouQuery = Coursedate::where('coursedates.organiser_id', $organiserId)
             ->join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('participant_id', Auth::user()->id)
-            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            ->whereNull('course_participant_bookeds.deleted_at')
-            ->distinct('coursedates.id')
-            ->count();
+            ->where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')))
+            ->whereNull('course_participant_bookeds.deleted_at');
 
-        $courseParticipantCount = Coursedate::where('coursedates.organiser_id', $organiserId)
+        if (!empty($filterCourseIds)) {
+            $courseDateCountYouQuery->whereIn('coursedates.course_id', $filterCourseIds);
+        }
+        $courseDateCountYou = $courseDateCountYouQuery->distinct('coursedates.id')->count();
+
+        $courseParticipantCountQuery = Coursedate::where('coursedates.organiser_id', $organiserId)
             ->join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('participant_id', Auth::user()->id)
-            ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
-            ->whereNull('course_participant_bookeds.deleted_at')
-            ->count();
+            ->where('kursstarttermin', '>=', date('Y-m-d', strtotime('now')))
+            ->whereNull('course_participant_bookeds.deleted_at');
+
+        if (!empty($filterCourseIds)) {
+            $courseParticipantCountQuery->whereIn('coursedates.course_id', $filterCourseIds);
+        }
+        $courseParticipantCount = $courseParticipantCountQuery->count();
 
         return view('components.courseBooking.dashboard', [
             'courseDateCountYou'     => $courseDateCountYou,

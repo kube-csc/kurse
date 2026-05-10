@@ -50,10 +50,13 @@ Route::get('/Kurseangebot/{id}', [HomeController::class, 'courseDate'])->name('f
 Route::get('/Kurseangebot/{coursedate}/Kalender.ics', [CoursedateController::class, 'downloadIcs'])->name('frontend.course.downloadIcs');
 Route::get('/Kursbuchung/abmelden', [HomeController::class, 'logout'])->name('frontend.logout');
 
+Route::get('/Kursbuchung/Einbetten', [CourseParticipantController::class, 'embed'])->name('courseBooking.course.embed')->middleware('allowIframes');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'allowIframes'
 ])->group(function () {
     Route::get('/dashboard', function () {
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
@@ -74,7 +77,7 @@ Route::middleware([
     Route::get('/Kursbuchung/stornieren/{coursedateId}/{courseBookId}', [CourseParticipantController::class, 'destroyBooked'])->name('courseBooking.course.destroyBooked');
 });
 
-Route::middleware('admin:admin')->group(function () {
+Route::middleware('admin:admin')->middleware('allowIframes')->group(function () {
     Route::get('admin/login', [AdminController::Class, 'loginForm']);
     Route::post('admin/login', [AdminController::Class, 'store'])->name('admin.login');
 });
@@ -82,7 +85,8 @@ Route::middleware('admin:admin')->group(function () {
 Route::middleware([
     'auth:sanctum,admin',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'allowIframes'
 ])->group(function () {
     Route::get('/admin/dashboard', function () {
         $organiser = Organiser::where('veranstaltungDomain', $_SERVER['HTTP_HOST'])->first();
@@ -135,6 +139,7 @@ Route::middleware([
     Route::put('/backend/SportgeraeteBildDestroy/{sportEquipment}', [SportEquipmentController::class, 'destroyImage'])->name('backend.sportEquipment.destroyImage');
 
     Route::get('/backend/Course', [CourseController::class, 'index'])->name('backend.course.index');
+    Route::get('/backend/Course/IFrameGenerator', [CourseController::class, 'iframeGenerator'])->name('backend.course.iframe_generator');
     Route::get('/backend/CourseCreate', [CourseController::class, 'create'])->name('backend.course.create');
     Route::post('/backend/CourseStore', [CourseController::class, 'store'])->name('backend.course.store');
     Route::get('/backend/CourseEdit/{course}', [CourseController::class, 'edit'])->name('backend.course.edit');
