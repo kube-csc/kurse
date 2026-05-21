@@ -24,7 +24,7 @@
                             <label for="sportgeraetanzahl" class="form-label">Höchstzahl der möglichen Teilnehmer für diesen Termin:</label>
                             <select name="sportgeraetanzahl">
                                 <option value="0"  @selected(old('sportgeraetanzahl') ?? 0 == $coursedate->sportgeraetanzahl)>
-                                    maximale Teilnehmer
+                                    0
                                 </option>
                                 @for($i = 1; $i <= $sportgeraetanzahlMax; $i++)
                                     <option value="{{ $i }}"

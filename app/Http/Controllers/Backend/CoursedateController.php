@@ -222,7 +222,7 @@ class CoursedateController extends Controller
 
         $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
 
-        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($coursedate->organiser_id);
+        $sportgeraetanzahlMax = $this->sportgeraetanzahlMaxCourse($coursedate->id);
 
         return view('components.backend.courseDate.editBooked', compact([
             'coursedate',
