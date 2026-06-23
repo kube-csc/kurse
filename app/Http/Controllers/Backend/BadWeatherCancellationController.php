@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\BadWeatherParticipantMail;
 use App\Models\Coursedate;
 use App\Models\CourseParticipantBooked;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +88,7 @@ class BadWeatherCancellationController extends Controller
         }
 
         $coursedate->update($updatePayload);
+        $this->setTrainerNotificationFlag($coursedate);
 
         $this->notifyParticipants(
             $coursedate,
@@ -163,6 +165,20 @@ class BadWeatherCancellationController extends Controller
                 $trainerMessage
             ));
         }
+    }
+
+    private function setTrainerNotificationFlag(Coursedate $coursedate): void
+    {
+        $trainerIds = $coursedate->users()->pluck('users.id');
+
+        if ($trainerIds->isEmpty()) {
+            return;
+        }
+
+        User::whereIn('id', $trainerIds)->update([
+            'trainernachricht' => '1',
+            'bearbeiter_id' => Auth::id(),
+        ]);
     }
 
     private function buildTrainerMessageSuggestion(): string

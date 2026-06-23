@@ -115,8 +115,10 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
-                        <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
-                        {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        @if((int) $coursedate->kursNichtDurchfuerbar === 1)
+                            <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
+                            Ja
+                        @endif
                         <label class="label">Von Buchungsangebot ausblenden:</label>
                         {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
@@ -162,4 +164,3 @@
         }
     </script>
 </x-app-layout>
-

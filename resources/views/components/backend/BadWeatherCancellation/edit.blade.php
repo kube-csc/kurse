@@ -72,6 +72,10 @@
                                 </span>
                             @enderror
                         </div>
+                        <div class="form-field" x-show="actionType === 'cancel'" x-cloak aria-hidden="true">
+                            <label class="form-label" style="visibility: hidden;">Neuer Starttermin:</label>
+                            <div class="form-field flex" style="min-height: 38px;"></div>
+                        </div>
 
                         <div class="form-field">
                             <label for="kurs_information" class="form-label">Kursinformation:</label>
