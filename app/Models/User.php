@@ -27,8 +27,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'trainernachricht',
-        'bearbeiter_id'
+        'trainernachricht'
     ];
 
     /**

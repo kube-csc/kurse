@@ -36,6 +36,11 @@ class BadWeatherParticipantMail extends Mailable
 
     public function content(): Content
     {
+        $domain = optional($this->coursedate->getOrganiserName)->veranstaltungDomain;
+        $bookingUrl = $domain
+            ? 'https://'.$domain.'/Kurseangebot/'.$this->coursedate->id
+            : rtrim((string) config('app.url'), '/').'/Kurseangebot/'.$this->coursedate->id;
+
         return new Content(
             markdown: 'mail.participant.bad-weather-cancellation',
             with: [
@@ -45,6 +50,7 @@ class BadWeatherParticipantMail extends Mailable
                 'oldEnd' => $this->oldEnd,
                 'actionType' => $this->actionType,
                 'trainerMessage' => $this->trainerMessage,
+                'bookingUrl' => $bookingUrl,
             ],
         );
     }
