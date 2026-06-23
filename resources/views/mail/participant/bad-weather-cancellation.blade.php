@@ -22,6 +22,18 @@ der Termin **{{ $coursedate->getCousename->kursName }}** wurde wegen Schlechtwet
 **Nachricht vom Trainer:**  
 {{ $trainerMessage }}
 
+@if(!empty($coursedate->kursInformation))
+**Kursinformation:**  
+{{ $coursedate->kursInformation }}
+@endif
+
+<x-mail::button :url="$bookingUrl">
+Zur Kursseite
+</x-mail::button>
+
+Falls der Button nicht funktioniert, nutze diesen Link:  
+{{ $bookingUrl }}
+
 Vielen Dank für dein Verständnis.
 
 {{ config('app.name') }}<br>

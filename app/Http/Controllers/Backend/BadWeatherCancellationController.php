@@ -176,8 +176,7 @@ class BadWeatherCancellationController extends Controller
         }
 
         User::whereIn('id', $trainerIds)->update([
-            'trainernachricht' => '1',
-            'bearbeiter_id' => Auth::id(),
+            'trainernachricht' => '1'
         ]);
     }
 

@@ -92,7 +92,7 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="trainer_message" class="form-label">Text vom Trainer an Teilnehmer (Vorschlag):</label>
+                            <label for="trainer_message" class="form-label">Text vom Trainer an Teilnehmer (Vorschlag bitte anpassen):</label>
                             <textarea
                                 name="trainer_message"
                                 id="trainer_message"
