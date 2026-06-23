@@ -45,6 +45,9 @@
                                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}" title="Teilnehmer und Material verwalten" aria-label="Teilnehmer und Material verwalten">
                                     <box-icon name='user'></box-icon>
                                 </a>
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.badWeather.edit', $coursedate->id) }}" title="Schlechtwetter-Absage oder Terminverschiebung" aria-label="Schlechtwetter-Absage oder Terminverschiebung">
+                                    <box-icon name='cloud-rain'></box-icon>
+                                </a>
                                 <a class="dasboard-iconbox-a"
                                    href="{{ route('backend.tripDistance.show', ['coursedate' => $coursedate->id, 'all_courses' => 0]) }}"
                                    title="Fahrtenbuch öffnen"
@@ -159,5 +162,4 @@
         }
     </script>
 </x-app-layout>
-
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\CoursedateController;
+use App\Http\Controllers\Backend\BadWeatherCancellationController;
 use App\Http\Controllers\Backend\OrganiserController;
 use App\Http\Controllers\Backend\SportEquipmentController;
 use App\Http\Controllers\Backend\TripDistanceController;
@@ -122,6 +123,8 @@ Route::middleware([
     Route::get('/backend/CourseDateTrainerDestroy/{coursedateId}', [CoursedateController::class, 'trainerDestroy'])->name('backend.courseDate.trainerDestroy');
     Route::get('/backend/CourseBockedInformation/{coursedate}', [CoursedateController::class, 'CourseBockedInformation'])->name('backend.courseDate.CourseBockedInformation');
     Route::get('/backend/CourseDateIcs/{coursedate}', [CoursedateController::class, 'downloadIcs'])->name('backend.courseDate.downloadIcs');
+    Route::get('/backend/CourseDate/BadWeather/{coursedate}', [BadWeatherCancellationController::class, 'edit'])->name('backend.courseDate.badWeather.edit');
+    Route::put('/backend/CourseDate/BadWeather/{coursedate}', [BadWeatherCancellationController::class, 'update'])->name('backend.courseDate.badWeather.update');
 
     Route::get('/backend/TripDistance', [TripDistanceController::class, 'index'])->name('backend.tripDistance.index');
     Route::get('/backend/TripDistance/Report', [TripDistanceController::class, 'report'])->name('backend.tripDistance.report');
