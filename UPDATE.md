@@ -2,9 +2,19 @@
 **Version V00.02.02**
 
 ***Neue Funktionen***
-Einbetten des Kursangebot ins fremden Webseiten über iFrame. oder  API-Kursangebot.
-Der Code zum einbetten in einer fremden Webseite kann im Dashboard erstellt werden.
-(Beispiele sind im Ordner Beispiele zu finden)
+- Schlechtwetter-Funktion für Kurstermine:
+  - Termin verschieben oder absagen
+  - Teilnehmer per E-Mail informieren
+  - separaten Trainertext für die Benachrichtigung hinterlegen
+  - Trainer-Flag setzen, damit der Versand über den bestehenden Cronjob `/TrainerMail` erfolgt
+  - Kapazitätsprüfung bei Terminverschiebung
+  - Schlechtwetter-Icon in den Backend-Terminlisten
+
+
+- Einbetten des Kursangebot
+    Einbetten des Kursangebot ins fremden Webseiten über iFrame. oder  API-Kursangebot.
+    Der Code zum einbetten in einer fremden Webseite kann im Dashboard erstellt werden.
+    (Beispiele sind im Ordner Beispiele zu finden)
 
 
 **Version V00.02.01**

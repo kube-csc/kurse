@@ -26,7 +26,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de (1und1.de) Server</li>
-  <li>in Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
+  <li>In Ordner "/resources/views/textimport ist folgendes zu Bearbeiten:
     <ul>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
@@ -34,7 +34,7 @@ Beispiel für einen Kanuverein mit Abteilungen/Sportarten:
      <li>mailImpressum.blade.php anlegen mit der Vorlage mailImpressum_example.blade.php ausfüllen</li>
     </ul>
   </li>
-  <li>in Ordner "public sind die folgenden Dateien anzulegen:
+  <li>In Ordner "public sind die folgenden Dateien anzulegen:
 <ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>
@@ -58,7 +58,7 @@ benötigt.
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
    <li>php artisan storage:link</li>
-   <li>die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
+   <li>Die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
       <ul>
         <li>organisers</li>
         <li>sportgeraete</li>
@@ -99,6 +99,7 @@ benötigt.
     <li>Teilnehmer verwalten (Buchen, Stornieren)</li>
     <li>Sportgeräte anlegen, bearbeiten, löschen</li>
     <li>Header für Kurse / Termine / Trainings anlegen, bearbeiten, löschen</li>
+    <li>Schlechtwetter-Absage / Terminverschiebung für Kurstermine inkl. Teilnehmer- und Trainerbenachrichtigung</li>
     <li>Fahrtenbuch: Distanz (km) je Termin erfassen, auf Trainer und Teilnehmer verteilen oder individuell überschreiben
         <ul>
             <li>Monats- und Jahresnavigation mit automatischem Überspringen leerer Monate</li>
@@ -133,9 +134,10 @@ Alternativ müssen die Daten in der Datenbank direkt eingetragen werden.
     <li>Abteilungen</li>
 </ul>
 
-<h2>Cronjobs</h2>
+<h2›Cronjobs‹/h2> 
 Versendung von Emails an Teilnehmer die Kurse gebucht haben → [URL]/TeilnehmerMail
 Versendung von Emails an Trainer die gebuchte Teilnehmer haben → [URL]/TrainerMail
+Trainer-Benachrichtigungen nach Terminänderungen / Schlechtwetter-Absagen werden über das Trainer-Flag und den gleichen Cronjob versendet.
 Trainingszeiten werden für Abteilungen / Mannschaften werden nach dem erstellten Trainingsplan angelegt → [URL]/Training/Planung
 
 ## Anleitung für die Kursbuchung
