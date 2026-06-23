@@ -45,6 +45,9 @@
                                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}" title="Teilnehmer und Material verwalten" aria-label="Teilnehmer und Material verwalten">
                                     <box-icon name='user'></box-icon>
                                 </a>
+                                <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.badWeather.edit', $coursedate->id) }}" title="Schlechtwetter-Absage oder Terminverschiebung" aria-label="Schlechtwetter-Absage oder Terminverschiebung">
+                                    <box-icon name='cloud-rain'></box-icon>
+                                </a>
                                 <a class="dasboard-iconbox-a"
                                    href="{{ route('backend.tripDistance.show', ['coursedate' => $coursedate->id, 'all_courses' => 0]) }}"
                                    title="Fahrtenbuch öffnen"
@@ -112,8 +115,10 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
-                        <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
-                        {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        @if((int) $coursedate->kursNichtDurchfuerbar === 1)
+                            <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
+                            Ja
+                        @endif
                         <label class="label">Von Buchungsangebot ausblenden:</label>
                         {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
@@ -159,5 +164,3 @@
         }
     </script>
 </x-app-layout>
-
-

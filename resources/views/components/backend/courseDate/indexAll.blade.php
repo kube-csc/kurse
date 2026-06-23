@@ -22,6 +22,7 @@
                 @php
                     $startDay = strftime('%a', strtotime($coursedate->kursstarttermin));
                     $endDay   = strftime('%a', strtotime($coursedate->kursendtermin));
+                    $userIsInCourse = $coursedate->users->contains('id', Auth::id());
                 @endphp
                 <div class="dashboard-flexbox-b1-2">
                     <div class="dashboard-flexbox-text">
@@ -34,6 +35,9 @@
                             <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.sportingEquipment', $coursedate->id) }}" title="Teilnehmer und Material verwalten" aria-label="Teilnehmer und Material verwalten">
                                 <box-icon name='user'></box-icon>
                             </a>
+                            <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.badWeather.edit', $coursedate->id) }}" title="Schlechtwetter-Absage oder Terminverschiebung" aria-label="Schlechtwetter-Absage oder Terminverschiebung">
+                                <box-icon name='cloud-rain'></box-icon>
+                            </a>
                             <a class="dasboard-iconbox-a"
                                href="{{ route('backend.tripDistance.show', ['coursedate' => $coursedate->id, 'all_courses' => 1]) }}"
                                title="Fahrtenbuch öffnen"
@@ -45,12 +49,6 @@
                                     <box-icon name='trash'></box-icon>
                                 </a>
                             @endif
-                            @php($userIsInCourse = false)
-                            @foreach($coursedate->users as $user)
-                                @if($user->id == Auth::user()->id)
-                                    @php($userIsInCourse = true)
-                                @endif
-                            @endforeach
                             @if($userIsInCourse == false)
                                 <a class="dasboard-iconbox-a" href="{{ route('backend.courseDate.trainerRegister', $coursedate->id) }}" title="Trainer zum Termin hinzufügen" aria-label="Trainer zum Termin hinzufügen">
                                     <box-icon name='plus'></box-icon>
@@ -118,8 +116,10 @@
                                 {{ $coursedate->booked_count }} von allen möglichen Teilnehmer
                             </div>
                         @endif
-                        <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
-                        {{ $coursedate->kursNichtDurchfuerbar == 0 ? 'Nein' : 'Ja' }}
+                        @if((int) $coursedate->kursNichtDurchfuerbar === 1)
+                            <label class="label">Termin kann wegen zeitlicher Überschneidungen nicht angeboten werden:</label>
+                            Ja
+                        @endif
                         <label class="label">Von Buchungsangebot ausblenden:</label>
                         {{ $coursedate->getCousename->nicht_anmeldebar == 1 ? 'Ja' : 'Nein' }}
                         <label class="label">{{ $organiser->trainerUeberschrift }}:</label>
@@ -164,5 +164,3 @@
         }
     </script>
 </x-app-layout>
-
-
