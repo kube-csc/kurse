@@ -10,9 +10,7 @@ use App\Models\Course;
 use App\Models\SportEquipment;
 use Auth;
 use Illuminate\Support\Carbon;
-
-// ToDo: Wird es noch benötigt?
-// use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -298,13 +296,20 @@ class HomeController extends Controller
         ];
     }
 
-    public function logout(){
+    public function logout(Request $request){
+        // Ziel-URL VOR dem Logout merken, da die Session danach geleert wird
+        $embedOriginUrl = session('embed_origin_url');
+
         Auth::logout();
 
-        if (session()->has('embed_origin_url')) {
-            return redirect(session('embed_origin_url'));
+        // Session invalidieren und CSRF-Token erneuern
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        if ($embedOriginUrl) {
+            return redirect($embedOriginUrl);
         }
 
-        return redirect(url()->previous());
+        return redirect('/');
     }
 }
