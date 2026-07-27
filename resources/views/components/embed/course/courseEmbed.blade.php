@@ -47,15 +47,18 @@
         if (!setlocale(LC_TIME, 'de_DE.UTF-8')) {
             setlocale(LC_TIME, 'German_Germany.1252');
         }
+
+        $courseHeadingRaw = $organiser->kurseUeberschrift ?? '';
+        $courseHeading = trim($courseHeadingRaw) !== '' ? $courseHeadingRaw : 'Kurse';
     @endphp
     @if($showDebug)
         <div style="background:#fff7ed; border:1px solid #fdba74; color:#9a3412; padding:0.5rem; border-radius:0.375rem; margin-bottom:0.75rem; font-family:monospace; font-size:0.8rem;">
             <strong>Debug URL:</strong> {{ $debugUrl }}<br>
-            <strong>Kurs-Filter (course_ids):</strong>
+            <strong>{{ $courseHeading }}-Filter (course_ids):</strong>
             @if(!empty($filterCourseIds))
                 {{ implode(', ', $filterCourseIds) }}
             @else
-                alle Kurse (kein Filter)
+                alle {{ $courseHeading }} (kein Filter)
             @endif
             <br>
             <strong>Gefundene Termine:</strong> {{ $coursedates->count() }}
@@ -63,10 +66,10 @@
     @endif
     @if($isCourseParticipantLoggedIn)
         <h3>Willkommen, {{ Auth::user()->vorname }}</h3>
-        <p>Hier sind die verfügbaren Kurse:</p>
+        <p>Hier findest du: {{ $courseHeading }}</p>
     @else
         <div style="background: #edf2f7; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-            <p>Um einen Kurs zu buchen, logge dich bitte ein oder erstelle einen neuen Account.</p>
+            <p>Um Buchungen für {{ $courseHeading }} vorzunehmen, logge dich bitte ein oder erstelle einen neuen Account.</p>
             @php
                 $loginUrl = route('login');
                 $registerUrl = route('register');
@@ -124,7 +127,7 @@
                         @if($coursedate->bookedSelf_count > 0)
                             Buchung bearbeiten
                         @else
-                            Kurs buchen
+                            Jetzt buchen
                         @endif
                     </a>
                 @else

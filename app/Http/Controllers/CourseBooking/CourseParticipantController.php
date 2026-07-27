@@ -274,6 +274,7 @@ class CourseParticipantController extends Controller
             $freeSportEquipment=0;
         }
 
+        /*
         if($coursedate->sportgeraetanzahl==0) {
             $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count() - $courseBookedAlls->count() + $freeSportEquipment;
         }
@@ -285,6 +286,8 @@ class CourseParticipantController extends Controller
                 $sportgeraetanzahlMax = $freeSportEquipmentSum;
             }
         }
+        */
+
         $timeMin=Carbon::parse($coursedate->kursstarttermin)->format('H:i');
         $courseLength = Carbon::parse($coursedate->kurslaenge);
         $courseLengthInMinutes = $courseLength->hour * 60 + $courseLength->minute;
@@ -304,7 +307,7 @@ class CourseParticipantController extends Controller
             $maxParticipant = $coursedate->sportgeraetanzahl;
         }
 
-        $maxReservierbarInput = (max ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();
+        $maxReservierbarInput = (min ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -363,6 +366,19 @@ class CourseParticipantController extends Controller
         if (!$coursedate) {
             self::warning('Der Termin wurde nicht gefunden oder ist nicht mehr verfügbar.');
             return redirect()->route('courseBooking.course.index');
+        }
+
+        $teilnehmerLimit = (int) ($coursedate->sportgeraetanzahl ?? 0);
+        if ($teilnehmerLimit > 0) {
+            $bereitsGebuchteTeilnehmer = CourseParticipantBooked::query()
+                ->where('kurs_id', $coursedateId)
+                ->whereNull('deleted_at')
+                ->count();
+
+            if ($bereitsGebuchteTeilnehmer >= $teilnehmerLimit) {
+                self::warning('Die maximale Teilnehmerzahl fuer diesen Kurs ist bereits erreicht.');
+                return redirect()->route('courseBooking.course.edit', $coursedateId);
+            }
         }
 
         // Alle Sportgeräte
