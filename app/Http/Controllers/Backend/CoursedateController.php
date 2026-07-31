@@ -404,9 +404,14 @@ class CoursedateController extends Controller
             })
             ->values();
 
+        $totalTeilnehmerCount = $overlapingCoursedatesWithParticipants->sum('teilnehmerCount');
+        $sportEquipmentsTotalPlaetze = (int) $sportEquipments->sum('sportleranzahl');
+        $zugewiesenePlaetzeGesamt = (int) $overlapingCoursedatesWithParticipants->sum('zugewiesenePlaetze');
+        $freiePlaetzeNachTerminzuweisung = max(0, $sportEquipmentsTotalPlaetze - $zugewiesenePlaetzeGesamt);
+
         $poolHasRemainingPlace = $allocationResult['poolHasRemainingPlace'];
         $poolRemainingPlaetze = $allocationResult['poolRemainingPlaetze'];
-        $poolRemainingSportgeraete = $allocationResult['poolRemainingSportgeraete'];
+          $poolRemainingSportgeraete = $allocationResult['poolRemainingSportgeraete'];
 
         // Berechnung mit sum('sportleranzahl') statt count()
         $freeSportEquipmentSum = $sportEquipmentPool->sum('sportleranzahl');
@@ -446,7 +451,11 @@ class CoursedateController extends Controller
             'overlapingCoursedatesWithParticipants',
             'poolHasRemainingPlace',
             'poolRemainingPlaetze',
-            'poolRemainingSportgeraete'
+            'poolRemainingSportgeraete',
+            'totalTeilnehmerCount',
+            'sportEquipmentsTotalPlaetze',
+            'zugewiesenePlaetzeGesamt',
+            'freiePlaetzeNachTerminzuweisung'
         ]));
     }
 

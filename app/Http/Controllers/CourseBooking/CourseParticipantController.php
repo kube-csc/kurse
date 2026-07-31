@@ -269,12 +269,13 @@ class CourseParticipantController extends Controller
         $sportEquipmentBookedsSum = $sportEquipmentBookeds->sum('sportleranzahl');
         $teilnehmerKursBookedsSum = $teilnehmerKursBookeds->count();
 
+        /*
         $freeSportEquipment = $sportEquipmentBookedsSum - $teilnehmerKursBookedsSum;
         if($freeSportEquipment>0){
             $freeSportEquipment=0;
         }
 
-        /*
+
         if($coursedate->sportgeraetanzahl==0) {
             $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count() - $courseBookedAlls->count() + $freeSportEquipment;
         }
@@ -301,13 +302,15 @@ class CourseParticipantController extends Controller
 
         $sportgeraetanzahlMax = CoursedateHelper::sportgeraetanzahlMaxPlaetze($coursedate->organiser_id);
         $maxReservierbarInput =  $sportgeraetanzahlMax - $needEquipmentProCourstimeSumme;
-        $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
 
+       // $maxReservierbarInput = (max ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();
+
+        $maxParticipant = $sportgeraetanzahlMax  - $needEquipmentProCourstimeSumme;
         if($maxParticipant > $coursedate->sportgeraetanzahl) {
             $maxParticipant = $coursedate->sportgeraetanzahl;
         }
 
-        $maxReservierbarInput = (min ($sportEquipmentBookedsForCoursedatesSum, $maxReservierbarInput))-$courseBookes->count()-$courseBookedAlls->count();
+        $freeParticipant = min ($maxParticipant - $courseBookes->count()-$courseBookedAlls->count() , $maxReservierbarInput);
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -317,8 +320,8 @@ class CourseParticipantController extends Controller
                 'courseBookedAlls',
                 'timeMax',
                 'timeMin',
-                // neu für Reservierung/Details
-                'maxParticipant',
+                 'maxParticipant',
+                'freeParticipant',
                 'maxReservierbarInput',
                 'sportEquipmentBookedsForCoursedatesSum',
                 'needEquipmentProCourstimeSumme'
@@ -337,7 +340,7 @@ class CourseParticipantController extends Controller
 
         $courseParticipantBookedCount = CourseParticipantBooked::where('kurs_id' , $coursedate->id)->count();
         if($courseParticipantBookedCount>0){
-            self::warning('Der Zeit kann nicht bearbeitet werden, da bereits Teilnehmer gebucht sind. Es können aber  weiter Teilnehmer gebucht werden.');
+            self::warning('Der Termin kann nicht bearbeitet werden, da bereits Teilnehmer gebucht sind. Es können aber  weiter Teilnehmer gebucht werden.');
             return redirect()->route('courseBooking.course.edit', $coursedate->id);
         }
 

@@ -79,15 +79,22 @@
                             <label for="course_id" class="form-label">
                                 {{ $courseBookes->count() }}
                                 {{ $courseBookes->count() === 1 ? 'belegter Platz' : 'belegte Plätze' }}
-                                in
-                                {{ $organiser->materialUeberschrift }} /
+                                in {{ $organiser->materialUeberschrift }}.
+                                Für diesen Termin max.:
                                 {{ $sportgeraetanzahlMax }}
-                                {{ $sportgeraetanzahlMax === 1 ? 'freier Platz' : 'freie Plätze' }}:
+                                {{ $sportgeraetanzahlMax === 1 ? 'Platz' : 'Plätze' }}.
+                                Im Pool frei:
+                                {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
+                                {{ ($freiePlaetzeNachTerminzuweisung ?? 0) === 1 ? 'Platz' : 'Plätze' }}:
                             </label>
                             <div class="form-box">
                                 @php
+                                    $hasGlobalCapacity = $totalTeilnehmerCount < ($sportEquipmentsTotalPlaetze ?? 0);
+                                    $hasRemainingGlobalPlaces = ($freiePlaetzeNachTerminzuweisung ?? 0) > 0;
                                     $canBookParticipant = $sportgeraetanzahlMax > 0
-                                        && (($courseBookes->count() > 0 && $poolHasRemainingPlace) || $timeMin == $timeMax);
+                                        && (($courseBookes->count() > 0 && $poolHasRemainingPlace) || $timeMin == $timeMax)
+                                        && $hasGlobalCapacity
+                                        && $hasRemainingGlobalPlaces;
                                 @endphp
                                 @if($canBookParticipant)
                                     <a href="{{ route('backend.courseDate.book' ,
@@ -161,6 +168,23 @@
                                     <div class="form-input-text" style="margin-top: 8px;">
                                         Verfügbare Plätze (Pool) = {{ $freeSportEquipmentSum  ?? 'n/a' }}
                                     </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Aktuell gebuchte Teilnehmer (überlappende Termine) = {{ $totalTeilnehmerCount ?? 0 }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Pool gesamt = {{ $sportEquipmentsTotalPlaetze ?? 0 }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Bereits zugewiesen = {{ $zugewiesenePlaetzeGesamt ?? 0 }}
+                                    </div>
+                                    <div class="form-input-text" style="margin-top: 8px;">
+                                        Frei für diesen Termin = {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
+                                    </div>
+                                    @if(($freiePlaetzeNachTerminzuweisung ?? 0) <= 0)
+                                        <div class="form-input-text" style="margin-top: 8px; color: #b91c1c;">
+                                            Kein freier Platz mehr.
+                                        </div>
+                                    @endif
 
                                 </div>
                             </div>
@@ -257,8 +281,9 @@
 
                         <div class="form-field">
                             <label for="course_id" class="form-label">
-                                {{ $overlapingCoursedates->count() }}
-                                {{ $overlapingCoursedates->count() === 1 ? 'überlappender Termin' : 'überlappende Termine' }} (inkl. aktuellem Termin):
+                                {{ $overlapingCoursedatesWithParticipants->count() }}
+                                {{ $overlapingCoursedatesWithParticipants->count() === 1 ? 'überlappender Termin' : 'überlappende Termine' }} (inkl. aktuellem Termin)
+                                – gesamt gebuchte Teilnehmer: {{ $totalTeilnehmerCount }}:
                             </label>
                             <div class="form-box">
                                 @foreach($overlapingCoursedatesWithParticipants as $overlap)
@@ -315,7 +340,7 @@
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                    @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && $poolHasRemainingPlace)
+                    @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && $poolHasRemainingPlace && ($freiePlaetzeNachTerminzuweisung ?? 0) > 0)
                         <button type="submit" class="form-button">
                             {{ __('main.save') }}
                         </button>

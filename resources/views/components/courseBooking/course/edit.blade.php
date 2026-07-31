@@ -67,9 +67,9 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $maxReservierbarInput }} frei(e) Plätz(e):</label>
+                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $freeParticipant }} frei(e) Plätz(e):</label>
                             <div class="form-box">
-                                @if($maxReservierbarInput>0 and $timeMin==$timeMax)
+                                @if($freeParticipant>0 and $timeMin==$timeMax)
                                     <a href="{{ route('courseBooking.course.book' ,
                                         [
                                            'coursedateId'     => $coursedate->id
@@ -93,6 +93,7 @@
                                 @endforeach
                             </div>
 
+                            @if(config('app.debug'))
                             <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
                                 <button
                                     type="button"
@@ -123,6 +124,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
 
                         </div>
 
