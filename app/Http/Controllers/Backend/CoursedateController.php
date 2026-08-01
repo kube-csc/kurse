@@ -416,6 +416,8 @@ class CoursedateController extends Controller
         // Berechnung mit sum('sportleranzahl') statt count()
         $freeSportEquipmentSum = $sportEquipmentPool->sum('sportleranzahl');
         $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
+        $freiePlaetzeImKursAusZugewiesenenSportgeraeten = max(0, $kursBookedSum - $courseBookes->count());
+        $currentCourseHasFreeBookedSeats = $kursBookedSum > $courseBookes->count();
 
         if($coursedate->sportgeraetanzahl==0) {
             $sportgeraetanzahlMax = $freeSportEquipmentSum + $kursBookedSum - $courseBookes->count();
@@ -455,7 +457,9 @@ class CoursedateController extends Controller
             'totalTeilnehmerCount',
             'sportEquipmentsTotalPlaetze',
             'zugewiesenePlaetzeGesamt',
-            'freiePlaetzeNachTerminzuweisung'
+            'freiePlaetzeNachTerminzuweisung',
+            'currentCourseHasFreeBookedSeats',
+            'freiePlaetzeImKursAusZugewiesenenSportgeraeten'
         ]));
     }
 
@@ -493,7 +497,14 @@ class CoursedateController extends Controller
             $coursedate->id
         );
 
-        if (empty($allocationResult['poolHasRemainingPlace'])) {
+        $currentCourseBookedPlaetze = (int) $sportEquipmentKursBookeds->sum('sportleranzahl');
+        $currentCourseParticipantCount = CourseParticipantBooked::query()
+            ->where('kurs_id', $coursedateId)
+            ->whereNull('deleted_at')
+            ->count();
+        $currentCourseHasFreeBookedSeats = $currentCourseBookedPlaetze > $currentCourseParticipantCount;
+
+        if (empty($allocationResult['poolHasRemainingPlace']) && !$currentCourseHasFreeBookedSeats) {
             self::warning('Es sind keine freien Plätze im Sportgeräte-Pool vorhanden. Der Teilnehmer kann nicht gebucht werden.');
             return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
         }

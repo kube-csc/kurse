@@ -83,6 +83,9 @@
                                 Für diesen Termin max.:
                                 {{ $sportgeraetanzahlMax }}
                                 {{ $sportgeraetanzahlMax === 1 ? 'Platz' : 'Plätze' }}.
+                                Im Kurs frei (zugewiesene {{ $organiser->materialUeberschrift }}):
+                                {{ $freiePlaetzeImKursAusZugewiesenenSportgeraeten ?? 0 }}
+                                {{ ($freiePlaetzeImKursAusZugewiesenenSportgeraeten ?? 0) === 1 ? 'Platz' : 'Plätze' }}.
                                 Im Pool frei:
                                 {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
                                 {{ ($freiePlaetzeNachTerminzuweisung ?? 0) === 1 ? 'Platz' : 'Plätze' }}:
@@ -90,9 +93,9 @@
                             <div class="form-box">
                                 @php
                                     $hasGlobalCapacity = $totalTeilnehmerCount < ($sportEquipmentsTotalPlaetze ?? 0);
-                                    $hasRemainingGlobalPlaces = ($freiePlaetzeNachTerminzuweisung ?? 0) > 0;
+                                    $hasRemainingGlobalPlaces = (($freiePlaetzeNachTerminzuweisung ?? 0) > 0) || ($currentCourseHasFreeBookedSeats ?? false);
                                     $canBookParticipant = $sportgeraetanzahlMax > 0
-                                        && (($courseBookes->count() > 0 && $poolHasRemainingPlace) || $timeMin == $timeMax)
+                                        && (($courseBookes->count() > 0 && ($poolHasRemainingPlace || ($currentCourseHasFreeBookedSeats ?? false))) || $timeMin == $timeMax)
                                         && $hasGlobalCapacity
                                         && $hasRemainingGlobalPlaces;
                                 @endphp
@@ -340,7 +343,7 @@
                     <a href="{{ route('backend.courseDate.index') }}" class="form-button">
                         {{ __('main.back') }}
                     </a>
-                    @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && $poolHasRemainingPlace && ($freiePlaetzeNachTerminzuweisung ?? 0) > 0)
+                    @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && ($poolHasRemainingPlace || ($currentCourseHasFreeBookedSeats ?? false)) && ((($freiePlaetzeNachTerminzuweisung ?? 0) > 0) || ($currentCourseHasFreeBookedSeats ?? false)))
                         <button type="submit" class="form-button">
                             {{ __('main.save') }}
                         </button>

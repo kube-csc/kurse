@@ -409,7 +409,14 @@ class CourseParticipantController extends Controller
             $coursedate->id
         );
 
-        if (empty($allocationResult['poolHasRemainingPlace'])) {
+        $currentCourseBookedPlaetze = (int) $sportEquipmentKursBookeds->sum('sportleranzahl');
+        $currentCourseParticipantCount = CourseParticipantBooked::query()
+            ->where('kurs_id', $coursedateId)
+            ->whereNull('deleted_at')
+            ->count();
+        $currentCourseHasFreeBookedSeats = $currentCourseBookedPlaetze > $currentCourseParticipantCount;
+
+        if (empty($allocationResult['poolHasRemainingPlace']) && !$currentCourseHasFreeBookedSeats) {
             self::warning('Es sind keine freien Plätze im Sportgeräte-Pool vorhanden. Der Teilnehmer kann nicht gebucht werden.');
             return redirect()->route('courseBooking.course.edit', $coursedateId);
         }

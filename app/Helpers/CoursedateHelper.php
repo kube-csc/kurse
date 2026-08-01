@@ -301,10 +301,21 @@ class CoursedateHelper
 
         $state = [];
         foreach ($overlapsWithParticipants as $row) {
+
             $coursedateId = (int) ($row['coursedate_id'] ?? 0);
+            $offeneReserviertePlaetze = max(
+                0,
+                (int) ($row['sportgeraeteReserviert'] ?? 0) - (int) ($row['teilnehmerplaetzeGebuchteSportgeraete'] ?? 0)
+            );
+            $restbedarf = max(
+                0,
+                max((int) ($row['benoetigtePlaetzeMax'] ?? 0), $offeneReserviertePlaetze)
+            );
+
             $state[$coursedateId] = [
                 'row' => $row,
-                'restbedarf' => max(0, (int) ($row['benoetigtePlaetzeMax'] ?? 0)),
+                // Offene Reservierungen verbrauchen ebenfalls Pool-Kapazitaet.
+                'restbedarf' => $restbedarf,
                 'neuZugewiesenePlaetze' => 0,
                 'neuZugewieseneSportgeraete' => [],
             ];
@@ -391,8 +402,8 @@ class CoursedateHelper
         return [
             'items' => $items,
             'poolRemainingPlaetze' => $poolRemainingPlaetze,
-            'poolHasRemainingPlace' => $poolRemainingPlaetze > 0,
-            'poolRemainingSportgeraete' => count($poolRest),
+            'poolHasRemainingPlace' =>  $poolRemainingPlaetze > 0,
+            'poolRemainingSportgeraete' =>count($poolRest),
         ];
     }
 
