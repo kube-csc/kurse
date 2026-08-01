@@ -80,13 +80,13 @@
                                 {{ $courseBookes->count() }}
                                 {{ $courseBookes->count() === 1 ? 'belegter Platz' : 'belegte Plätze' }}
                                 in {{ $organiser->materialUeberschrift }}.
-                                Für diesen Termin max.:
+                                Termin frei:
                                 {{ $sportgeraetanzahlMax }}
                                 {{ $sportgeraetanzahlMax === 1 ? 'Platz' : 'Plätze' }}.
                                 Im Kurs frei (zugewiesene {{ $organiser->materialUeberschrift }}):
                                 {{ $freiePlaetzeImKursAusZugewiesenenSportgeraeten ?? 0 }}
                                 {{ ($freiePlaetzeImKursAusZugewiesenenSportgeraeten ?? 0) === 1 ? 'Platz' : 'Plätze' }}.
-                                Im Pool frei:
+                                Pool frei:
                                 {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
                                 {{ ($freiePlaetzeNachTerminzuweisung ?? 0) === 1 ? 'Platz' : 'Plätze' }}:
                             </label>
@@ -181,7 +181,7 @@
                                         Bereits zugewiesen = {{ $zugewiesenePlaetzeGesamt ?? 0 }}
                                     </div>
                                     <div class="form-input-text" style="margin-top: 8px;">
-                                        Frei für diesen Termin = {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
+                                        Termin frei = {{ $freiePlaetzeNachTerminzuweisung ?? 0 }}
                                     </div>
                                     @if(($freiePlaetzeNachTerminzuweisung ?? 0) <= 0)
                                         <div class="form-input-text" style="margin-top: 8px; color: #b91c1c;">

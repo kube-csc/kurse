@@ -67,9 +67,9 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="course_id" class="form-label">{{ $courseBookes->count() }} gebucht(e) Teilnehmer / {{ $courseBookes->count()+$courseBookedAlls->count() }} belegt(e) Plätz(e) / {{ $freeParticipant }} frei(e) Plätz(e):</label>
+                            <label for="course_id" class="form-label">Gebucht: {{ $courseBookes->count() }} / Belegt: {{ $courseBookes->count()+$courseBookedAlls->count() }} / Frei gesamt: {{ $freeParticipant }} / Frei im Kurs: {{ $freiePlaetzeImKursAusZugewiesenenSportgeraeten ?? 0 }}</label>
                             <div class="form-box">
-                                @if($freeParticipant>0 and $timeMin==$timeMax)
+                                @if($freeParticipant > 0)
                                     <a href="{{ route('courseBooking.course.book' ,
                                         [
                                            'coursedateId'     => $coursedate->id

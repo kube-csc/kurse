@@ -266,6 +266,8 @@ class CourseParticipantController extends Controller
         // Berechnung mit sum('sportleranzahl') statt count()
         $freeSportEquipmentSum = $sportEquipments->sum('sportleranzahl');
         $kursBookedSum = $sportEquipmentKursBookeds->sum('sportleranzahl');
+        $totalCourseParticipants = $courseBookes->count() + $courseBookedAlls->count();
+        $freiePlaetzeImKursAusZugewiesenenSportgeraeten = max(0, $kursBookedSum - $totalCourseParticipants);
         $sportEquipmentBookedsSum = $sportEquipmentBookeds->sum('sportleranzahl');
         $teilnehmerKursBookedsSum = $teilnehmerKursBookeds->count();
 
@@ -310,7 +312,8 @@ class CourseParticipantController extends Controller
             $maxParticipant = $coursedate->sportgeraetanzahl;
         }
 
-        $freeParticipant = min ($maxParticipant - $courseBookes->count()-$courseBookedAlls->count() , $maxReservierbarInput);
+        $freeParticipant = min($maxParticipant - $totalCourseParticipants, $maxReservierbarInput);
+        $freeParticipant = max(0, max($freeParticipant, $freiePlaetzeImKursAusZugewiesenenSportgeraeten));
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -324,7 +327,8 @@ class CourseParticipantController extends Controller
                 'freeParticipant',
                 'maxReservierbarInput',
                 'sportEquipmentBookedsForCoursedatesSum',
-                'needEquipmentProCourstimeSumme'
+                'needEquipmentProCourstimeSumme',
+                'freiePlaetzeImKursAusZugewiesenenSportgeraeten'
             ])
         );
     }
