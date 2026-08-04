@@ -185,7 +185,7 @@
                                     </div>
                                     @if(($freiePlaetzeNachTerminzuweisung ?? 0) <= 0)
                                         <div class="form-input-text" style="margin-top: 8px; color: #b91c1c;">
-                                            Kein freier Platz mehr.
+                                            Kein freier Platz im Pool mehr.
                                         </div>
                                     @endif
 
@@ -208,17 +208,28 @@
                                         </div>
                                         @php $prevPoolSportleranzahl = $sportEquipmentFree->sportleranzahl; @endphp
                                     @endif
-                                    <a href="{{ route('backend.courseDate.equipmentBooked' ,
-                                    [
-                                        'coursedateId'     => $coursedate->id,
-                                        'sportequipmentId' => $sportEquipmentFree->id
-                                    ] ) }}"
-                                    >
-                                        <span class="form-button">
-                                            <box-icon name='plus-circle'></box-icon>
+                                    @php
+                                        $canAssignEquipment = ($freiePlaetzeNachTerminzuweisung ?? 0) >= ($sportEquipmentFree->sportleranzahl ?? 0);
+                                    @endphp
+                                    @if($canAssignEquipment)
+                                        <a href="{{ route('backend.courseDate.equipmentBooked' ,
+                                        [
+                                            'coursedateId'     => $coursedate->id,
+                                            'sportequipmentId' => $sportEquipmentFree->id
+                                        ] ) }}"
+                                        >
+                                            <span class="form-button">
+                                                <box-icon name='plus-circle'></box-icon>
+                                                {{ $sportEquipmentFree->sportgeraet }}
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="form-button" style="opacity: 0.5; cursor: not-allowed;">
+                                            <box-icon name='block'></box-icon>
                                             {{ $sportEquipmentFree->sportgeraet }}
+                                            (benötigt {{ $sportEquipmentFree->sportleranzahl }} Plätze)
                                         </span>
-                                    </a>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>

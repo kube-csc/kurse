@@ -558,14 +558,29 @@ class CoursedateController extends Controller
                 return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
             }
 
+            $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
+            $overlapingCoursedates->push($coursedate);
+            $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates);
+
+            $baseAllocationResult = CoursedateHelper::allocateFreeSportEquipmentGreedy(
+                $overlapingCoursedatesWithParticipants,
+                $sportEquipmentPool,
+                $coursedate->id
+            );
+            $sportEquipmentsTotalPlaetze = (int) $sportEquipments->sum('sportleranzahl');
+            $zugewiesenePlaetzeGesamt = (int) collect($baseAllocationResult['items'] ?? [])->sum('zugewiesenePlaetze');
+            $freiePlaetzeNachTerminzuweisung = max(0, $sportEquipmentsTotalPlaetze - $zugewiesenePlaetzeGesamt);
+
+            if ((int) ($selectedEquipment->sportleranzahl ?? 0) > $freiePlaetzeNachTerminzuweisung) {
+                self::warning('Das gewählte Sportgerät hat mehr Plätze als aktuell frei sind und kann nicht zugewiesen werden.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
             $simulatedSportEquipmentKursBookeds = $sportEquipmentKursBookeds->push($selectedEquipment);
             $simulatedKursBookedPlaetze = (int) $simulatedSportEquipmentKursBookeds->sum('sportleranzahl');
             $simulatedKursBookedCount = (int) $simulatedSportEquipmentKursBookeds->count();
 
-            $overlapingCoursedates = CoursedateHelper::getOverlappingCoursedates($coursedate);
-            $overlapingCoursedates->push($coursedate);
-
-            $overlapingCoursedatesWithParticipants = CoursedateHelper::getParticipantCountForOverlappingCoursedates($overlapingCoursedates)
+            $overlapingCoursedatesWithParticipants = $overlapingCoursedatesWithParticipants
                 ->map(function ($row) use ($coursedate, $simulatedKursBookedPlaetze, $simulatedKursBookedCount) {
                     if ((int) ($row['coursedate_id'] ?? 0) !== (int) $coursedate->id) {
                         return $row;
