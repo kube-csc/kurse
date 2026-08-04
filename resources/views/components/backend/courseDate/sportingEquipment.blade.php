@@ -137,6 +137,7 @@
                                 @endforeach
                             </div>
 
+                            @if(config('app.debug'))
                             <div x-data="{ showEquipmentInfo: false }" style="margin-top: 6px;">
                                 <button
                                     type="button"
@@ -191,6 +192,7 @@
 
                                 </div>
                             </div>
+                            @endif
                         </div>
 
                         <div class="form-field">
