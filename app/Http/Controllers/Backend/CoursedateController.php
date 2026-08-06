@@ -571,7 +571,14 @@ class CoursedateController extends Controller
             $zugewiesenePlaetzeGesamt = (int) collect($baseAllocationResult['items'] ?? [])->sum('zugewiesenePlaetze');
             $freiePlaetzeNachTerminzuweisung = max(0, $sportEquipmentsTotalPlaetze - $zugewiesenePlaetzeGesamt);
 
-            if ((int) ($selectedEquipment->sportleranzahl ?? 0) > $freiePlaetzeNachTerminzuweisung) {
+            $selectedEquipmentPlaetze = (int) ($selectedEquipment->sportleranzahl ?? 0);
+
+            if ($selectedEquipmentPlaetze < 1) {
+                self::warning('Das gewählte Sportgerät hat keine gültige Platzanzahl und kann nicht zugewiesen werden.');
+                return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
+            }
+
+            if ($selectedEquipmentPlaetze > $freiePlaetzeNachTerminzuweisung) {
                 self::warning('Das gewählte Sportgerät hat mehr Plätze als aktuell frei sind und kann nicht zugewiesen werden.');
                 return redirect()->route('backend.courseDate.sportingEquipment', $coursedateId);
             }

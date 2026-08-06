@@ -211,7 +211,9 @@
                                         @php $prevPoolSportleranzahl = $sportEquipmentFree->sportleranzahl; @endphp
                                     @endif
                                     @php
-                                        $canAssignEquipment = ($freiePlaetzeNachTerminzuweisung ?? 0) >= ($sportEquipmentFree->sportleranzahl ?? 0);
+                                        $equipmentSeats = (int) ($sportEquipmentFree->sportleranzahl ?? 0);
+                                        $canAssignEquipment = $equipmentSeats > 0
+                                            && (($freiePlaetzeNachTerminzuweisung ?? 0) >= $equipmentSeats);
                                     @endphp
                                     @if($canAssignEquipment)
                                         <a href="{{ route('backend.courseDate.equipmentBooked' ,
@@ -229,7 +231,7 @@
                                         <span class="form-button" style="opacity: 0.5; cursor: not-allowed;">
                                             <box-icon name='block'></box-icon>
                                             {{ $sportEquipmentFree->sportgeraet }}
-                                            (benötigt {{ $sportEquipmentFree->sportleranzahl }} Plätze)
+                                            (benötigt {{ $equipmentSeats }} Plätze)
                                         </span>
                                     @endif
                                 @endforeach
