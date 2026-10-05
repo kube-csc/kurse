@@ -41,10 +41,6 @@ class CourseParticipantController extends Controller
         }
 
         $coursedatesQuery = Coursedate::where('coursedates.organiser_id', $organiser->id)
-            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Kursleiter zugeordnet sind
-            // Aktuel wird das in der blade mit einer if Abfrage gemacht
-            //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            //->where('coursedate_user.user_id', Auth::user()->id)
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->withCount(['courseParticipantBookeds as booked_count' => function ($query) {
                 $query->whereColumn('kurs_id', 'coursedates.id');
@@ -67,10 +63,6 @@ class CourseParticipantController extends Controller
         $organiser = $this->organiser();
 
         $coursedates = Coursedate::where('coursedates.organiser_id', $organiser->id)
-            // ToDo:Vorher Filter so das nur noch Ergebnisse vorhanden sind die den angemeldeten Kursleiter zugeordnet sind
-            // Aktuel wird das in der blade mit einer if Abfrage gemacht
-            //->join('coursedate_user', 'coursedate_user.coursedate_id', '=', 'coursedates.id')
-            //->where('coursedate_user.user_id', Auth::user()->id)
             ->join('course_participant_bookeds', 'course_participant_bookeds.kurs_id', '=', 'coursedates.id')
             ->where('kursstarttermin', '>=' , date('Y-m-d', strtotime('now')))
             ->where('participant_id', Auth::user()->id)
@@ -313,7 +305,7 @@ class CourseParticipantController extends Controller
         }
 
         $freeParticipant = min($maxParticipant - $totalCourseParticipants, $maxReservierbarInput);
-        $freeParticipant = max(0, max($freeParticipant, $freiePlaetzeImKursAusZugewiesenenSportgeraeten));
+        $freeParticipant = max(0, min($freeParticipant, $freiePlaetzeImKursAusZugewiesenenSportgeraeten));
 
         return view('components.courseBooking.course.edit', compact([
                 'coursedate',
@@ -323,7 +315,7 @@ class CourseParticipantController extends Controller
                 'courseBookedAlls',
                 'timeMax',
                 'timeMin',
-                 'maxParticipant',
+                'maxParticipant',
                 'freeParticipant',
                 'maxReservierbarInput',
                 'sportEquipmentBookedsForCoursedatesSum',

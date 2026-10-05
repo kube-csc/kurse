@@ -27,7 +27,7 @@
                                    {{ Illuminate\Support\Carbon::parse($coursedate->kursstarttermin)->format('d.m.Y') }}
                                 </div>
                                 @if($courseBookes->count() == 0 && $timeMin != $timeMax)
-                                <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date"
+                                <input type="time" name="kursstartterminTime" id="kursstartterminTime" class="form-input-date form-input-date-blue"
                                        value=
                                       @if(isset($kursstartterminTime))
                                            "{{ $kursstartterminTime }}"
@@ -360,7 +360,7 @@
                     </a>
                     @if($courseBookes->count() == 0 && $timeMin != $timeMax && $sportgeraetanzahlMax > 0 && ($poolHasRemainingPlace || ($currentCourseHasFreeBookedSeats ?? false)) && ((($freiePlaetzeNachTerminzuweisung ?? 0) > 0) || ($currentCourseHasFreeBookedSeats ?? false)))
                         <button type="submit" class="form-button">
-                            {{ __('main.save') }}
+                            {{ __('main.choose time and book') }}
                         </button>
                     @endif
                 </div>
